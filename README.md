@@ -5,6 +5,6 @@
 ## Команда Авторов
 - [Макар Кузнецов](https://github.com/HomeboyMakkri)
 - [Иван Протопопов](https://github.com/Illuuusion)
-- [Максим Паншин]()
-- [Никита Шиц]()
-- [Елизовета Суровец]()
+- [Максим Паншин](https://github.com/homemadelobotomy)
+- [Никита Шиц](https://github.com/shitznikita)
+- [Елизовета Суровец](https://github.com/SurovetsElizaveta)
