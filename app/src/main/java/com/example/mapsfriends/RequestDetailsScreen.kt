@@ -2,7 +2,6 @@ package com.example.mapsfriends
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.content.contentReceiver
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,14 +18,12 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,7 +33,7 @@ import androidx.compose.ui.unit.sp
 
 @Preview
 @Composable
-fun EventDetailsScreen() {
+fun RequestDetailsScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,7 +51,7 @@ fun EventDetailsScreen() {
             modifier = Modifier.fillMaxWidth()
         ) {
             IconButton(
-                onClick = {/* Назад к мои ивенты */},
+                onClick = {/* Назад к заявкам */},
                 modifier = Modifier
                     .padding(0.dp)
                     .border(4.dp, Color.White, RoundedCornerShape(12.dp))
@@ -118,48 +115,19 @@ fun EventDetailsScreen() {
         }
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceBetween
+                .height(40.dp)
+                .background(Color.White, RoundedCornerShape(20.dp))
+                .padding(start = 10.dp)
         ) {
-            Row(
-                modifier = Modifier
-                    .height(48.dp)
-                    .background(Color.White, RoundedCornerShape(20.dp))
-                    .padding(start = 10.dp)
-            ) {
-                mockEvents[0].members.forEach { member->
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "MemberIcon",
-                        tint = colorResource(R.color.bg_pink),
-                        modifier = Modifier
-                            .width(36.dp)
-                            .height(36.dp)
-                            .align(Alignment.CenterVertically)
-                    )
-                }
-                IconButton(
-                    onClick = {/* Добавить человека */},
-                    modifier = Modifier
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.add_plus),
-                        contentDescription = "Add member",
-                        tint = colorResource(R.color.main_purple)
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            IconButton(
-                onClick = {/* Переход к чату ивента */},
-                modifier = Modifier
-                    .background(Color.White, RoundedCornerShape(20.dp))
-//                    .padding(10.dp)
-            ) {
+            mockEvents[0].members.forEach { member->
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.event_chat),
-                    contentDescription = "Event chat",
-                    tint = colorResource(R.color.main_purple)
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "MemberIcon",
+                    tint = colorResource(R.color.bg_pink),
+                    modifier = Modifier
+                        .width(36.dp)
+                        .height(36.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
         }
@@ -190,16 +158,28 @@ fun EventDetailsScreen() {
                 .padding(10.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            TextButton(
-                onClick = {/* Удаление ивента */},
+            IconButton(
+                onClick = {/* Принять заявку */},
                 modifier = Modifier
-                    .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
+                    .width(64.dp)
+                    .border(2.dp, colorResource(R.color.main_blue), RoundedCornerShape(16.dp))
             ) {
-                Text(
-                    text = LocalContext.current.getString(R.string.dalete),
-                    fontSize = 20.sp,
-                    color = colorResource(R.color.main_pink),
-                    fontWeight = FontWeight.Bold,
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.acception),
+                    contentDescription = "Accept",
+                    tint = colorResource(R.color.main_blue)
+                )
+            }
+            IconButton(
+                onClick = {/* Отклонить заявку */},
+                modifier = Modifier
+                    .width(64.dp)
+                    .border(2.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp))
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.cross),
+                    contentDescription = "Refuse",
+                    tint = colorResource(R.color.main_pink)
                 )
             }
         }

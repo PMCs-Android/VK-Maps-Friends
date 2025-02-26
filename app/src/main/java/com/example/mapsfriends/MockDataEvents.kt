@@ -25,3 +25,14 @@ val mockEvents = listOf(
         listOf(mockUsers[0], mockUsers[1])
     )
 )
+
+data class Messages(
+    val user: MockDataUsers,
+    val text: String,
+    val time: String
+)
+
+val mockMessages = listOf(
+    Messages(mockUsers[1],"Возьмите воды", "18:36"),
+    Messages(mockUsers[0],"Я задержусь ;,,(", "18:41")
+)
