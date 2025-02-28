@@ -1,13 +1,11 @@
 package com.example.mapsfriends
 
-import androidx.compose.animation.core.animateFloatAsState
+import android.graphics.Bitmap
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -24,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -39,16 +36,23 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.MapType
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import androidx.compose.ui.platform.LocalContext
-import androidx.room.util.copy
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.coroutines.launch
 import com.google.maps.android.compose.Marker as Marker
+
+
+
+data class MarkerData(
+    val position: LatLng,
+    val title: String,
+    val originalBitmap: Bitmap,
+    var icon: BitmapDescriptor? = null
+)
 
 
 @Composable
@@ -103,13 +107,18 @@ fun MapScreen() {
     LaunchedEffect(Unit) {
         mockUsers.forEach { user ->
             coroutineScope.launch {
-                val markerIcon = loadMarkerIconFromUrl(context, user.avatarUrl)
-                if (markerIcon != null) {
+                val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
+                if (originalBitmap != null) {
+                    val initialZoom = calculateMarkerSize(zoomLevel)
+                    val initialIcon = BitmapDescriptorFactory.fromBitmap(
+                        Bitmap.createScaledBitmap(originalBitmap, initialZoom, initialZoom, false)
+                    )
                     markers.add(
                         MarkerData(
                             position = user.location,
                             title = user.name,
-                            icon = markerIcon
+                            originalBitmap = originalBitmap,
+                            icon = initialIcon
                         )
                     )
                 }
@@ -117,6 +126,15 @@ fun MapScreen() {
         }
     }
 
+    LaunchedEffect(cameraPositionState.position.zoom) {
+        zoomLevel = cameraPositionState.position.zoom.coerceIn(5f, 20f)
+        markers.forEach { markerData ->
+            val newSize = calculateMarkerSize(zoomLevel)
+            markerData.icon = BitmapDescriptorFactory.fromBitmap(
+                Bitmap.createScaledBitmap(markerData.originalBitmap, newSize, newSize, false)
+            )
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // Карта
@@ -136,12 +154,14 @@ fun MapScreen() {
         ) {
             // Отображение маркеров
             markers.forEach { markerData ->
-                Marker(
-                    state = MarkerState(position = markerData.position),
-                    title = markerData.title,
-                    icon = markerData.icon,
-                    onClick = { false }
-                )
+                markerData.icon?.let {
+                    Marker(
+                        state = MarkerState(position = markerData.position),
+                        title = markerData.title,
+                        icon = it,
+                        onClick = { false }
+                    )
+                }
             }
         }
 
@@ -159,7 +179,7 @@ fun MapScreen() {
                         .build()
                 },
                 valueRange = 5f..20f, // Диапазон зума
-                steps = 100, // Более плавный слайдер (больше шагов)
+                steps = 50, // Более плавный слайдер (больше шагов)
                 colors = SliderDefaults.colors(
                     thumbColor = Color.White, // Цвет индикатора
                     activeTrackColor = Color.Blue, // Активная часть слайдера
@@ -175,20 +195,8 @@ fun MapScreen() {
 }
 
 
-data class MarkerData(
-    val position: LatLng,
-    val title: String,
-    val icon: BitmapDescriptor
-)
 
 
-//val animatedOffset = animateFloatAsState(
-//    targetValue = if (isPulsing) 1.2f else 1f,
-//    animationSpec = infiniteRepeatable(
-//        animation = tween(durationMillis = 1000),
-//        repeatMode = RepeatMode.Reverse
-//    )
-//)
 
 @Preview
 @Composable
