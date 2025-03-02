@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -40,11 +40,12 @@ import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.vectorResource
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.coroutines.launch
 import com.google.maps.android.compose.Marker as Marker
-
 
 
 data class MarkerData(
@@ -58,29 +59,109 @@ data class MarkerData(
 @Composable
 fun MainScreen() {
     Box(modifier = Modifier.fillMaxSize()) {
-        // Карта
+
         MapScreen()
 
-        // Кнопки поверх карты
         Column(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(16.dp)
         ) {
             IconButton(
-                onClick = { /* Центрировать на местоположении */ },
-                modifier = Modifier.background(Color.White, CircleShape)
+                onClick = { /* Показать профиль */ },
+                modifier = Modifier
+                    .background(colorResource(R.color.white), RoundedCornerShape(12.dp))
+                    .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
             ) {
-                Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Location")
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.profile),
+                    contentDescription = "Profile",
+                    tint = colorResource(R.color.main_purple)
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             IconButton(
-                onClick = { /* Показать друзей */ },
-                modifier = Modifier.background(Color.White, CircleShape)
+                onClick = { /* Показать статистику шагов */ },
+                modifier = Modifier
+                    .background(Color.White, RoundedCornerShape(12.dp))
+                    .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
             ) {
-                Icon(imageVector = Icons.Default.Face, contentDescription = "Friends")
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.footstep_boot),
+                    contentDescription = "Footsteps",
+                    tint = colorResource(R.color.main_purple)
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 30.dp)
+        ) {
+            IconButton(
+                onClick = { /* Центрировать геоположение */ },
+                modifier = Modifier
+                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(16.dp))
+                    .align(Alignment.CenterHorizontally)
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.gps_focus),
+                    contentDescription = "Location",
+                    tint = colorResource(R.color.main_purple)
+                )
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row (
+                horizontalArrangement = Arrangement.SpaceBetween
+
+            ) {
+                IconButton(
+                    onClick = { /* Показать чаты */ },
+                    modifier = Modifier
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(12.dp))
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.chat_main_page),
+                        contentDescription = "Chats",
+                        tint = colorResource(R.color.main_blue)
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+
+                IconButton(
+                    onClick = { /* Показать ивенты */ },
+                    modifier = Modifier
+                        .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .padding(horizontal = 10.dp, vertical = 16.dp)
+                        .height(56.dp)
+                        .width(56.dp)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.event_calendar),
+                        contentDescription = "Events",
+                        tint = colorResource(R.color.main_purple)
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                IconButton(
+                    onClick = { /* Показать друзей */ },
+                    modifier = Modifier
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(12.dp))
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.friends),
+                        contentDescription = "Friends",
+                        tint = colorResource(R.color.main_pink)
+                    )
+                }
             }
         }
     }
@@ -92,10 +173,8 @@ fun MapScreen() {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
-    // Текущий пользователь
     val currentUser = mockUsers.firstOrNull { it.id == 1 } ?: mockUsers.first()
 
-    // Состояние камеры
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(currentUser.location, 18f)
     }
@@ -137,22 +216,19 @@ fun MapScreen() {
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Карта
+
         GoogleMap(
             properties = MapProperties(
-                //mapToolbarEnabled = false, // Отключаем гугловский элемент UI для маршрутов
-                //isLiteModeEnabled = false,
                 mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
             ),
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
             uiSettings = MapUiSettings(
-                zoomControlsEnabled = false, // Скрываем кнопки "+" и "-"
-                myLocationButtonEnabled = false, // Скрываем кнопку "Мое местоположение"
-                compassEnabled = false // Скрываем компас
+                zoomControlsEnabled = false,
+                myLocationButtonEnabled = false,
+                compassEnabled = false
             )
         ) {
-            // Отображение маркеров
             markers.forEach { markerData ->
                 markerData.icon?.let {
                     Marker(
@@ -165,7 +241,6 @@ fun MapScreen() {
             }
         }
 
-        // Слайдер для управления зумом
         Column(
             horizontalAlignment = Alignment.End,
             modifier = Modifier.fillMaxSize()
@@ -173,17 +248,17 @@ fun MapScreen() {
             Slider(
                 value = zoomLevel,
                 onValueChange = { newZoom ->
-                    zoomLevel = newZoom.coerceIn(5f, 20f) // Ограничение зума от 5 до 20
+                    zoomLevel = newZoom.coerceIn(5f, 20f)
                     cameraPositionState.position = CameraPosition.Builder(cameraPositionState.position)
-                        .zoom(newZoom) // Устанавливаем новый уровень зума
+                        .zoom(newZoom)
                         .build()
                 },
-                valueRange = 5f..20f, // Диапазон зума
-                steps = 50, // Более плавный слайдер (больше шагов)
+                valueRange = 5f..20f,
+                steps = 50,
                 colors = SliderDefaults.colors(
-                    thumbColor = Color.White, // Цвет индикатора
-                    activeTrackColor = Color.Blue, // Активная часть слайдера
-                    inactiveTrackColor = Color.LightGray // Неактивная часть слайдера
+                    thumbColor = Color.White,
+                    activeTrackColor = Color.Blue,
+                    inactiveTrackColor = Color.LightGray
                 ),
                 modifier = Modifier
                     .height(300.dp)
@@ -194,12 +269,3 @@ fun MapScreen() {
     }
 }
 
-
-
-
-
-@Preview
-@Composable
-fun SimpleComposablePreview() {
-    MainScreen()
-}
