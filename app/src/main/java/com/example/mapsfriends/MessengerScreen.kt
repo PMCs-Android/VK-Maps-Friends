@@ -36,13 +36,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
-@Preview
 @Composable
-fun MessengerScreen() {
+fun MessengerScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,10 +61,9 @@ fun MessengerScreen() {
                 .padding(horizontal = 10.dp)
         ) {
             IconButton(
-                onClick = {/* Назад к деталям ивента */ },
+                onClick = { navController.popBackStack() },
                 modifier = Modifier
                     .border(4.dp, Color.White, RoundedCornerShape(12.dp))
-                    .weight(1f)
                     .align(Alignment.CenterVertically)
             ) {
                 Icon(
@@ -88,7 +86,7 @@ fun MessengerScreen() {
                 modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = mockEvents[0].day.toString() + " " + monthList.get(mockEvents[0].month - 1),
+                    text = mockEvents[0].day.toString() + " " + monthList[mockEvents[0].month - 1],
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -122,7 +120,7 @@ fun MessengerScreen() {
                 .padding(horizontal = 10.dp)
         ) {
             mockMessages.forEach { message ->
-                Row() {
+                Row {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Member Icon",
@@ -179,19 +177,20 @@ fun MessengerScreen() {
                     focusedContainerColor = Color.White,
                     unfocusedContainerColor = Color.White,
                     unfocusedIndicatorColor = Color.White,
-                    focusedIndicatorColor = Color.White),
-            placeholder = {
-                Text(
-                    text = LocalContext.current.getString(R.string.message_placefolder),
-                    fontSize = 16.sp,
-                    color = Color.Gray
-                )
-            },
+                    focusedIndicatorColor = Color.White
+                ),
+                placeholder = {
+                    Text(
+                        text = LocalContext.current.getString(R.string.message_placefolder),
+                        fontSize = 16.sp,
+                        color = Color.Gray
+                    )
+                },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
             )
             Spacer(modifier = Modifier.width(10.dp))
             IconButton(
-                onClick = {/* Отправление сообщения */},
+                onClick = {/* Отправление сообщения */ },
                 modifier = Modifier
                     .background(colorResource(R.color.main_purple), CircleShape)
                     .align(Alignment.Top)

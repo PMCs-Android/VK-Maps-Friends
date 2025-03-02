@@ -42,6 +42,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.coroutines.launch
@@ -55,10 +56,12 @@ data class MarkerData(
     var icon: BitmapDescriptor? = null
 )
 
-
 @Composable
-fun MainScreen() {
-    Box(modifier = Modifier.fillMaxSize()) {
+fun MainScreen(navController: NavHostController) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(vertical = 30.dp)
+    ) {
 
         MapScreen()
 
@@ -68,7 +71,7 @@ fun MainScreen() {
                 .padding(16.dp)
         ) {
             IconButton(
-                onClick = { /* Показать профиль */ },
+                onClick = { navController.navigate("profile") },
                 modifier = Modifier
                     .background(colorResource(R.color.white), RoundedCornerShape(12.dp))
                     .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
@@ -134,7 +137,7 @@ fun MainScreen() {
                 Spacer(modifier = Modifier.width(10.dp))
 
                 IconButton(
-                    onClick = { /* Показать ивенты */ },
+                    onClick = { navController.navigate("events") },
                     modifier = Modifier
                         .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
                         .background(Color.White, RoundedCornerShape(12.dp))

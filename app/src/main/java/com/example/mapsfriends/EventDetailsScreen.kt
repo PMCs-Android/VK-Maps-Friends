@@ -2,7 +2,6 @@ package com.example.mapsfriends
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.content.contentReceiver
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,13 +29,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
-@Preview
 @Composable
-fun EventDetailsScreen() {
+fun EventDetailsScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,11 +52,10 @@ fun EventDetailsScreen() {
             modifier = Modifier.fillMaxWidth()
         ) {
             IconButton(
-                onClick = {/* Назад к мои ивенты */},
+                onClick = { navController.popBackStack() },
                 modifier = Modifier
                     .padding(0.dp)
                     .border(4.dp, Color.White, RoundedCornerShape(12.dp))
-                    .weight(1f)
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.back_arrow),
@@ -89,7 +86,7 @@ fun EventDetailsScreen() {
                 modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = mockEvents[0].day.toString() + " " + monthList.get(mockEvents[0].month - 1),
+                    text = mockEvents[0].day.toString() + " " + monthList[mockEvents[0].month - 1],
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -119,7 +116,6 @@ fun EventDetailsScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-//            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(
                 modifier = Modifier
@@ -127,7 +123,7 @@ fun EventDetailsScreen() {
                     .background(Color.White, RoundedCornerShape(20.dp))
                     .padding(start = 10.dp)
             ) {
-                mockEvents[0].members.forEach { member->
+                mockEvents[0].members.forEach { member ->
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "MemberIcon",
@@ -139,7 +135,7 @@ fun EventDetailsScreen() {
                     )
                 }
                 IconButton(
-                    onClick = {/* Добавить человека */},
+                    onClick = {/* Добавить человека */ },
                     modifier = Modifier
                 ) {
                     Icon(
@@ -151,10 +147,9 @@ fun EventDetailsScreen() {
             }
             Spacer(modifier = Modifier.width(16.dp))
             IconButton(
-                onClick = {/* Переход к чату ивента */},
+                onClick = {navController.navigate("messenger")},
                 modifier = Modifier
                     .background(Color.White, RoundedCornerShape(20.dp))
-//                    .padding(10.dp)
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.event_chat),
@@ -163,7 +158,7 @@ fun EventDetailsScreen() {
                 )
             }
         }
-        Column (
+        Column(
             modifier = Modifier
                 .padding(vertical = 10.dp)
                 .height(300.dp)
@@ -191,7 +186,7 @@ fun EventDetailsScreen() {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             TextButton(
-                onClick = {/* Удаление ивента */},
+                onClick = {/* Удаление ивента */ },
                 modifier = Modifier
                     .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
             ) {

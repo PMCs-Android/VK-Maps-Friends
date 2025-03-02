@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -23,14 +22,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
 
-@Preview
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,7 +43,7 @@ fun ProfileScreen() {
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
         IconButton(
-            onClick = {/* Удаление ивента */ },
+            onClick = { navController.popBackStack() },
             modifier = Modifier
                 .border(
                     4.dp,

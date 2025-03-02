@@ -27,13 +27,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 
-@Preview
 @Composable
-fun RequestDetailsScreen() {
+fun RequestDetailsScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,11 +50,10 @@ fun RequestDetailsScreen() {
             modifier = Modifier.fillMaxWidth()
         ) {
             IconButton(
-                onClick = {/* Назад к заявкам */},
+                onClick = { navController.popBackStack() },
                 modifier = Modifier
                     .padding(0.dp)
                     .border(4.dp, Color.White, RoundedCornerShape(12.dp))
-                    .weight(1f)
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.back_arrow),
@@ -86,7 +84,7 @@ fun RequestDetailsScreen() {
                 modifier = Modifier.align(Alignment.CenterVertically)
             ) {
                 Text(
-                    text = mockEvents[0].day.toString() + " " + monthList.get(mockEvents[0].month - 1),
+                    text = mockEvents[0].day.toString() + " " + monthList[mockEvents[0].month - 1],
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -119,7 +117,7 @@ fun RequestDetailsScreen() {
                 .background(Color.White, RoundedCornerShape(20.dp))
                 .padding(start = 10.dp)
         ) {
-            mockEvents[0].members.forEach { member->
+            mockEvents[0].members.forEach { member ->
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
                     contentDescription = "MemberIcon",
@@ -131,7 +129,7 @@ fun RequestDetailsScreen() {
                 )
             }
         }
-        Column (
+        Column(
             modifier = Modifier
                 .padding(vertical = 10.dp)
                 .height(300.dp)
@@ -159,7 +157,7 @@ fun RequestDetailsScreen() {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             IconButton(
-                onClick = {/* Принять заявку */},
+                onClick = {/* Принять заявку */ },
                 modifier = Modifier
                     .width(64.dp)
                     .border(2.dp, colorResource(R.color.main_blue), RoundedCornerShape(16.dp))
@@ -171,7 +169,7 @@ fun RequestDetailsScreen() {
                 )
             }
             IconButton(
-                onClick = {/* Отклонить заявку */},
+                onClick = {/* Отклонить заявку */ },
                 modifier = Modifier
                     .width(64.dp)
                     .border(2.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp))
