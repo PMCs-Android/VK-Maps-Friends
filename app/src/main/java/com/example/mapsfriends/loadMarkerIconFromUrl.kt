@@ -3,11 +3,9 @@ package com.example.mapsfriends
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.core.graphics.drawable.toBitmap
-import coil.ImageLoader
 import coil.imageLoader
 import coil.request.ImageRequest
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import kotlin.math.pow
 
 
 suspend fun loadOriginalBitmapFromUrl(context: Context, url: String): Bitmap? {
@@ -21,14 +19,15 @@ suspend fun loadOriginalBitmapFromUrl(context: Context, url: String): Bitmap? {
     } catch (e: Exception) {
         e.printStackTrace()
         null
-    }
+    }feagit 
 }
 
 fun calculateMarkerSize(zoom: Float): Int {
-    return when {
-        zoom > 18 -> 200
-        zoom > 15 -> 150
-        zoom > 12 -> 100
-        else -> 30
-    }
+    val baseZoom = 18f
+    val scaleFactor = 2.5f
+    val baseSize = 256
+
+    return (baseSize * (zoom / baseZoom).pow(scaleFactor))
+        .toInt()
+        .coerceIn(16, 200)
 }
