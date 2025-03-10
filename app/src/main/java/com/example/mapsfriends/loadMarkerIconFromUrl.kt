@@ -19,7 +19,7 @@ suspend fun loadOriginalBitmapFromUrl(context: Context, url: String): Bitmap? {
     } catch (e: Exception) {
         e.printStackTrace()
         null
-    }feagit 
+    }
 }
 
 fun calculateMarkerSize(zoom: Float): Int {

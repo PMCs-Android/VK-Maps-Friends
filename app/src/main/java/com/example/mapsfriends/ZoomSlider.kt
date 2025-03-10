@@ -46,28 +46,12 @@ fun ZoomSlider(
 
     val scope = rememberCoroutineScope()
 
-    Box(modifier = modifier.fillMaxHeight().width(64.dp)) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .drawBehind {
-                    if (alpha > 0.01f) {
-
-                        drawRoundRect(
-                            color = Color.Blue.copy(alpha = 0.2f * alpha),
-                            cornerRadius = CornerRadius(4f, 4f),
-                            topLeft = Offset(size.width - 8f, 0f),
-                            size = Size(4f, size.height)
-                        )
-
-                        drawCircle(
-                            color = Color.Blue.copy(alpha = 0.4f * alpha),
-                            radius = 24f,
-                            center = Offset(size.width / 2, touchOffset.y)
-                        )
-                    }
-                }
-        )
+    Box(
+        modifier = modifier
+            .fillMaxHeight()
+            .width(64.dp)
+    ) {
+        DrawBehind(alpha, touchOffset)
 
         Box(
             modifier = Modifier
@@ -99,4 +83,29 @@ fun ZoomSlider(
                 }
         )
     }
+}
+
+@Composable
+fun DrawBehind(alpha: Float, touchOffset: Offset) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .drawBehind {
+                if (alpha > 0.01f) {
+
+                    drawRoundRect(
+                        color = Color.Blue.copy(alpha = 0.2f * alpha),
+                        cornerRadius = CornerRadius(4f, 4f),
+                        topLeft = Offset(size.width - 8f, 0f),
+                        size = Size(4f, size.height)
+                    )
+
+                    drawCircle(
+                        color = Color.Blue.copy(alpha = 0.4f * alpha),
+                        radius = 24f,
+                        center = Offset(size.width / 2, touchOffset.y)
+                    )
+                }
+            }
+    )
 }
