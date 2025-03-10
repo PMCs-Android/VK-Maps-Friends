@@ -30,10 +30,10 @@ fun ZoomSlider(
     modifier: Modifier = Modifier,
     onZoomChange: (Float) -> Unit,
     initialZoom: Float = 18f,
-    sensitivity: Float = 0.025f
+    sensitivity: Float = 0.002f
 ) {
     var startY by remember { mutableFloatStateOf(0f) }
-    var initialZoomState by remember { mutableFloatStateOf(initialZoom) }
+    var currentZoom by remember { mutableFloatStateOf(initialZoom) }
     var touchOffset by remember { mutableStateOf(Offset.Zero) }
     var isVisible by remember { mutableStateOf(false) }
     var interaction by remember { mutableStateOf(false) }
@@ -46,13 +46,20 @@ fun ZoomSlider(
 
     val scope = rememberCoroutineScope()
 
+    fun updateZoom(deltaY: Float) {
+        val scaleFactor = 1f + (-deltaY * sensitivity)
+        val newZoom = currentZoom * scaleFactor
+
+        currentZoom = newZoom
+        onZoomChange(newZoom)
+    }
+
     Box(modifier = modifier.fillMaxHeight().width(64.dp)) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .drawBehind {
                     if (alpha > 0.01f) {
-
                         drawRoundRect(
                             color = Color.Blue.copy(alpha = 0.2f * alpha),
                             cornerRadius = CornerRadius(4f, 4f),
@@ -78,15 +85,13 @@ fun ZoomSlider(
                             interaction = true
                             isVisible = true
                             startY = offset.y
-                            initialZoomState = initialZoom
                             touchOffset = offset
                         },
                         onVerticalDrag = { change, _ ->
                             touchOffset = change.position
-                            val currentY = change.position.y
-                            val deltaY = startY - currentY
-                            val newZoom = initialZoomState + deltaY * sensitivity
-                            onZoomChange(newZoom)
+                            val deltaY = (change.position.y - startY)
+                            updateZoom(deltaY)
+                            startY = change.position.y
                         },
                         onDragEnd = {
                             interaction = false
