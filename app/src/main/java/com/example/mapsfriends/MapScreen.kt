@@ -35,6 +35,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 
 
+
 @Composable
 @Preview
 fun MapScreen() {
@@ -67,7 +68,7 @@ fun MapScreen() {
                             title = user.name,
                             originalBitmap = it,
                             icon = BitmapDescriptorFactory.fromBitmap(
-                                Bitmap.createScaledBitmap(it, initialSize, initialSize, false)
+                                createMarkerWithBorderAndTail(context, it, initialSize)
                             )
                         )
                     )
@@ -82,7 +83,8 @@ fun MapScreen() {
         markers.forEach { marker ->
             val newSize = calculateMarkerSize(currentZoom)
             marker.icon = BitmapDescriptorFactory.fromBitmap(
-                Bitmap.createScaledBitmap(marker.originalBitmap, newSize, newSize, false))
+                createMarkerWithBorderAndTail(context, marker.originalBitmap, newSize)
+            )
         }
     }
 
