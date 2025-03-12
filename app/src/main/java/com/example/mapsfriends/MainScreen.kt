@@ -41,7 +41,6 @@ fun MainScreen(navController: NavHostController) {
         .fillMaxSize()
         .padding(vertical = 30.dp)
     ) {
-
         MapScreen()
 
         Column(
