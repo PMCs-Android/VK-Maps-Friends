@@ -48,103 +48,13 @@ fun EventDetailsScreen(navController: NavHostController) {
             )
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IconButton(
-                onClick = { navController.popBackStack() },
-                modifier = Modifier
-                    .padding(0.dp)
-                    .border(4.dp, Color.White, RoundedCornerShape(12.dp))
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.back_arrow),
-                    contentDescription = "Back",
-                    tint = Color.White
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = mockEvents[0].name,
-                fontSize = 32.sp,
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .weight(3f)
-                    .align(Alignment.CenterVertically)
-            )
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "CreatorIcon",
-                modifier = Modifier
-                    .width(36.dp)
-                    .height(36.dp)
-                    .weight(1f)
-                    .align(Alignment.CenterVertically)
-            )
-            Column(
-                modifier = Modifier.align(Alignment.CenterVertically)
-            ) {
-                Text(
-                    text = mockEvents[0].day.toString() + " " + monthList[mockEvents[0].month - 1],
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    text = mockEvents[0].time,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-        }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp)
-                .height(80.dp)
-                .background(Color.White, RoundedCornerShape(20.dp))
-        ) {
-            Text(
-                text = mockEvents[0].description,
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(10.dp)
-            )
-        }
+        EventHeader(navController)
+        EventDescription()
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
-            Row(
-                modifier = Modifier
-                    .height(48.dp)
-                    .background(Color.White, RoundedCornerShape(20.dp))
-                    .padding(start = 10.dp)
-            ) {
-                mockEvents[0].members.forEach { member ->
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "MemberIcon",
-                        tint = colorResource(R.color.bg_pink),
-                        modifier = Modifier
-                            .width(36.dp)
-                            .height(36.dp)
-                            .align(Alignment.CenterVertically)
-                    )
-                }
-                IconButton(
-                    onClick = {/* Добавить человека */ },
-                    modifier = Modifier
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.add_plus),
-                        contentDescription = "Add member",
-                        tint = colorResource(R.color.main_purple)
-                    )
-                }
-            }
+            EventMembers()
             Spacer(modifier = Modifier.width(16.dp))
             IconButton(
                 onClick = {navController.navigate("messenger")},
@@ -158,45 +68,160 @@ fun EventDetailsScreen(navController: NavHostController) {
                 )
             }
         }
-        Column(
-            modifier = Modifier
-                .padding(vertical = 10.dp)
-                .height(300.dp)
-                .background(Color.White, RoundedCornerShape(20.dp))
+        EventLocation()
+        EventDeleteButton()
+    }
+}
 
+@Composable
+fun EventHeader(navController: NavHostController) {
+    Row(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .padding(0.dp)
+                .border(4.dp, Color.White, RoundedCornerShape(12.dp))
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.back_arrow),
+                contentDescription = "Back",
+                tint = Color.White
+            )
+        }
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = mockEvents[0].name,
+            fontSize = 32.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .weight(3f)
+                .align(Alignment.CenterVertically)
+        )
+        Icon(
+            imageVector = Icons.Default.AccountCircle,
+            contentDescription = "CreatorIcon",
+            modifier = Modifier
+                .width(36.dp)
+                .height(36.dp)
+                .weight(1f)
+                .align(Alignment.CenterVertically)
+        )
+        Column(
+            modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = mockEvents[0].location,
-                fontSize = 14.sp,
+                text = mockEvents[0].day.toString() + " " + monthList[mockEvents[0].month - 1],
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 10.dp, top = 10.dp)
+                color = Color.White
             )
-            Box(
-                modifier = Modifier
-                    .padding(10.dp)
-            ) {
-                MapScreen()
-            }
+            Text(
+                text = mockEvents[0].time,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
         }
-        Row(
+    }
+}
+
+@Composable
+fun EventDescription()  {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+            .height(80.dp)
+            .background(Color.White, RoundedCornerShape(20.dp))
+    ) {
+        Text(
+            text = mockEvents[0].description,
+            fontSize = 16.sp,
             modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            TextButton(
-                onClick = {/* Удаление ивента */ },
+                .padding(10.dp)
+        )
+    }
+}
+
+@Composable
+fun EventMembers() {
+    Row(
+        modifier = Modifier
+            .height(48.dp)
+            .background(Color.White, RoundedCornerShape(20.dp))
+            .padding(start = 10.dp)
+    ) {
+        mockEvents[0].members.forEach { member ->
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "MemberIcon",
+                tint = colorResource(R.color.bg_pink),
                 modifier = Modifier
-                    .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
-            ) {
-                Text(
-                    text = LocalContext.current.getString(R.string.dalete),
-                    fontSize = 20.sp,
-                    color = colorResource(R.color.main_pink),
-                    fontWeight = FontWeight.Bold,
-                )
-            }
+                    .width(36.dp)
+                    .height(36.dp)
+                    .align(Alignment.CenterVertically)
+            )
+        }
+        IconButton(
+            onClick = {/* Добавить человека */ },
+            modifier = Modifier
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.add_plus),
+                contentDescription = "Add member",
+                tint = colorResource(R.color.main_purple)
+            )
+        }
+    }
+}
+
+@Composable
+fun EventLocation() {
+    Column(
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .height(300.dp)
+            .background(Color.White, RoundedCornerShape(20.dp))
+
+    ) {
+        Text(
+            text = mockEvents[0].location,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 10.dp, top = 10.dp)
+        )
+        Box(
+            modifier = Modifier
+                .padding(10.dp)
+        ) {
+            MapScreen()
+        }
+    }
+}
+
+@Composable
+fun EventDeleteButton() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(20.dp))
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        TextButton(
+            onClick = {/* Удаление ивента */ },
+            modifier = Modifier
+                .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
+        ) {
+            Text(
+                text = LocalContext.current.getString(R.string.dalete),
+                fontSize = 20.sp,
+                color = colorResource(R.color.main_pink),
+                fontWeight = FontWeight.Bold,
+            )
         }
     }
 }
