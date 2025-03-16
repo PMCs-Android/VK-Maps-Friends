@@ -5,4 +5,6 @@
     <string name="new_event">Создать</string>
     <string name="dalete">Удалить</string>
     <string name="message_placefolder">Сообщение</string>
+    <string name="no_events">Нет запланированных ивентов</string>
+    <string name="no_messages">Здесь пока нет сообщений.\nНачни общение!</string>
 </resources>

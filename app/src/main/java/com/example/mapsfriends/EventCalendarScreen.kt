@@ -56,7 +56,12 @@ fun EventCalendarScreen(navController: NavHostController) {
             modifier = Modifier
                 .weight(1f)
         ) {
-            NotEmptyEvents(navController)
+            if (mockEvents.isEmpty()) {
+                EmptyEvents()
+            }
+            else {
+                NotEmptyEvents(navController)
+            }
         }
         BottomBar(navController)
     }
@@ -259,5 +264,24 @@ fun NotEmptyEvents(navController: NavHostController) {
         items(mockEvents) { event->
             OneEvent(event, navController)
         }
+    }
+}
+
+@Composable
+fun EmptyEvents() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+            .background(Color.White, RoundedCornerShape(20.dp))
+    ) {
+        Text(
+            text = stringResource(R.string.no_events),
+            fontSize = 16.sp,
+            fontWeight = FontWeight(600),
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.Center)
+        )
     }
 }

@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -61,8 +62,13 @@ fun MessengerScreen(navController: NavHostController) {
                 .weight(6f)
                 .padding(horizontal = 10.dp)
         ) {
-            mockMessages.forEach { message ->
-                MessagesOutput(message)
+            if (mockMessages.isEmpty()) {
+                EmptyMessenger()
+            }
+            else {
+                mockMessages.forEach { message ->
+                    MessagesOutput(message)
+                }
             }
         }
         MessageInput()
@@ -220,5 +226,21 @@ fun MessengerHeader(navController: NavHostController) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun EmptyMessenger() {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(
+            text = stringResource(R.string.no_messages),
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            fontWeight = FontWeight(600),
+            modifier = Modifier.align(Alignment.Center)
+        )
     }
 }
