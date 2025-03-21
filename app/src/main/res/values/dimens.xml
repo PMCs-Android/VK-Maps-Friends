@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Размеры маркера -->
+    <dimen name="marker_border_width">4dp</dimen>
+    <dimen name="marker_tail_height">8dp</dimen>
+    <dimen name="marker_corner_radius">8dp</dimen>
+</resources>
