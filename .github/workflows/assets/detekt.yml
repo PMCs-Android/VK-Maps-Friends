@@ -1,4 +1,4 @@
-build:
+build: baseline.xml 
   maxIssues: 0
   excludeCorrectable: false
   weights:
