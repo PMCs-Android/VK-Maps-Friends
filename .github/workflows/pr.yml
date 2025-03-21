@@ -9,9 +9,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 1.11
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -19,7 +19,7 @@ jobs:
         run: chmod +x gradlew
       - name: 🔨 Build debug
         run: ./gradlew assembleDebug
-      - name: 🛠️ Unit-test
+      - name: 🛠 Unit-test
         run: ./gradlew test
   static_analysis:
     runs-on: ubuntu-latest
@@ -28,9 +28,9 @@ jobs:
         uses: reviewdog/action-setup@v1
         with:
           reviewdog_version: latest
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/cache@v4
-        name: ♻ Cache
+        name: ♻️ Cache
         with:
           path: build/bin
           key: ${{ runner.os }}
@@ -45,12 +45,12 @@ jobs:
   check_aseemble:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 1.11
-        uses: actions/setup-java@v2
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
       - name: 🔐 Set up permission
         run: chmod +x gradlew
       - name: 🔨 Build internal release
@@ -63,6 +63,6 @@ jobs:
   idea_cli_check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: lionzxy/idea-cli-inspector-actions@v1
         name: 💡 Check with IDEA CLI Inspector
