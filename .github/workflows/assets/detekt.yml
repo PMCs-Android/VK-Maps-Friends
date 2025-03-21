@@ -7,6 +7,8 @@ build:
     # style: 1
     # comments: 1
 
+baseline: baseline.xml
+
 config:
   validation: true
   # when writing own rules with new properties, exclude the property path e.g.: 'my_rule_set,.*>.*>[my_property]'
