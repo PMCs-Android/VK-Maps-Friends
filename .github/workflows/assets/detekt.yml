@@ -7,7 +7,7 @@ build:
     # style: 1
     # comments: 1
 
-baseline: baseline.xml
+baseline: ../../../baseline.xml
 
 config:
   validation: true
