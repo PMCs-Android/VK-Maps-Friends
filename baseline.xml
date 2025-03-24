@@ -2,6 +2,12 @@
 <SmellBaseline>
   <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
+    <ID>LongMethod:EventCalendarScreen.kt$@Composable fun OneEvent(event : MockDataEvents, navController: NavHostController)</ID>
+    <ID>LongMethod:MainScreen.kt$@Composable fun MainScreen(navController: NavHostController)</ID>
+    <ID>LongMethod:MessengerScreen.kt$@Composable fun MessengerHeader(navController: NavHostController)</ID>
+    <ID>LongMethod:RequestsScreen.kt$@Composable fun OneRequest(navController: NavHostController, event: MockDataEvents)</ID>
+    <ID>LongMethod:ZoomSlider.kt$@Composable fun ZoomSlider( modifier: Modifier = Modifier, onZoomChange: (Float) -&gt; Unit, initialZoom: Float = 18f, sensitivity: Float = 0.002f )</ID>
+    <ID>LongMethod:loadMarkerIconFromUrl.kt$fun createMarkerWithBorderAndTail( context: Context, original: Bitmap, size: Int ): Bitmap</ID>
     <ID>LongMethod:EventCalendarScreen.kt$@Composable fun EventCalendarScreen(navController: NavHostController)</ID>
     <ID>LongMethod:EventDetailsScreen.kt$@Composable fun EventDetailsScreen(navController: NavHostController)</ID>
     <ID>LongMethod:MainScreen.kt$@Composable fun MainScreen(navController: NavHostController)</ID>
@@ -43,6 +49,14 @@
     <ID>MagicNumber:MainScreen.kt$10</ID>
     <ID>MagicNumber:MainScreen.kt$12</ID>
     <ID>MagicNumber:MainScreen.kt$16</ID>
+    <ID>MagicNumber:MainScreen.kt$30</ID>
+    <ID>MagicNumber:MainScreen.kt$4</ID>
+    <ID>MagicNumber:MainScreen.kt$56</ID>
+    <ID>MagicNumber:MainScreen.kt$8</ID>
+    <ID>MagicNumber:MapScreen.kt$150</ID>
+    <ID>MagicNumber:MapScreen.kt$18f</ID>
+    <ID>MagicNumber:MapScreen.kt$8</ID>
+    <ID>MagicNumber:MapViewModel.kt$MapViewModel$18f</ID>
     <ID>MagicNumber:MainScreen.kt$18f</ID>
     <ID>MagicNumber:MainScreen.kt$20f</ID>
     <ID>MagicNumber:MainScreen.kt$30</ID>
@@ -85,6 +99,10 @@
     <ID>MagicNumber:ProfileScreen.kt$30</ID>
     <ID>MagicNumber:ProfileScreen.kt$4</ID>
     <ID>MagicNumber:RequestDetailsScreen.kt$10</ID>
+    <ID>MagicNumber:RequestDetailsScreen.kt$16</ID>
+    <ID>MagicNumber:RequestDetailsScreen.kt$20</ID>
+    <ID>MagicNumber:RequestDetailsScreen.kt$30</ID>
+    <ID>MagicNumber:RequestDetailsScreen.kt$64</ID>
     <ID>MagicNumber:RequestDetailsScreen.kt$12</ID>
     <ID>MagicNumber:RequestDetailsScreen.kt$14</ID>
     <ID>MagicNumber:RequestDetailsScreen.kt$16</ID>
@@ -108,6 +126,31 @@
     <ID>MagicNumber:Type.kt$0.5</ID>
     <ID>MagicNumber:Type.kt$16</ID>
     <ID>MagicNumber:Type.kt$24</ID>
+    <ID>MagicNumber:ZoomSlider.kt$0.01f</ID>
+    <ID>MagicNumber:ZoomSlider.kt$0.2f</ID>
+    <ID>MagicNumber:ZoomSlider.kt$0.4f</ID>
+    <ID>MagicNumber:ZoomSlider.kt$300</ID>
+    <ID>MagicNumber:ZoomSlider.kt$4f</ID>
+    <ID>MagicNumber:ZoomSlider.kt$500</ID>
+    <ID>MagicNumber:ZoomSlider.kt$64</ID>
+    <ID>MagicNumber:ZoomSlider.kt$8f</ID>
+    <ID>MagicNumber:build.gradle.kts$24</ID>
+    <ID>MagicNumber:build.gradle.kts$33</ID>
+    <ID>MagicNumber:build.gradle.kts$35</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$0.05f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$0.25f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$0.2f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$0.4f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$0.5f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$0.6f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$16</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$18f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$2.5f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$200</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$256</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$4</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$4f</ID>
+    <ID>MagicNumber:loadMarkerIconFromUrl.kt$8</ID>
     <ID>MagicNumber:build.gradle.kts$24</ID>
     <ID>MagicNumber:build.gradle.kts$33</ID>
     <ID>MagicNumber:build.gradle.kts$35</ID>
@@ -129,6 +172,7 @@
     <ID>NewLineAtEndOfFile:ExampleInstrumentedTest.kt$com.example.mapsfriends.ExampleInstrumentedTest.kt</ID>
     <ID>NewLineAtEndOfFile:ExampleUnitTest.kt$com.example.mapsfriends.ExampleUnitTest.kt</ID>
     <ID>NewLineAtEndOfFile:MainActivity.kt$com.example.mapsfriends.MainActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:MapScreen.kt$com.example.mapsfriends.MapScreen.kt</ID>
     <ID>NewLineAtEndOfFile:MessengerScreen.kt$com.example.mapsfriends.MessengerScreen.kt</ID>
     <ID>NewLineAtEndOfFile:MockDataEvents.kt$com.example.mapsfriends.MockDataEvents.kt</ID>
     <ID>NewLineAtEndOfFile:MockDataUsers.kt$com.example.mapsfriends.MockDataUsers.kt</ID>
@@ -137,6 +181,7 @@
     <ID>NewLineAtEndOfFile:RequestsScreen.kt$com.example.mapsfriends.RequestsScreen.kt</ID>
     <ID>NewLineAtEndOfFile:Theme.kt$com.example.mapsfriends.ui.theme.Theme.kt</ID>
     <ID>NewLineAtEndOfFile:Type.kt$com.example.mapsfriends.ui.theme.Type.kt</ID>
+    <ID>NewLineAtEndOfFile:ZoomSlider.kt$.ZoomSlider.kt</ID>
     <ID>NewLineAtEndOfFile:build.gradle.kts$.build.gradle.kts</ID>
     <ID>NewLineAtEndOfFile:loadMarkerIconFromUrl.kt$com.example.mapsfriends.loadMarkerIconFromUrl.kt</ID>
     <ID>NewLineAtEndOfFile:settings.gradle.kts$.settings.gradle.kts</ID>
