@@ -3,7 +3,7 @@ name: Pull Request CI
 on:
   pull_request:
     paths-ignore:
-    - 'README.md'
+      - 'README.md'
 
 jobs:
   test:
@@ -19,7 +19,7 @@ jobs:
         run: chmod +x gradlew
       - name: 🔨 Build debug
         run: ./gradlew assembleDebug
-      - name: 🛠️ Unit-test
+      - name: 🛠 Unit-test
         run: ./gradlew test
   static_analysis:
     runs-on: ubuntu-latest
@@ -30,7 +30,7 @@ jobs:
           reviewdog_version: latest
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
-        name: ♻ Cache
+        name: ♻️ Cache
         with:
           path: build/bin
           key: ${{ runner.os }}
