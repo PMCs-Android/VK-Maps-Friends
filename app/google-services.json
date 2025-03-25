@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "383873723936",
+    "project_id": "maps-and-friends",
+    "storage_bucket": "maps-and-friends.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:383873723936:android:4a77962d35f4c7db771645",
+        "android_client_info": {
+          "package_name": "com.example.mapsfriends"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKJCQLVAZ4cH81gCleulBNNjJLMHxfIj0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
