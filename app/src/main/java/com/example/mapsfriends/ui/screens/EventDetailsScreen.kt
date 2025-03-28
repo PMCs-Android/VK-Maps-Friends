@@ -201,7 +201,7 @@ fun EventLocation() {
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            MapScreen()
+            //MapScreen()
         }
     }
 }

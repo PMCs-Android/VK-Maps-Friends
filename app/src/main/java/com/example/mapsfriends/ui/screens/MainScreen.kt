@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 
 
 data class MarkerData(
+    val id : Int,
     val position: LatLng,
     val title: String,
     val originalBitmap: Bitmap,
@@ -43,7 +44,7 @@ fun MainScreen(navController: NavHostController) {
         .fillMaxSize()
         .padding(vertical = 30.dp)
     ) {
-        MapScreen()
+        MapScreen(navController)
 
         Column(
             modifier = Modifier

@@ -11,8 +11,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.mapsfriends.utils.MapViewModel
 import com.example.mapsfriends.R
 import com.example.mapsfriends.data.mockUsers
@@ -27,9 +29,11 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 
-
 @Composable
-fun MapScreen(viewModel: MapViewModel = viewModel()) {
+fun MapScreen(
+    navController: NavHostController,
+    viewModel: MapViewModel = viewModel()
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -66,9 +70,23 @@ fun MapScreen(viewModel: MapViewModel = viewModel()) {
                 markerData.icon?.let {
                     Marker(
                         state = MarkerState(position = markerData.position),
-                        title = markerData.title,
                         icon = it,
-                        onClick = { false }
+                        onClick = {
+                            if (viewModel.selectedMarkerId.value == markerData.id) {
+                                navController.navigate("profile/${markerData.id}")
+                                viewModel.selectedMarkerId.value = null
+                            } else {
+                                coroutineScope.launch {
+
+                                    cameraPositionState.animate(
+                                        CameraUpdateFactory.newLatLng(markerData.position),
+                                        150
+                                    )
+                                }
+                                viewModel.selectedMarkerId.value = markerData.id
+                            }
+                            true
+                        }
                     )
                 }
             }
