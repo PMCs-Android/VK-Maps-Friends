@@ -1,6 +1,6 @@
 [versions]
 agp = "8.8.2"
-kotlin = "2.0.0"
+kotlin = "2.1.20"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -8,9 +8,30 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
 composeBom = "2024.04.01"
+gmsVersion = "4.4.2"
+
+bomVersion = "33.10.0"
+vkidVersion = "2.2.0"
+
+navigationCompose = "2.8.9"
+serializationVersion = "2.0.0"
+serializationKotlin = "1.8.0"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationKotlin" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "bomVersion" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+
+vkid = { group = "com.vk.id", name = "vkid", version.ref = "vkidVersion" }
+vkid-support = { group = "com.vk.id", name = "vk-sdk-support", version.ref = "vkidVersion" }
+vkid-onetap = { group = "com.vk.id", name = "onetap-compose", version.ref = "vkidVersion" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -29,4 +50,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+gms = { id = "com.google.gms.google-services", version.ref = "gmsVersion" }
+plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationVersion" }
 

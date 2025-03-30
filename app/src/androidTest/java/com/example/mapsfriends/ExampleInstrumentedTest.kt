@@ -1,4 +1,4 @@
-package com.example.vkid
+package com.example.mapsfriends
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

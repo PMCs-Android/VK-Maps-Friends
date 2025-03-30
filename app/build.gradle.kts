@@ -2,14 +2,17 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    alias(libs.plugins.gms)
+    alias(libs.plugins.plugin.serialization)
 }
 
 android {
-    namespace = "com.example.vkid"
+    namespace = "com.example.mapsfriends"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.vkid"
+        applicationId = "com.example.mapsfriends"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
@@ -67,8 +70,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("com.vk.id:vkid:2.2.0")
-    implementation("com.vk.id:vk-sdk-support:2.2.0")
-    implementation("com.vk.id:onetap-compose:2.2.0")
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    implementation(libs.vkid)
+    implementation(libs.vkid.support)
+    implementation(libs.vkid.onetap)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
+
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.navigation.compose)
 }

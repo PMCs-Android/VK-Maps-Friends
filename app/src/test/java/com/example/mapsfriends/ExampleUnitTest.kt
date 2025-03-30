@@ -1,4 +1,4 @@
-package com.example.vkid
+package com.example.mapsfriends
 
 import org.junit.Test
 

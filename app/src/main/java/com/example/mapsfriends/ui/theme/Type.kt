@@ -1,4 +1,4 @@
-package com.example.vkid.ui.theme
+package com.example.mapsfriends.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
