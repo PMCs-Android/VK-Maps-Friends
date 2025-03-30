@@ -1,9 +1,9 @@
 package com.example.mapsfriends
 
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.firestore.ktx.firestore
-import java.io.IOException
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import okio.IOException
 
 class FirebaseEventRepository : EventRepository {
     private val events = Firebase.firestore.collection("events")
