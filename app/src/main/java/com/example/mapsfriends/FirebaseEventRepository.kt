@@ -1,6 +1,7 @@
 package com.example.mapsfriends
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
 import okio.IOException
@@ -50,8 +51,11 @@ class FirebaseEventRepository : EventRepository {
         } catch (e: IOException) {
             println("Network error: $e")
             null
-        } catch (e: Exception) {
-            println("Unexpected error: $e")
+        } catch (e: IllegalStateException) {
+            println("Data conversion error: $e")
+            null
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore operation failed: ${e.code} - ${e.message}")
             null
         }
     }

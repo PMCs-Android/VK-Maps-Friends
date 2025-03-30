@@ -1,6 +1,7 @@
 package com.example.mapsfriends
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
@@ -27,10 +28,13 @@ class FirebaseUserRepository : UserRepository {
                 null
             }
         } catch (e: IOException) {
-            println(e)
+            println("Network error: $e")
             null
-        } catch (e: Exception) {
-            println(e)
+        } catch (e: IllegalStateException) {
+            println("Data conversion error: $e")
+            null
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore operation failed: ${e.code} - ${e.message}")
             null
         }
     }
@@ -51,10 +55,13 @@ class FirebaseUserRepository : UserRepository {
                 null
             }
         } catch (e: IOException) {
-            println(e)
+            println("Network error: $e")
             null
-        } catch (e: Exception) {
-            println(e)
+        } catch (e: IllegalStateException) {
+            println("Data conversion error: $e")
+            null
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore operation failed: ${e.code} - ${e.message}")
             null
         }
     }
