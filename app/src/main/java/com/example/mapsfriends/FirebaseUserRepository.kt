@@ -4,6 +4,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.tasks.await
+import okio.IOException
 
 class FirebaseUserRepository : UserRepository {
     private val db = Firebase.firestore.collection("users")
@@ -25,6 +26,9 @@ class FirebaseUserRepository : UserRepository {
             } else {
                 null
             }
+        } catch (e: IOException) {
+            println(e)
+            null
         } catch (e: Exception) {
             println(e)
             null
@@ -39,13 +43,16 @@ class FirebaseUserRepository : UserRepository {
                 .await()
 
             if (document.exists()) {
-                val user = document.toObject(User::class.java)
+                val user = User.fromFirestore(document.data!!)
                 println("User from Firestore: $user")
                 user
             } else {
                 println("User not found: ")
                 null
             }
+        } catch (e: IOException) {
+            println(e)
+            null
         } catch (e: Exception) {
             println(e)
             null
@@ -78,9 +85,9 @@ class FirebaseUserRepository : UserRepository {
         location: GeoPoint
     ) {
         val user = User(
-            user_id = userId,
+            userId = userId,
             username = username,
-            avatar_url = avatarUrl,
+            avatarUrl = avatarUrl,
             friends = friends,
             location = location
         )

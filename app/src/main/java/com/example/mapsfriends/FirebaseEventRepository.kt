@@ -1,32 +1,22 @@
 package com.example.mapsfriends
 
-import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
+import okio.IOException
 
 class FirebaseEventRepository : EventRepository {
     private val events = Firebase.firestore.collection("events")
     private val database = Firebase.firestore
 
-    override suspend fun createEvent(
-        event_id: String,
-        creator_id: String,
-        title: String,
-        description: String,
-        location: GeoPoint,
-        time: String,
-        participants: List<String>
-    ) {
-        val newParticipants: List<String>
-        if (!participants.contains(creator_id)) {
-            newParticipants = participants + creator_id
-        } else {
-            newParticipants = participants
+    override suspend fun createEvent(event: Event) {
+        val newParticipants = event.participants
+        if (!newParticipants.contains(event.creatorId)) {
+            newParticipants.plus(event.creatorId)
         }
-        val event = Event(event_id, creator_id, title, description, location, time, newParticipants)
-        events.document(event_id)
-            .set(event)
+        val newEvent = event.copy(participants = newParticipants)
+        events.document(event.eventId)
+            .set(newEvent)
             .await()
     }
 
@@ -43,5 +33,28 @@ class FirebaseEventRepository : EventRepository {
         events.document(eventId)
             .update("participants", updatedParticipants)
             .await()
+    }
+
+    override suspend fun getEventById(eventId: String): Event? {
+        return try {
+            val doc = events
+                .document(eventId)
+                .get()
+                .await()
+
+            if (doc.exists()){
+                val event = Event.fromFirestore(doc.data!!)
+                println("Event from Firestore: $event")
+                event
+            } else{
+                null
+            }
+        } catch (e:IOException) {
+            println(e)
+            null
+        } catch (e:Exception) {
+            println(e)
+            null
+        }
     }
 }

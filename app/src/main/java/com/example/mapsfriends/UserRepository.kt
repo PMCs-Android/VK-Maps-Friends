@@ -3,12 +3,33 @@ package com.example.mapsfriends
 import com.google.firebase.firestore.GeoPoint
 
 data class User(
-    val user_id: String = "",
+    val userId: String = "",
     val username: String = "",
-    val avatar_url: String = "",
+    val avatarUrl: String = "",
     val friends: List<String> = emptyList(),
     val location: GeoPoint = GeoPoint(0.0, 0.0)
-)
+){
+    companion object {
+        fun fromFirestore(map: Map<String, Any>): User {
+            return User(
+                userId = map["user_id"] as? String ?: "",
+                username = map["username"] as? String ?: "",
+                avatarUrl = map["avatar_url"] as? String ?: "",
+                friends = map["friends"] as? List<String> ?: emptyList(),
+                location = map["location"] as? GeoPoint ?: GeoPoint(0.0, 0.0)
+            )
+        }
+    }
+    fun toFirestore(): Map<String, Any> {
+        return mapOf(
+            "user_id" to userId,
+            "username" to username,
+            "avatar_url" to avatarUrl,
+            "friends" to friends,
+            "location" to location
+        )
+    }
+}
 
 interface UserRepository {
     suspend fun getUserById(userId: String): User?
