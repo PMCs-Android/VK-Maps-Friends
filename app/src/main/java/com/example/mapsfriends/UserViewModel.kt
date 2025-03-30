@@ -15,5 +15,4 @@ class UserViewModel @Inject constructor(
 fun Screen(
     userViewModel: UserViewModel = hiltViewModel()
 ) {
-
 }
