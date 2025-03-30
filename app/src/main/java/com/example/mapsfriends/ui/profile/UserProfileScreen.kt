@@ -1,4 +1,4 @@
-package com.example.vkid
+package com.example.mapsfriends.ui.profile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,13 +16,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mapsfriends.ui.profile.data.ProfileScreenDataObject
+import com.example.mapsfriends.ui.theme.MainGradient
 
 @Composable
-fun UserProfileScreen(userInfo: Map<String, String>) {
+fun UserProfileScreen(
+    data: ProfileScreenDataObject
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Brush.verticalGradient(listOf(Color(0xFF6A11CB), Color(0xFF2575FC))))
+            .background(MainGradient)
             .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -34,13 +38,11 @@ fun UserProfileScreen(userInfo: Map<String, String>) {
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
-        userInfo.forEach { (key, value) ->
-            Text(
-                text = "$key: $value",
-                color = Color.White,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(4.dp)
-            )
-        }
+        Text(
+            text = data.email,
+            color = Color.White,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
