@@ -9,9 +9,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository
-) : ViewModel() {
-
-}
+) : ViewModel()
 
 @Composable
 fun Screen(

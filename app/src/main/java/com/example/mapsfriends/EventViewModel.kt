@@ -7,6 +7,4 @@ import javax.inject.Inject
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository
-) : ViewModel(){
-
-}
+) : ViewModel()
