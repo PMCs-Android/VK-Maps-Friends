@@ -9,20 +9,20 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @HiltAndroidApp
-class  MyApp: Application()
+class MyApp : Application()
 
 @Module
-@InstallIn (SingletonComponent::class)
+@InstallIn(SingletonComponent::class)
 object AppModule {
     @Provides
     @Singleton
-    fun provideUserRepository(): UserRepository{
+    fun provideUserRepository(): UserRepository {
         return FirebaseUserRepository()
     }
 
     @Provides
     @Singleton
-    fun provideEventRepository(): EventRepository{
+    fun provideEventRepository(): EventRepository {
         return FirebaseEventRepository()
     }
 }
