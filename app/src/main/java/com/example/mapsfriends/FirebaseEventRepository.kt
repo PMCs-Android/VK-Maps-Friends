@@ -1,7 +1,7 @@
 package com.example.mapsfriends
 
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.ktx.firestore
 import kotlinx.coroutines.tasks.await
 import java.io.IOException
 
