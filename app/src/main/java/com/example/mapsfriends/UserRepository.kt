@@ -8,7 +8,7 @@ data class User(
     val avatarUrl: String = "",
     val friends: List<String> = emptyList(),
     val location: GeoPoint = GeoPoint(0.0, 0.0)
-){
+) {
     companion object {
         fun fromFirestore(map: Map<String, Any>): User {
             return User(

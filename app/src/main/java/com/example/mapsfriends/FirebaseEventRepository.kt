@@ -3,20 +3,21 @@ package com.example.mapsfriends
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
-import okio.IOException
+import java.io.IOException
 
 class FirebaseEventRepository : EventRepository {
     private val events = Firebase.firestore.collection("events")
     private val database = Firebase.firestore
 
     override suspend fun createEvent(event: Event) {
-        val newParticipants = event.participants
-        if (!newParticipants.contains(event.creatorId)) {
-            newParticipants.plus(event.creatorId)
+        val newParticipants = if (event.participants.contains(event.creatorId)) {
+            event.participants
+        } else {
+            event.participants + event.creatorId
         }
-        val newEvent = event.copy(participants = newParticipants)
+
         events.document(event.eventId)
-            .set(newEvent)
+            .set(event.copy(participants = newParticipants))
             .await()
     }
 
@@ -24,36 +25,33 @@ class FirebaseEventRepository : EventRepository {
         if (!database.collection("users").document(userId).get().await().exists()) {
             return
         }
+
         val currentParticipants = events.document(eventId)
             .get()
             .await()
-            .get("participants") as List<String>
-        val updatedParticipants = currentParticipants + userId
+            .get("participants") as? List<String> ?: emptyList()
 
         events.document(eventId)
-            .update("participants", updatedParticipants)
+            .update("participants", currentParticipants + userId)
             .await()
     }
 
     override suspend fun getEventById(eventId: String): Event? {
         return try {
-            val doc = events
-                .document(eventId)
-                .get()
-                .await()
+            val doc = events.document(eventId).get().await()
 
-            if (doc.exists()){
+            if (doc.exists()) {
                 val event = Event.fromFirestore(doc.data!!)
                 println("Event from Firestore: $event")
                 event
-            } else{
+            } else {
                 null
             }
-        } catch (e:IOException) {
-            println(e)
+        } catch (e: IOException) {
+            println("Network error: $e")
             null
-        } catch (e:Exception) {
-            println(e)
+        } catch (e: Exception) {
+            println("Unexpected error: $e")
             null
         }
     }
