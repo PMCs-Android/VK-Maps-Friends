@@ -1,5 +1,7 @@
 package com.example.mapsfriends
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,7 +18,7 @@ fun App() {
         composable("main") { MainScreen(navController) }
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }
-        composable("create") { RequestDetailsScreen(navController) }
+        composable("create") { CreateEventScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
         composable("eventDetails") { EventDetailsScreen(navController) }
         composable("messenger") { MessengerScreen(navController) }

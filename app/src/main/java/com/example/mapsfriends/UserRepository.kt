@@ -49,4 +49,6 @@ interface UserRepository {
         friends: List<String>,
         location: GeoPoint
     )
+
+    suspend fun addEventToUser(creatorID: String, eventId: String)
 }
