@@ -1,9 +1,5 @@
 package com.example.mapsfriends
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,41 +16,25 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePickerState
-import androidx.compose.material3.DisplayMode
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,10 +46,9 @@ import com.google.firebase.firestore.GeoPoint
 fun CreateEventScreen(navController: NavHostController) {
     val title = remember { mutableStateOf("") }
     val descrip = remember { mutableStateOf("") }
-    val datetime = remember { mutableStateOf("") }
     val date = remember { mutableStateOf("") }
     val time = remember { mutableStateOf("") }
-    val location = remember { mutableStateOf(GeoPoint(0.0, 0.0)) }
+//    val location = remember { mutableStateOf(GeoPoint(0.0, 0.0)) }
 
     val viewModel = hiltViewModel< EventViewModel>()
 //    val data by viewModel.data.collectAsState()
@@ -127,7 +106,7 @@ fun CreateEventScreen(navController: NavHostController) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
         )
         // date time input
-        Row() {
+        Row {
             TextField(
                 value = date.value,
                 onValueChange = { date.value = it },
@@ -347,56 +326,56 @@ fun CreateEventScreen(navController: NavHostController) {
 //}
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DateInput(openDialog: MutableState<Boolean>, state: DatePickerState) {
-
-    //            val state = rememberDatePickerState()
-//            val openDialog = remember { mutableStateOf(true) }
-    if (openDialog.value) {
-        DatePickerDialog(
-            colors = DatePickerDefaults.colors(
-                containerColor = Color.White,
-            ),
-            onDismissRequest = {
-                openDialog.value = false
-            },
-            confirmButton = {
-                TextButton(
-                    colors = ButtonColors(
-                        containerColor = Color.White,
-                        contentColor = colorResource(R.color.main_blue),
-                        disabledContainerColor = Color.LightGray,
-                        disabledContentColor = Color.Gray,
-                    ),
-                    border = BorderStroke(2.dp, colorResource(R.color.main_blue)),
-                    onClick = {
-                        openDialog.value = false
-                    }
-                ) {
-                    Text("OK")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    colors = ButtonColors(
-                        containerColor = Color.White,
-                        contentColor = colorResource(R.color.main_pink),
-                        disabledContainerColor = Color.LightGray,
-                        disabledContentColor = Color.Gray,
-                    ),
-                    border = BorderStroke(2.dp, colorResource(R.color.main_pink)),
-                    onClick = {
-                        openDialog.value = false
-                    }
-                ) {
-                    Text("CANCEL")
-                }
-            }
-        ) {
-            DatePicker(
-                state = state
-            )
-        }
-    }
-}
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun DateInput(openDialog: MutableState<Boolean>, state: DatePickerState) {
+//
+//    //            val state = rememberDatePickerState()
+////            val openDialog = remember { mutableStateOf(true) }
+//    if (openDialog.value) {
+//        DatePickerDialog(
+//            colors = DatePickerDefaults.colors(
+//                containerColor = Color.White,
+//            ),
+//            onDismissRequest = {
+//                openDialog.value = false
+//            },
+//            confirmButton = {
+//                TextButton(
+//                    colors = ButtonColors(
+//                        containerColor = Color.White,
+//                        contentColor = colorResource(R.color.main_blue),
+//                        disabledContainerColor = Color.LightGray,
+//                        disabledContentColor = Color.Gray,
+//                    ),
+//                    border = BorderStroke(2.dp, colorResource(R.color.main_blue)),
+//                    onClick = {
+//                        openDialog.value = false
+//                    }
+//                ) {
+//                    Text("OK")
+//                }
+//            },
+//            dismissButton = {
+//                TextButton(
+//                    colors = ButtonColors(
+//                        containerColor = Color.White,
+//                        contentColor = colorResource(R.color.main_pink),
+//                        disabledContainerColor = Color.LightGray,
+//                        disabledContentColor = Color.Gray,
+//                    ),
+//                    border = BorderStroke(2.dp, colorResource(R.color.main_pink)),
+//                    onClick = {
+//                        openDialog.value = false
+//                    }
+//                ) {
+//                    Text("CANCEL")
+//                }
+//            }
+//        ) {
+//            DatePicker(
+//                state = state
+//            )
+//        }
+//    }
+//}
