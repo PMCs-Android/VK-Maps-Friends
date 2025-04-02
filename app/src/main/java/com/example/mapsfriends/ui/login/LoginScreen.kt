@@ -1,6 +1,5 @@
 package com.example.mapsfriends.ui.login
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,50 +18,53 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.mapsfriends.R
+import com.example.mapsfriends.ui.profile.data.ProfileScreenDataObject
+import com.example.mapsfriends.ui.theme.MainGradient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.example.mapsfriends.R
-import com.example.mapsfriends.ui.profile.data.ProfileScreenDataObject
-import com.example.mapsfriends.ui.theme.*
 
 @Composable
-fun LoginScreen(
-    onNavigateToProfileScreen: (ProfileScreenDataObject) -> Unit
-) {
-    val auth = remember {
-        Firebase.auth
-    }
+fun LoginScreen(onNavigateToProfileScreen: (ProfileScreenDataObject) -> Unit) {
+    val auth =
+        remember {
+            Firebase.auth
+        }
 
-    val errorState = remember {
-        mutableStateOf("")
-    }
+    val errorState =
+        remember {
+            mutableStateOf("")
+        }
 
-    val emailState = remember {
-        mutableStateOf("")
-    }
-    val passwordState = remember {
-        mutableStateOf("")
-    }
+    val emailState =
+        remember {
+            mutableStateOf("")
+        }
+    val passwordState =
+        remember {
+            mutableStateOf("")
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MainGradient)
-            .padding(
-                start = 40.dp, end = 40.dp
-            ),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MainGradient)
+                .padding(
+                    start = 40.dp,
+                    end = 40.dp,
+                ),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
             painter = painterResource(id = R.drawable.mapsfriends),
-            contentDescription = "Logo"
+            contentDescription = "Logo",
         )
         RoundedCornerTextField(
             text = emailState.value,
             label = "Email",
-
         ) {
             emailState.value = it
         }
@@ -70,8 +72,7 @@ fun LoginScreen(
         RoundedCornerTextField(
             text = passwordState.value,
             label = "Password",
-
-            ) {
+        ) {
             passwordState.value = it
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -79,30 +80,34 @@ fun LoginScreen(
             Text(
                 text = errorState.value,
                 color = Color.Red,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
         VKIDButton()
         LoginButton("Sign In") {
             signIn(
-                auth, emailState.value, passwordState.value,
+                auth,
+                emailState.value,
+                passwordState.value,
                 onSignInSuccess = { navData ->
                     onNavigateToProfileScreen(navData)
                 },
                 onSignInFailure = { error ->
                     errorState.value = error
-                }
+                },
             )
         }
         LoginButton("Sign Up") {
             signUp(
-                auth, emailState.value, passwordState.value,
+                auth,
+                emailState.value,
+                passwordState.value,
                 onSignUpSuccess = { navData ->
                     onNavigateToProfileScreen(navData)
                 },
                 onSignUpFailure = { error ->
                     errorState.value = error
-                }
+                },
             )
         }
     }
@@ -113,7 +118,7 @@ private fun signUp(
     email: String,
     password: String,
     onSignUpSuccess: (ProfileScreenDataObject) -> Unit,
-    onSignUpFailure: (String) -> Unit
+    onSignUpFailure: (String) -> Unit,
 ) {
     if (email.isBlank() || password.isBlank()) {
         onSignUpFailure("Email and password cannot be empty")
@@ -126,8 +131,8 @@ private fun signUp(
                 onSignUpSuccess(
                     ProfileScreenDataObject(
                         it.result.user?.uid!!,
-                        it.result.user?.email!!
-                    )
+                        it.result.user?.email!!,
+                    ),
                 )
             }
         }
@@ -141,7 +146,7 @@ private fun signIn(
     email: String,
     password: String,
     onSignInSuccess: (ProfileScreenDataObject) -> Unit,
-    onSignInFailure: (String) -> Unit
+    onSignInFailure: (String) -> Unit,
 ) {
     if (email.isBlank() || password.isBlank()) {
         onSignInFailure("Email and password cannot be empty")
@@ -154,8 +159,8 @@ private fun signIn(
                 onSignInSuccess(
                     ProfileScreenDataObject(
                         it.result.user?.uid!!,
-                        it.result.user?.email!!
-                    )
+                        it.result.user?.email!!,
+                    ),
                 )
             }
         }
@@ -164,11 +169,11 @@ private fun signIn(
         }
 }
 
-//private fun signOut(auth: FirebaseAuth) {
+// private fun signOut(auth: FirebaseAuth) {
 //    auth.signOut()
-//}
+// }
 //
-//private fun deleteAccount(auth: FirebaseAuth, email: String, password: String) {
+// private fun deleteAccount(auth: FirebaseAuth, email: String, password: String) {
 //    val credential = EmailAuthProvider.getCredential(email, password)
 //    auth.currentUser?.reauthenticate(credential)?.addOnCompleteListener {
 //        if (it.isSuccessful) {
@@ -183,4 +188,4 @@ private fun signIn(
 //            Log.d("MyLog", "Failure auth")
 //        }
 //    }
-//}
+// }

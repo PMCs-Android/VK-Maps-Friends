@@ -6,20 +6,22 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import com.example.mapsfriends.ui.theme.VKbutton
 
 @Composable
 fun LoginButton(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
-    Button(onClick = {
-        onClick()
-    },
+    Button(
+        onClick = {
+            onClick()
+        },
         modifier = Modifier.fillMaxWidth(0.5f),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF0077FF)
-        )
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = VKbutton,
+            ),
     ) {
         Text(text = text)
     }

@@ -43,23 +43,27 @@ import androidx.navigation.NavHostController
 @Composable
 fun MessengerScreen(navController: NavHostController) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        colorResource(R.color.bg_blue),
-                        colorResource(R.color.bg_pink)
-                    )
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    brush =
+                        Brush.horizontalGradient(
+                            colors =
+                                listOf(
+                                    colorResource(R.color.bg_blue),
+                                    colorResource(R.color.bg_pink),
+                                ),
+                        ),
                 )
-            )
-            .padding(top = 30.dp)
+                .padding(top = 30.dp),
     ) {
         MessengerHeader(navController)
         Column(
-            modifier = Modifier
-                .weight(6f)
-                .padding(horizontal = 10.dp)
+            modifier =
+                Modifier
+                    .weight(6f)
+                    .padding(horizontal = 10.dp),
         ) {
             mockMessages.forEach { message ->
                 MessagesOutput(message)
@@ -69,48 +73,51 @@ fun MessengerScreen(navController: NavHostController) {
     }
 }
 
-
 @Composable
 fun MessageInput() {
     val message = remember { mutableStateOf("") }
 
     Row(
-        modifier = Modifier
-            .height(110.dp)
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(horizontal = 10.dp, vertical = 10.dp)
+        modifier =
+            Modifier
+                .height(110.dp)
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(horizontal = 10.dp, vertical = 10.dp),
     ) {
         TextField(
             value = message.value,
             onValueChange = { message.value = it },
             textStyle = TextStyle(fontSize = 20.sp),
-            modifier = Modifier
-                .height(52.dp)
-                .border(1.dp, Color.Black, RoundedCornerShape(16.dp))
-                .align(Alignment.Top)
-                .weight(1f),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White,
-                unfocusedContainerColor = Color.White,
-                unfocusedIndicatorColor = Color.White,
-                focusedIndicatorColor = Color.White
-            ),
+            modifier =
+                Modifier
+                    .height(52.dp)
+                    .border(1.dp, Color.Black, RoundedCornerShape(16.dp))
+                    .align(Alignment.Top)
+                    .weight(1f),
+            colors =
+                TextFieldDefaults.colors(
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.White,
+                    unfocusedIndicatorColor = Color.White,
+                    focusedIndicatorColor = Color.White,
+                ),
             placeholder = {
                 Text(
                     text = LocalContext.current.getString(R.string.message_placefolder),
                     fontSize = 16.sp,
-                    color = Color.Gray
+                    color = Color.Gray,
                 )
             },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
         )
         Spacer(modifier = Modifier.width(10.dp))
         IconButton(
-            onClick = {/* Отправление сообщения */ },
-            modifier = Modifier
-                .background(colorResource(R.color.main_purple), CircleShape)
-                .align(Alignment.Top)
+            onClick = { /* Отправление сообщения */ },
+            modifier =
+                Modifier
+                    .background(colorResource(R.color.main_purple), CircleShape)
+                    .align(Alignment.Top),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.send_message),
@@ -122,61 +129,66 @@ fun MessageInput() {
 }
 
 @Composable
-fun MessagesOutput(message: Messages){
+fun MessagesOutput(message: Messages) {
     Row {
         Icon(
             imageVector = Icons.Default.AccountCircle,
             contentDescription = "Member Icon",
             tint = colorResource(R.color.main_purple),
-            modifier = Modifier
-                .width(60.dp)
-                .height(60.dp)
-                .align(Alignment.CenterVertically)
+            modifier =
+                Modifier
+                    .width(60.dp)
+                    .height(60.dp)
+                    .align(Alignment.CenterVertically),
         )
         Spacer(modifier = Modifier.width(4.dp))
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp)
-                .height(80.dp)
-                .background(Color.White, RoundedCornerShape(20.dp))
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp)
+                    .height(80.dp)
+                    .background(Color.White, RoundedCornerShape(20.dp)),
         ) {
             Text(
                 text = message.text,
                 fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(10.dp)
+                modifier =
+                    Modifier
+                        .padding(10.dp),
             )
             Text(
                 text = message.time,
                 fontSize = 12.sp,
                 textAlign = TextAlign.End,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(10.dp)
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(10.dp),
             )
         }
     }
 }
 
-
 @Composable
 fun MessengerHeader(navController: NavHostController) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 10.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp),
     ) {
         IconButton(
             onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .border(4.dp, Color.White, RoundedCornerShape(12.dp))
-                .align(Alignment.CenterVertically)
+            modifier =
+                Modifier
+                    .border(4.dp, Color.White, RoundedCornerShape(12.dp))
+                    .align(Alignment.CenterVertically),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.back_arrow),
                 contentDescription = "Back",
-                tint = Color.White
+                tint = Color.White,
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
@@ -185,37 +197,40 @@ fun MessengerHeader(navController: NavHostController) {
             fontSize = 32.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .weight(4f)
-                .align(Alignment.CenterVertically)
+            modifier =
+                Modifier
+                    .weight(4f)
+                    .align(Alignment.CenterVertically),
         )
         Column(
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier.align(Alignment.CenterVertically),
         ) {
             Text(
                 text = mockEvents[0].day.toString() + " " + monthList[mockEvents[0].month - 1],
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.End)
+                modifier =
+                    Modifier
+                        .align(Alignment.End),
             )
             Text(
                 text = mockEvents[0].time,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
-                modifier = Modifier
-                    .align(Alignment.End)
+                modifier =
+                    Modifier
+                        .align(Alignment.End),
             )
             Row(
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier.align(Alignment.End),
             ) {
                 mockEvents[0].members.forEach {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Member Icon",
-                        tint = colorResource(R.color.main_blue)
+                        tint = colorResource(R.color.main_blue),
                     )
                 }
             }

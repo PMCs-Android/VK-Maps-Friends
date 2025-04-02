@@ -60,38 +60,45 @@ fun VKIDButton() {
                     Toast.makeText(
                         context,
                         fail.description,
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_LONG,
                     ).show()
                 }
             }
         },
         scenario = OneTapTitleScenario.SignIn,
         signInAnotherAccountButtonEnabled = true,
-        style = OneTapStyle
-            .Light(
-                cornersStyle = OneTapButtonCornersStyle.Custom(2f),
-                sizeStyle = OneTapButtonSizeStyle.SMALL_32,
-                elevationStyle = OneTapButtonElevationStyle.Custom(4f)
-            ),
-        authParams = VKIDAuthUiParams {
-            scopes = setOf("friends")
-        },
-        modifier = Modifier.padding(16.dp)
+        style =
+            OneTapStyle
+                .Light(
+                    cornersStyle = OneTapButtonCornersStyle.Custom(2f),
+                    sizeStyle = OneTapButtonSizeStyle.SMALL_32,
+                    elevationStyle = OneTapButtonElevationStyle.Custom(4f),
+                ),
+        authParams =
+            VKIDAuthUiParams {
+                scopes = setOf("friends")
+            },
+        modifier = Modifier.padding(16.dp),
     )
 }
 
-fun getUserInfo(token: String, onResult: (Map<String, String>) -> Unit) {
+fun getUserInfo(
+    token: String,
+    onResult: (Map<String, String>) -> Unit,
+) {
     CoroutineScope(Dispatchers.Main).launch {
-        try {
-            VKID.instance.getUserData(
-                callback = object : VKIDGetUserCallback {
+        VKID.instance.getUserData(
+            callback =
+                object : VKIDGetUserCallback {
                     override fun onSuccess(user: VKIDUser) {
-                        val userInfo = mapOf(
-                            "Name" to user.firstName,
-                            "LastName" to user.lastName
-                        )
+                        val userInfo =
+                            mapOf(
+                                "Name" to user.firstName,
+                                "LastName" to user.lastName,
+                            )
                         onResult(userInfo)
                     }
+
                     override fun onFail(fail: VKIDGetUserFail) {
                         when (fail) {
                             is VKIDGetUserFail.FailedApiCall -> fail.description
@@ -99,10 +106,7 @@ fun getUserInfo(token: String, onResult: (Map<String, String>) -> Unit) {
                             is VKIDGetUserFail.NotAuthenticated -> fail.description
                         }
                     }
-                }
-            )
-        } catch (e: Exception) {
-            println(e.message)
-        }
+                },
+        )
     }
 }

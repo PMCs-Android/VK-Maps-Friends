@@ -1,14 +1,10 @@
 package com.example.mapsfriends
 
 import android.content.Context
-import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 
 class MapViewModel : ViewModel() {
@@ -25,22 +21,27 @@ class MapViewModel : ViewModel() {
                             position = user.location,
                             title = user.name,
                             originalBitmap = it,
-                            icon = BitmapDescriptorFactory.fromBitmap(
-                                createMarkerWithBorderAndTail(context, it, initialSize)
-                            )
-                        )
+                            icon =
+                                BitmapDescriptorFactory.fromBitmap(
+                                    createMarkerWithBorderAndTail(context, it, initialSize),
+                                ),
+                        ),
                     )
                 }
             }
         }
     }
 
-    fun updateMarkerIcons(currentZoom: Float, context: Context) {
+    fun updateMarkerIcons(
+        currentZoom: Float,
+        context: Context,
+    ) {
         markers.forEach { marker ->
             val newSize = calculateMarkerSize(currentZoom)
-            marker.icon = BitmapDescriptorFactory.fromBitmap(
-                createMarkerWithBorderAndTail(context, marker.originalBitmap, newSize)
-            )
+            marker.icon =
+                BitmapDescriptorFactory.fromBitmap(
+                    createMarkerWithBorderAndTail(context, marker.originalBitmap, newSize),
+                )
         }
     }
 }

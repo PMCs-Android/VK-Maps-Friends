@@ -34,6 +34,7 @@ drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable ic_my_location
 drawable location_on_24px
+drawable mapsfriends
 drawable profile
 drawable send_message
 drawable settings_24px
@@ -47,9 +48,15 @@ mipmap ic_launcher_round
 raw map_style
 string app_name
 string dalete
+string gcm_defaultSenderId
+string google_api_key
+string google_app_id
+string google_crash_reporting_api_key
+string google_storage_bucket
 string message_placefolder
 string my_events
 string new_event
+string project_id
 string requests
 style AppTheme
 style Theme.MapsFriends

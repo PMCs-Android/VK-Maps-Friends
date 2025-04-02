@@ -10,29 +10,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import kotlin.math.sin
 
 @Composable
 fun RoundedCornerTextField(
     text: String,
     label: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ) {
-    TextField(value = text, onValueChange = {
-        onValueChange(it)
-    },
+    TextField(
+        value = text,
+        onValueChange = {
+            onValueChange(it)
+        },
         shape = RoundedCornerShape(25.dp),
-        colors = TextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent
-        ),
-        modifier = Modifier.fillMaxWidth()
-            .border(1.dp, Color.Black, RoundedCornerShape(25.dp)),
+        colors =
+            TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White,
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+            ),
+        modifier =
+            Modifier.fillMaxWidth()
+                .border(1.dp, Color.Black, RoundedCornerShape(25.dp)),
         label = {
             Text(text = label, color = Color.Gray)
         },
-        singleLine = true
+        singleLine = true,
     )
 }

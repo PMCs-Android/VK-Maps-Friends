@@ -27,6 +27,8 @@
     <string msgid="8875138169939072951" name="abc_shareactionprovider_share_with">"Teilen mit"</string>
     <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Mit <ns1:g id="APPLICATION_NAME">%s</ns1:g> teilen"</string>
     <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Minimieren"</string>
+    <string msgid="8397015543330865059" name="android.credentials.TYPE_PASSWORD_CREDENTIAL">"Passwort"</string>
+    <string msgid="3929015085059320822" name="androidx.credentials.TYPE_PUBLIC_KEY_CREDENTIAL">"Passkey"</string>
     <string msgid="881409763997275156" name="call_notification_answer_action">"Annehmen"</string>
     <string msgid="8793775615905189152" name="call_notification_answer_video_action">"Video"</string>
     <string msgid="3229508546291798546" name="call_notification_decline_action">"Ablehnen"</string>
@@ -54,9 +56,15 @@
     <string name="common_open_on_phone">Auf Smartphone öffnen</string>
     <string name="common_signin_button_text">Anmelden</string>
     <string name="common_signin_button_text_long">Über Google anmelden</string>
+    <string msgid="6083905920877235314" name="copy">"Kopieren"</string>
+    <string msgid="3260749812566568062" name="copy_toast_msg">"Link in Zwischenablage kopiert"</string>
     <string msgid="8038256446254964252" name="default_error_message">"Ungültige Eingabe"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"Pop-up-Fenster"</string>
     <string msgid="1890207353314751437" name="dropdown_menu">"Drop-down-Menü"</string>
+    <string msgid="2427401033573778270" name="expand_button_title">"Erweitert"</string>
+    <string msgid="4566929209979330987" name="fallback_menu_item_copy_link">"Link kopieren"</string>
+    <string msgid="3413186855122069269" name="fallback_menu_item_open_in_browser">"Im Browser öffnen"</string>
+    <string msgid="7145444925855055364" name="fallback_menu_item_share_link">"Link teilen"</string>
     <string msgid="6827826412747255547" name="in_progress">"In Bearbeitung"</string>
     <string msgid="7933458017204019916" name="indeterminate">"Teilweise aktiviert"</string>
     <string msgid="2988463736136100848" name="m3c_bottom_sheet_collapse_description">"Ansicht am unteren Rand minimieren"</string>
@@ -117,6 +125,8 @@
     <string msgid="5460405025248574620" name="m3c_tooltip_pane_description">"Kurzinfo"</string>
     <string msgid="542007171693138492" name="navigation_menu">"Navigationsmenü"</string>
     <string msgid="6610465462668679431" name="not_selected">"Nicht ausgewählt"</string>
+    <string msgid="6573031135582639649" name="not_set">"Nicht festgelegt"</string>
+    <string msgid="6685851473431805375" name="preference_copied">"\"<ns1:g id="SUMMARY">%1$s</ns1:g>\" in Zwischenablage kopiert."</string>
     <string msgid="5941395253238309765" name="range_end">"Bereichsende"</string>
     <string msgid="7097486360902471446" name="range_start">"Bereichsstart"</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Suche"</string>
@@ -125,9 +135,68 @@
     <string msgid="5834637030682409883" name="state_off">"Aus"</string>
     <string msgid="1490883874751719580" name="state_on">"An"</string>
     <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+    <string msgid="9167775378838880170" name="summary_collapsed_preference_list">"<ns1:g id="CURRENT_ITEMS">%1$s</ns1:g>, <ns1:g id="ADDED_ITEMS">%2$s</ns1:g>"</string>
     <string msgid="2561197295334830845" name="switch_role">"Wechseln"</string>
     <string msgid="1672349317127674378" name="tab">"Tab"</string>
     <string msgid="5946805113151406391" name="template_percent">"<ns1:g id="PERCENTAGE">%1$d</ns1:g> Prozent."</string>
     <string msgid="3765533235322692011" name="tooltip_description">"Kurzinfo"</string>
     <string msgid="3124740595719787496" name="tooltip_label">"Kurzinfo anzeigen"</string>
+    <string msgid="3140233346420563315" name="v7_preference_off">"AUS"</string>
+    <string msgid="89551595707643515" name="v7_preference_on">"AN"</string>
+    <string name="vkid_auth_use_another_account">Mit einem anderen Konto anmelden</string>
+    <string name="vkid_auth_use_another_account_short">Konto wechseln</string>
+    <string name="vkid_calculate">Berechnen</string>
+    <string name="vkid_calculate_as">Berechnen für %1$s</string>
+    <string name="vkid_calculate_with_vkid">Mit VK ID berechnen</string>
+    <string name="vkid_get">Erhalten</string>
+    <string name="vkid_get_as">Erhalten für %1$s</string>
+    <string name="vkid_get_with_vkid">Mit VK ID erhalten</string>
+    <string name="vkid_log_in">Fortfahren</string>
+    <string name="vkid_log_in_as">Als %1$s fortfahren</string>
+    <string name="vkid_log_in_with_vkid">Mit VK-ID anmelden</string>
+    <string name="vkid_oauth_list_widget_note">oder melden Sie sich mit Ihrer VK-ID an, indem Sie Informationen aus dem Dienst verwenden</string>
+    <string name="vkid_oauth_list_widget_title_mail">Mit Mail anmelden</string>
+    <string name="vkid_oauth_list_widget_title_ok">Mit OK anmelden</string>
+    <string name="vkid_oauth_list_widget_title_vk">Mit VK ID anmelden</string>
+    <string name="vkid_open">Öffnen</string>
+    <string name="vkid_open_as">Öffnen als %1$s</string>
+    <string name="vkid_open_with_vkid">Mit VK ID öffnen</string>
+    <string name="vkid_order">Bestellen</string>
+    <string name="vkid_order_as">Bestellen als %1$s</string>
+    <string name="vkid_order_with_vkid">Mit VK ID bestellen</string>
+    <string name="vkid_participate">Teilnehmen</string>
+    <string name="vkid_participate_as">Teilnehmen als %1$s</string>
+    <string name="vkid_participate_with_vkid">Mit VK ID teilnehmen</string>
+    <string name="vkid_place_order">Bestellung aufgeben</string>
+    <string name="vkid_place_order_as">Bestellung aufgeben als %1$s</string>
+    <string name="vkid_place_order_with_vkid">Mit VK ID Bestellung aufgeben</string>
+    <string name="vkid_scenario_common_description">Anschließend stehen Ihnen alle Funktionen des Dienstes zur Verfügung. Ihre persönlichen Daten werden sorgfältig geschützt.</string>
+    <string name="vkid_schenario_application_title">Bewerben Sie mit VK-ID</string>
+    <string name="vkid_schenario_application_vkid_button_text_no_user">Mit VK-ID fortfahren</string>
+    <string name="vkid_schenario_application_vkid_button_text_user_found">Als %1$s fortfahren</string>
+    <string name="vkid_schenario_enter_service_title">Melden Sie sich beim Dienst an oder registrieren Sie sich</string>
+    <string name="vkid_schenario_enter_service_vkid_button_text_no_user">Mit VK-ID anmelden</string>
+    <string name="vkid_schenario_enter_service_vkid_button_text_user_found">Als %1$s anmelden</string>
+    <string name="vkid_schenario_enter_to_account_title">Melden Sie sich bei Ihrem %1$s-Konto an</string>
+    <string name="vkid_schenario_enter_to_account_vkid_button_text_no_user">Mit VK-ID anmelden</string>
+    <string name="vkid_schenario_enter_to_account_vkid_button_text_user_found">Als %1$s anmelden</string>
+    <string name="vkid_schenario_order_in_service_title">Machen Sie eine Bestellung auf %1$s mit VK-ID</string>
+    <string name="vkid_schenario_order_in_service_vkid_button_text_no_user">Mit VK-ID bestellen</string>
+    <string name="vkid_schenario_order_in_service_vkid_button_text_user_found">Als %1$s bestellen</string>
+    <string name="vkid_schenario_order_title">Machen Sie eine Bestellung mit VK-ID</string>
+    <string name="vkid_schenario_order_vkid_button_text_no_user">Mit VK-ID bestellen</string>
+    <string name="vkid_schenario_order_vkid_button_text_user_found">Als %1$s bestellen</string>
+    <string name="vkid_schenario_registration_for_the_event_title">Melden Sie sich für die Veranstaltung an</string>
+    <string name="vkid_schenario_registration_for_the_event_vkid_button_text_no_user">Mit VK-ID fortfahren</string>
+    <string name="vkid_schenario_registration_for_the_event_vkid_button_text_user_found">Als %1$s fortfahren</string>
+    <string name="vkid_send_request">Anfrage stellen</string>
+    <string name="vkid_send_request_as">Anfrage stellen als %1$s</string>
+    <string name="vkid_send_request_with_vkid">Mit VK ID Anfrage stellen</string>
+    <string name="vkid_sheet_state_auth_failed">Anmeldung fehlgeschlagen</string>
+    <string name="vkid_sheet_state_auth_failed_retry">Erneut versuchen</string>
+    <string name="vkid_sheet_state_auth_in_progress">Anmeldung</string>
+    <string name="vkid_sheet_state_auth_success">Gelungen!</string>
+    <string name="vkid_sign_up">Anmelden</string>
+    <string name="vkid_sign_up_as">Anmelden als %1$s</string>
+    <string name="vkid_sign_up_with_vkid">Mit VK ID anmelden</string>
 </resources>

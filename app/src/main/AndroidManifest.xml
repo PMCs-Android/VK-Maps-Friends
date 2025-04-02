@@ -8,7 +8,6 @@
 
     <application
 
-
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,9 +17,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MapsFriends"
         tools:targetApi="31">
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB4SoTT_aBfOjPsoej8T-B6R7XOX-pQLhE" />
+
+        <meta-data
+                android:name="com.vk.sdk.VKApplicationId"
+                android:value="53221768" />
 
         <activity
             android:name=".MainActivity"

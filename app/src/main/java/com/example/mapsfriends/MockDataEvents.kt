@@ -11,28 +11,30 @@ data class MockDataEvents(
     val time: String,
     val description: String,
     val location: String,
-    val members: List<MockDataUsers>
+    val members: List<MockDataUsers>,
 )
 
-val mockEvents = listOf(
-    MockDataEvents(
-        "Баскетбол",
-        27,
-        2,
-        "18:40",
-        "Описание",
-        "Новочеркасская, 9",
-        listOf(mockUsers[0], mockUsers[1])
+val mockEvents =
+    listOf(
+        MockDataEvents(
+            "Баскетбол",
+            27,
+            2,
+            "18:40",
+            "Описание",
+            "Новочеркасская, 9",
+            listOf(mockUsers[0], mockUsers[1]),
+        ),
     )
-)
 
 data class Messages(
     val user: MockDataUsers,
     val text: String,
-    val time: String
+    val time: String,
 )
 
-val mockMessages = listOf(
-    Messages(mockUsers[1],"Возьмите воды", "18:36"),
-    Messages(mockUsers[0],"Я задержусь ;,,(", "18:41")
-)
+val mockMessages =
+    listOf(
+        Messages(mockUsers[1], "Возьмите воды", "18:36"),
+        Messages(mockUsers[0], "Я задержусь ;,,(", "18:41"),
+    )

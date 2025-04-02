@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-66:/values-v23/values-v23.xml",
+            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-87:/values-v23/values-v23.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\listk\\.gradle\\caches\\8.11.1\\transforms\\b62bad41f451ed41996fc4ca017d1ec3\\transformed\\appcompat-1.7.0\\res\\values-v23\\values-v23.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.11.1\\transforms\\99d99ee4b3afd6dc3eaffaa87febacb0\\transformed\\appcompat-1.7.0\\res\\values-v23\\values-v23.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,20,34,35,36,39,43,44,45,46",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4",
