@@ -1,30 +1,51 @@
 [versions]
+<<<<<<< HEAD
 agp = "8.7.1"
 kotlin = "2.0.0"
+=======
+agp = "8.8.2"
+kotlin = "2.1.20"
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
+<<<<<<< HEAD
 activityCompose = "1.9.3"
 composeBom = "2024.04.01"
 appcompat = "1.7.0"
 navigationCompose = "2.8.7"
 roomKtx = "2.6.1"
 
+=======
+activityCompose = "1.10.1"
+composeBom = "2024.04.01"
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 gmsVersion = "4.4.2"
 
 bomVersion = "33.10.0"
 vkidVersion = "2.2.0"
 
+<<<<<<< HEAD
 serializationVersion = "2.0.0"
 serializationKotlin = "1.8.0"
 ktlint = "12.2.0"
+=======
+navigationCompose = "2.8.9"
+serializationVersion = "2.0.0"
+serializationKotlin = "1.8.0"
+
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationKotlin" }
+<<<<<<< HEAD
+=======
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "bomVersion" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
@@ -47,9 +68,12 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+<<<<<<< HEAD
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+=======
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -58,5 +82,8 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 
 gms = { id = "com.google.gms.google-services", version.ref = "gmsVersion" }
 plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationVersion" }
+<<<<<<< HEAD
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+=======
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 

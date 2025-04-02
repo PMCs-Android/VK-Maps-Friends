@@ -1,5 +1,6 @@
 package com.example.mapsfriends
 
+<<<<<<< HEAD
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -29,3 +30,14 @@ fun App() {
         composable("requestDetails") { RequestDetailsScreen(navController) }
     }
 }
+=======
+import android.app.Application
+import com.vk.id.VKID
+
+class App : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        VKID.init(this)
+    }
+}
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671

@@ -30,7 +30,11 @@ jobs:
           reviewdog_version: latest
       - uses: actions/checkout@v4
       - uses: actions/cache@v4
+<<<<<<< HEAD
         name: ♻️ Cache
+=======
+        name: ♻ Cache
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
         with:
           path: build/bin
           key: ${{ runner.os }}

@@ -1,8 +1,12 @@
 <resources>
+<<<<<<< HEAD
     <string name="app_name">Maps&amp;Friends</string>
     <string name="my_events">Мои ивенты</string>
     <string name="requests">Заявки</string>
     <string name="new_event">Создать</string>
     <string name="dalete">Удалить</string>
     <string name="message_placefolder">Сообщение</string>
+=======
+    <string name="app_name">vkid</string>
+>>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 </resources>
