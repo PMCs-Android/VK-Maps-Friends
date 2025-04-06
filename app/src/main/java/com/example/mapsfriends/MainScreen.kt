@@ -61,8 +61,8 @@ fun MainScreen(
 ) {
     Box(
         modifier = Modifier
-        .fillMaxSize()
-        .padding(vertical = 30.dp)
+            .fillMaxSize()
+            .padding(vertical = 30.dp)
     ) {
 
         MapScreen()
