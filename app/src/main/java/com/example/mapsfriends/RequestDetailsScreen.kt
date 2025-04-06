@@ -39,7 +39,8 @@ fun RequestDetailsScreen(navController: NavHostController) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue),
+                        colorResource(R.color.bg_pink)
                     )
                 )
             )
@@ -150,10 +151,11 @@ fun RequestDetailsScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             IconButton(
-                onClick = {/* Принять заявку */ },
+                onClick = { /* Принять заявку */ },
                 modifier = Modifier
                     .width(64.dp)
                     .border(2.dp, colorResource(R.color.main_blue), RoundedCornerShape(16.dp))
@@ -165,7 +167,7 @@ fun RequestDetailsScreen(navController: NavHostController) {
                 )
             }
             IconButton(
-                onClick = {/* Отклонить заявку */ },
+                onClick = { /* Отклонить заявку */ },
                 modifier = Modifier
                     .width(64.dp)
                     .border(2.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp))

@@ -190,7 +190,7 @@ fun MessengerScreen(navController: NavHostController) {
             )
             Spacer(modifier = Modifier.width(10.dp))
             IconButton(
-                onClick = {/* Отправление сообщения */ },
+                onClick = { /* Отправление сообщения */ },
                 modifier = Modifier
                     .background(colorResource(R.color.main_purple), CircleShape)
                     .align(Alignment.Top)

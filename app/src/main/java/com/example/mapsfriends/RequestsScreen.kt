@@ -23,11 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
@@ -39,7 +39,8 @@ fun RequestsScreen(navController: NavHostController) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue),
+                        colorResource(R.color.bg_pink)
                     )
                 )
             )
@@ -85,7 +86,8 @@ fun RequestsScreen(navController: NavHostController) {
                         .clickable { navController.navigate("requestDetails") }
                         .weight(1f)
                         .background(Color.White, RoundedCornerShape(20.dp))
-                        .padding(16.dp)) {
+                        .padding(16.dp)
+                ) {
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
@@ -103,7 +105,8 @@ fun RequestsScreen(navController: NavHostController) {
                                 )
                             }
                             Text(
-                                text = event.members.size.toString() + "/" + mockUsers.size.toString(),
+                                text = event.members.size.toString() + "/"
+                                        + mockUsers.size.toString(),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Normal,
                                 modifier = Modifier
@@ -125,12 +128,12 @@ fun RequestsScreen(navController: NavHostController) {
                         modifier = Modifier
                     ) {
                         IconButton(
-                            onClick = {/* Удаление ивента */ }, modifier = Modifier.border(
-                                    2.dp,
-                                    colorResource(R.color.main_blue),
-                                    RoundedCornerShape(16.dp)
-                                )
-
+                            onClick = { /* Удаление ивента */ },
+                            modifier = Modifier.border(
+                                2.dp,
+                                colorResource(R.color.main_blue),
+                                RoundedCornerShape(16.dp)
+                            )
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.acception),
@@ -140,12 +143,11 @@ fun RequestsScreen(navController: NavHostController) {
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         IconButton(
-                            onClick = {/* Удаление ивента */ }, modifier = Modifier.border(
-                                    2.dp,
-                                    colorResource(R.color.main_pink),
-                                    RoundedCornerShape(16.dp)
-                                )
-
+                            onClick = { /* Удаление ивента */ }, modifier = Modifier.border(
+                                2.dp,
+                                colorResource(R.color.main_pink),
+                                RoundedCornerShape(16.dp)
+                            )
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.cross),

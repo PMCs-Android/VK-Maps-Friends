@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
-
 @Composable
 fun ProfileScreen(navController: NavHostController) {
     Column(
@@ -35,17 +34,20 @@ fun ProfileScreen(navController: NavHostController) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue),
+                        colorResource(R.color.bg_pink)
                     )
                 )
             )
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
         IconButton(
-            onClick = { navController.popBackStack() }, modifier = Modifier.border(
-                    4.dp, Color.White, RoundedCornerShape(16.dp)
-                )
-
+            onClick = { navController.popBackStack() },
+            modifier = Modifier.border(
+                4.dp,
+                Color.White,
+                RoundedCornerShape(16.dp)
+            )
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),

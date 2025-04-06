@@ -25,12 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
@@ -42,7 +42,8 @@ fun EventCalendarScreen(navController: NavHostController) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue),
+                        colorResource(R.color.bg_pink)
                     )
                 )
             )
@@ -88,7 +89,9 @@ fun EventCalendarScreen(navController: NavHostController) {
                                 .background(Color.White, RoundedCornerShape(8.dp))
                         ) {
                             Text(
-                                text = date.toString(), fontSize = 16.sp, color = Color.Black
+                                text = date.toString(),
+                                fontSize = 16.sp,
+                                color = Color.Black
                             )
                         }
                         Text(
@@ -122,7 +125,8 @@ fun EventCalendarScreen(navController: NavHostController) {
                             .clickable { navController.navigate("eventDetails") }
                             .weight(1f)
                             .background(Color.White, RoundedCornerShape(20.dp))
-                            .padding(16.dp)) {
+                            .padding(16.dp)
+                    ) {
                         Column(
                             modifier = Modifier.weight(1f)
                         ) {
@@ -141,7 +145,8 @@ fun EventCalendarScreen(navController: NavHostController) {
                                     )
                                 }
                                 Text(
-                                    text = event.members.size.toString() + "/" + mockUsers.size.toString(),
+                                    text = event.members.size.toString() + "/"
+                                            + mockUsers.size.toString(),
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Normal,
                                     modifier = Modifier
@@ -160,7 +165,8 @@ fun EventCalendarScreen(navController: NavHostController) {
                             )
                         }
                         IconButton(
-                            onClick = {/* Удаление ивента */ }, modifier = Modifier
+                            onClick = {/* Удаление ивента */ },
+                            modifier = Modifier
                                 .border(
                                     2.dp,
                                     colorResource(R.color.main_pink),
@@ -198,7 +204,7 @@ fun EventCalendarScreen(navController: NavHostController) {
                 )
             }
             TextButton(
-                onClick = {/* Обновление данных ивентов */ },
+                onClick = { /* Обновление данных ивентов */ },
                 modifier = Modifier
                     .height(64.dp)
                     .width(104.dp)

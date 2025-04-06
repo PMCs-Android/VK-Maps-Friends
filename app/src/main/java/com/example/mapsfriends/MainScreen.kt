@@ -1,14 +1,13 @@
 package com.example.mapsfriends
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -30,24 +29,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import android.graphics.Bitmap
+import androidx.navigation.NavHostController
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker as Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.vectorResource
-import androidx.navigation.NavHostController
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.coroutines.launch
-import com.google.maps.android.compose.Marker as Marker
-
 
 data class MarkerData(
     val position: LatLng,
@@ -57,7 +56,9 @@ data class MarkerData(
 )
 
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(
+    navController: NavHostController
+) {
     Box(modifier = Modifier
         .fillMaxSize()
         .padding(vertical = 30.dp)
@@ -117,7 +118,7 @@ fun MainScreen(navController: NavHostController) {
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-            Row (
+            Row(
                 horizontalArrangement = Arrangement.SpaceBetween
 
             ) {
@@ -169,7 +170,6 @@ fun MainScreen(navController: NavHostController) {
         }
     }
 }
-
 
 @Composable
 fun MapScreen() {
@@ -252,7 +252,8 @@ fun MapScreen() {
                 value = zoomLevel,
                 onValueChange = { newZoom ->
                     zoomLevel = newZoom.coerceIn(5f, 20f)
-                    cameraPositionState.position = CameraPosition.Builder(cameraPositionState.position)
+                    cameraPositionState.position = CameraPosition
+                        .Builder(cameraPositionState.position)
                         .zoom(newZoom)
                         .build()
                 },

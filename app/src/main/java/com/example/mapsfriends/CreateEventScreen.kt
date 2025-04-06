@@ -91,14 +91,14 @@ fun CreateEventScreen(navController: NavHostController) {
     val viewModel = hiltViewModel<EventViewModel>()
 //    val data by viewModel.data.collectAsState()
 
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue),
+                        colorResource(R.color.bg_pink)
                     )
                 )
             )
@@ -149,10 +149,11 @@ fun CreateEventScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(10.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             TextButton(
-                onClick = {/* Добавление ивента */
+                onClick = { /* Добавление ивента */
                     viewModel.createEvent(
                         title.value,
                         descrip.value,
@@ -162,10 +163,10 @@ fun CreateEventScreen(navController: NavHostController) {
                     )
                 },
                 modifier = Modifier.border(
-                        4.dp,
-                        colorResource(R.color.main_blue),
-                        RoundedCornerShape(20.dp)
-                    )
+                    4.dp,
+                    colorResource(R.color.main_blue),
+                    RoundedCornerShape(20.dp)
+                )
             ) {
                 Text(
                     text = "Готово!",
@@ -174,9 +175,6 @@ fun CreateEventScreen(navController: NavHostController) {
                     fontWeight = FontWeight.Bold,
                 )
             }
-        }
-        Column {
-
         }
     }
 }
@@ -200,11 +198,14 @@ fun CreateEventTitleInput(title: MutableState<String>) {
         ),
         placeholder = {
             Text(
-                text = "Название", fontSize = 12.sp, color = Color.Gray
+                text = "Название",
+                fontSize = 12.sp,
+                color = Color.Gray
             )
         },
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text, hintLocales = LocaleList(Locale("ru"))
+            keyboardType = KeyboardType.Text,
+            hintLocales = LocaleList(Locale("ru"))
         )
     )
 }
@@ -228,7 +229,8 @@ fun CreateEventDateInput(
             EventDateText(selectedDate.value)
         }
         IconButton(
-            onClick = { showDatePicker.value = true }) {
+            onClick = { showDatePicker.value = true }
+        ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.calendar),
                 contentDescription = "Date Picker",
@@ -240,7 +242,8 @@ fun CreateEventDateInput(
 
 @Composable
 fun CreateEventTimeInput(
-    showTimePicker: MutableState<Boolean>, selectedTime: MutableState<String>
+    showTimePicker: MutableState<Boolean>,
+    selectedTime: MutableState<String>
 ) {
     Row(
         modifier = Modifier
@@ -256,7 +259,8 @@ fun CreateEventTimeInput(
             EventTimeText(selectedTime.value)
         }
         IconButton(
-            onClick = { showTimePicker.value = true }) {
+            onClick = { showTimePicker.value = true }
+        ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.clock),
                 contentDescription = "Time Picker",
@@ -301,11 +305,14 @@ fun CreateEventDescriptionInput(descrip: MutableState<String>) {
         ),
         placeholder = {
             Text(
-                text = "Описание", fontSize = 16.sp, color = Color.Gray
+                text = "Описание",
+                fontSize = 16.sp,
+                color = Color.Gray
             )
         },
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text, hintLocales = LocaleList(Locale("ru"))
+            keyboardType = KeyboardType.Text,
+            hintLocales = LocaleList(Locale("ru"))
         )
     )
 }
@@ -334,7 +341,7 @@ fun CreateEventAddParticipants() {
                 )
             }
             IconButton(
-                onClick = {/* Добавить человека */ }, modifier = Modifier
+                onClick = { /* Добавить человека */ }, modifier = Modifier
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.add_plus),
@@ -369,7 +376,6 @@ fun CreateEventAddLocation() {
     }
 }
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -381,35 +387,39 @@ fun DateInput(
     if (showDatePicker.value) {
         DatePickerDialog(
             onDismissRequest = {
-            showDatePicker.value = false
-        }, confirmButton = {
-            TextButton(onClick = {
-                state.selectedDateMillis?.let {
-                    val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-                    selectedDate.value = "${date.dayOfMonth + 1}.${date.month.ordinal + 1}"
-                }
                 showDatePicker.value = false
-            }) {
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        state.selectedDateMillis?.let {
+                        val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+                        selectedDate.value = "${date.dayOfMonth + 1}.${date.month.ordinal + 1}"
+                    }
+                    showDatePicker.value = false
+                }
+                ) {
                 Text("OK")
-            }
+                }
             TextButton(
-                onClick = { showDatePicker.value = false }) {
+                onClick = { showDatePicker.value = false }
+            ) {
                 Text(text = "Cancel")
-            }
-        }, colors = DatePickerDefaults.colors(
-            containerColor = Color.White,
-            headlineContentColor = colorResource(R.color.main_purple),
-            selectedDayContainerColor = colorResource(R.color.main_purple),
-            selectedDayContentColor = Color.White,
-            todayContentColor = colorResource(R.color.main_purple),
-            todayDateBorderColor = colorResource(R.color.main_blue)
+                }
+            },
+            colors = DatePickerDefaults.colors(
+                containerColor = Color.White,
+                headlineContentColor = colorResource(R.color.main_purple),
+                selectedDayContainerColor = colorResource(R.color.main_purple),
+                selectedDayContentColor = Color.White,
+                todayContentColor = colorResource(R.color.main_purple),
+                todayDateBorderColor = colorResource(R.color.main_blue)
         )
         ) {
             DatePicker(state = state)
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -439,7 +449,8 @@ fun TimeInput(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     TimePicker(
-                        state = state, colors = TimePickerDefaults.colors(
+                        state = state,
+                        colors = TimePickerDefaults.colors(
                             containerColor = Color.White,
                             clockDialColor = Color.White,
                             selectorColor = colorResource(R.color.main_blue),
@@ -462,125 +473,11 @@ fun TimeInput(
                             onClick = {
                                 showTimePicker.value = false
                                 selectedTime.value = "${state.hour}:${state.minute}"
-                            }) { Text("OK") }
+                            }
+                        ) { Text("OK") }
                     }
                 }
             }
         }
     }
 }
-
-
-//@RequiresApi(Build.VERSION_CODES.O)
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-////@Preview
-//fun DateInputField() {
-//    var showDatePicker by remember { mutableStateOf(false) }
-//    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-//
-//    val dateFormatter = remember { DateTimeFormatter.ofPattern("dd.MM.yyyy") }
-//
-//    Column(modifier = Modifier.padding(16.dp)) {
-//        // Поле для отображения выбранной даты
-//        OutlinedTextField(
-//            value = selectedDate.format(dateFormatter),
-//            onValueChange = {},
-//            label = { Text("Дата") },
-//            modifier = Modifier.fillMaxWidth(),
-//            readOnly = true,
-//            trailingIcon = {
-//                IconButton(onClick = { showDatePicker = true }) {
-//                    Icon(Icons.Default.DateRange, contentDescription = "Выбрать дату")
-//                }
-//            }
-//        )
-//    }
-//    if (showDatePicker) {
-//        val datePickerState = rememberDatePickerState(
-//            initialSelectedDateMillis = selectedDate
-//                .atStartOfDay(ZoneId.systemDefault())
-//                .toInstant()
-//                .toEpochMilli()
-//        )
-//
-//        DatePickerDialog(
-//            onDismissRequest = { showDatePicker = false },
-//            confirmButton = {
-//                Button(onClick = {
-//                    datePickerState.selectedDateMillis?.let {
-//                        selectedDate = Instant.ofEpochMilli(it)
-//                            .atZone(ZoneId.systemDefault())
-//                            .toLocalDate()
-//                    }
-//                    showDatePicker = false
-//                }) {
-//                    Text("OK")
-//                }
-//            }
-//        ) {
-//            DatePicker(state = datePickerState)
-//        }
-//    }
-//}
-
-//@Composable
-//fun CreateEventDateTimeInput(date: MutableState<String>, time: MutableState<String>) {
-//    Row {
-//        TextField(
-//            value = date.value,
-//            onValueChange = { date.value = it },
-//            textStyle = TextStyle(fontSize = 20.sp),
-//            shape = RoundedCornerShape(20.dp),
-//            modifier = Modifier
-//                .weight(1f)
-//                .height(60.dp)
-//                .padding(top = 10.dp),
-//            colors = TextFieldDefaults.colors(
-//                focusedContainerColor = Color.White,
-//                unfocusedContainerColor = Color.White,
-//                unfocusedIndicatorColor = Color.Transparent,
-//                focusedIndicatorColor = Color.Transparent
-//            ),
-//            placeholder = {
-//                Text(
-//                    text = "Дата",
-//                    fontSize = 12.sp,
-//                    color = Color.Gray
-//                )
-//            },
-//            keyboardOptions = KeyboardOptions(
-//                keyboardType = KeyboardType.Text,
-//                hintLocales = LocaleList(Locale("ru"))
-//            )
-//        )
-//        Spacer(modifier = Modifier.width(10.dp))
-//        TextField(
-//            value = time.value,
-//            onValueChange = { time.value = it },
-//            textStyle = TextStyle(fontSize = 20.sp),
-//            shape = RoundedCornerShape(20.dp),
-//            modifier = Modifier
-//                .weight(1f)
-//                .height(60.dp)
-//                .padding(top = 10.dp),
-//            colors = TextFieldDefaults.colors(
-//                focusedContainerColor = Color.White,
-//                unfocusedContainerColor = Color.White,
-//                unfocusedIndicatorColor = Color.Transparent,
-//                focusedIndicatorColor = Color.Transparent
-//            ),
-//            placeholder = {
-//                Text(
-//                    text = "Время",
-//                    fontSize = 12.sp,
-//                    color = Color.Gray
-//                )
-//            },
-//            keyboardOptions = KeyboardOptions(
-//                keyboardType = KeyboardType.Text,
-//                hintLocales = LocaleList(Locale("ru"))
-//            )
-//        )
-//    }
-//}
