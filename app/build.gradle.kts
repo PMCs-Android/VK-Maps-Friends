@@ -50,10 +50,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation ("com.google.android.gms:play-services-maps:19.1.0")
-    implementation ("androidx.appcompat:appcompat:1.7.0")
-    implementation ("com.google.maps.android:maps-compose:4.3.0")
-    implementation ("io.coil-kt:coil-compose:2.4.0")
+    implementation("com.google.android.gms:play-services-maps:19.1.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.maps.android:maps-compose:4.3.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.ktx)
@@ -64,5 +64,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
 }

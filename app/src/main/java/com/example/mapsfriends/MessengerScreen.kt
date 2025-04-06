@@ -69,7 +69,6 @@ fun MessengerScreen(navController: NavHostController) {
     }
 }
 
-
 @Composable
 fun MessageInput() {
     val message = remember { mutableStateOf("") }
@@ -107,7 +106,7 @@ fun MessageInput() {
         )
         Spacer(modifier = Modifier.width(10.dp))
         IconButton(
-            onClick = {/* Отправление сообщения */ },
+            onClick = { /* Отправление сообщения */ },
             modifier = Modifier
                 .background(colorResource(R.color.main_purple), CircleShape)
                 .align(Alignment.Top)
@@ -122,7 +121,7 @@ fun MessageInput() {
 }
 
 @Composable
-fun MessagesOutput(message: Messages){
+fun MessagesOutput(message: Messages) {
     Row {
         Icon(
             imageVector = Icons.Default.AccountCircle,
@@ -158,7 +157,6 @@ fun MessagesOutput(message: Messages){
         }
     }
 }
-
 
 @Composable
 fun MessengerHeader(navController: NavHostController) {

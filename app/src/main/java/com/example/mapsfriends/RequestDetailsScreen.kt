@@ -55,7 +55,7 @@ fun RequestAcceptRefuseButtons() {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(
-            onClick = {/* Принять заявку */ },
+            onClick = { /* Принять заявку */ },
             modifier = Modifier
                 .width(64.dp)
                 .border(2.dp, colorResource(R.color.main_blue), RoundedCornerShape(16.dp))
@@ -67,7 +67,7 @@ fun RequestAcceptRefuseButtons() {
             )
         }
         IconButton(
-            onClick = {/* Отклонить заявку */ },
+            onClick = { /* Отклонить заявку */ },
             modifier = Modifier
                 .width(64.dp)
                 .border(2.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp))

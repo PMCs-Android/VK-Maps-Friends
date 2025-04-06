@@ -57,7 +57,7 @@ fun EventDetailsScreen(navController: NavHostController) {
             EventMembers()
             Spacer(modifier = Modifier.width(16.dp))
             IconButton(
-                onClick = {navController.navigate("messenger")},
+                onClick = { navController.navigate("messenger") },
                 modifier = Modifier
                     .background(Color.White, RoundedCornerShape(20.dp))
             ) {
@@ -129,7 +129,7 @@ fun EventHeader(navController: NavHostController) {
 }
 
 @Composable
-fun EventDescription()  {
+fun EventDescription() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -166,7 +166,7 @@ fun EventMembers() {
             )
         }
         IconButton(
-            onClick = {/* Добавить человека */ },
+            onClick = { /* Добавить человека */ },
             modifier = Modifier
         ) {
             Icon(
@@ -212,7 +212,7 @@ fun EventDeleteButton() {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         TextButton(
-            onClick = {/* Удаление ивента */ },
+            onClick = { /* Удаление ивента */ },
             modifier = Modifier
                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
         ) {

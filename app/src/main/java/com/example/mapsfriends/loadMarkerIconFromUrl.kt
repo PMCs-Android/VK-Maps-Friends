@@ -15,7 +15,6 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import kotlin.math.pow
 
-
 suspend fun loadOriginalBitmapFromUrl(context: Context, url: String): Bitmap? {
     return try {
         val request = ImageRequest.Builder(context)
@@ -93,15 +92,19 @@ fun createMarkerWithBorderAndTail(
     val combined = Bitmap.createBitmap(contentSize, contentSize, Bitmap.Config.ARGB_8888)
     Canvas(combined).apply {
         drawBitmap(mask, 0f, 0f, null)
-        drawBitmap(scaledBitmap, 0f, 0f, Paint().apply {
-            xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-        })
+        drawBitmap(
+            scaledBitmap,
+            0f,
+            0f,
+            Paint().apply {
+                xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+            }
+        )
     }
 
     val left = (size - contentSize) / 2f
     val top = (size - contentSize) / 2f
     canvas.drawBitmap(combined, left, top, null)
-
 
     val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE

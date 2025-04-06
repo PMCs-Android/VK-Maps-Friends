@@ -1,14 +1,10 @@
 package com.example.mapsfriends
 
 import android.content.Context
-import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.launch
 
 class MapViewModel : ViewModel() {
