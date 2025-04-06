@@ -105,8 +105,8 @@ fun RequestsScreen(navController: NavHostController) {
                                 )
                             }
                             Text(
-                                text = event.members.size.toString() + "/"
-                                        + mockUsers.size.toString(),
+                                text = event.members.size.toString() + "/" +
+                                    mockUsers.size.toString(),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Normal,
                                 modifier = Modifier
@@ -143,7 +143,8 @@ fun RequestsScreen(navController: NavHostController) {
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         IconButton(
-                            onClick = { /* Удаление ивента */ }, modifier = Modifier.border(
+                            onClick = { /* Удаление ивента */ },
+                            modifier = Modifier.border(
                                 2.dp,
                                 colorResource(R.color.main_pink),
                                 RoundedCornerShape(16.dp)

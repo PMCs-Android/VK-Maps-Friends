@@ -341,7 +341,8 @@ fun CreateEventAddParticipants() {
                 )
             }
             IconButton(
-                onClick = { /* Добавить человека */ }, modifier = Modifier
+                onClick = { /* Добавить человека */ },
+                modifier = Modifier
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.add_plus),
@@ -393,18 +394,19 @@ fun DateInput(
                 TextButton(
                     onClick = {
                         state.selectedDateMillis?.let {
-                        val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
-                        selectedDate.value = "${date.dayOfMonth + 1}.${date.month.ordinal + 1}"
+                            val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                            selectedDate.value = "${date.dayOfMonth + 1}.${date.month.ordinal + 1}"
+                        }
+                        showDatePicker.value = false
                     }
-                    showDatePicker.value = false
-                }
                 ) {
-                Text("OK")
+                    Text("OK")
                 }
-            TextButton(
-                onClick = { showDatePicker.value = false }
-            ) {
-                Text(text = "Cancel")
+                TextButton(
+                    onClick = { showDatePicker.value = false }
+                ) {
+                    Text(text = "Cancel")
                 }
             },
             colors = DatePickerDefaults.colors(
@@ -414,7 +416,7 @@ fun DateInput(
                 selectedDayContentColor = Color.White,
                 todayContentColor = colorResource(R.color.main_purple),
                 todayDateBorderColor = colorResource(R.color.main_blue)
-        )
+            )
         ) {
             DatePicker(state = state)
         }

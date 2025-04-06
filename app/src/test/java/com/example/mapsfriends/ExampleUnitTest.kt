@@ -1,6 +1,5 @@
 package com.example.mapsfriends
 
-
 import org.junit.Assert.*
 import org.junit.Test
 

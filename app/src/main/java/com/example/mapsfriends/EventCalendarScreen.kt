@@ -145,8 +145,8 @@ fun EventCalendarScreen(navController: NavHostController) {
                                     )
                                 }
                                 Text(
-                                    text = event.members.size.toString() + "/"
-                                            + mockUsers.size.toString(),
+                                    text = event.members.size.toString() + "/" +
+                                        mockUsers.size.toString(),
                                     fontSize = 16.sp,
                                     fontWeight = FontWeight.Normal,
                                     modifier = Modifier
@@ -165,7 +165,7 @@ fun EventCalendarScreen(navController: NavHostController) {
                             )
                         }
                         IconButton(
-                            onClick = {/* Удаление ивента */ },
+                            onClick = { /* Удаление ивента */ },
                             modifier = Modifier
                                 .border(
                                     2.dp,
