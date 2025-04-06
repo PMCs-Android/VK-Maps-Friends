@@ -11,8 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
-    private val eventRepository: EventRepository,
-    private val userRepository: UserRepository
+    private val eventRepository: EventRepository, private val userRepository: UserRepository
 ) : ViewModel() {
     private val currentUserId = MutableStateFlow<String?>(null)
 

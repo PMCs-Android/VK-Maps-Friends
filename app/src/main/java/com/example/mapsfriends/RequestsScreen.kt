@@ -39,8 +39,7 @@ fun RequestsScreen(navController: NavHostController) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue),
-                        colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
                     )
                 )
             )
@@ -51,8 +50,7 @@ fun RequestsScreen(navController: NavHostController) {
         ) {
             IconButton(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier
-                    .border(4.dp, Color.White, RoundedCornerShape(12.dp))
+                modifier = Modifier.border(4.dp, Color.White, RoundedCornerShape(12.dp))
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.back_arrow),
@@ -87,8 +85,7 @@ fun RequestsScreen(navController: NavHostController) {
                         .clickable { navController.navigate("requestDetails") }
                         .weight(1f)
                         .background(Color.White, RoundedCornerShape(20.dp))
-                        .padding(16.dp)
-                ) {
+                        .padding(16.dp)) {
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
@@ -128,9 +125,7 @@ fun RequestsScreen(navController: NavHostController) {
                         modifier = Modifier
                     ) {
                         IconButton(
-                            onClick = {/* Удаление ивента */ },
-                            modifier = Modifier
-                                .border(
+                            onClick = {/* Удаление ивента */ }, modifier = Modifier.border(
                                     2.dp,
                                     colorResource(R.color.main_blue),
                                     RoundedCornerShape(16.dp)
@@ -145,9 +140,7 @@ fun RequestsScreen(navController: NavHostController) {
                         }
                         Spacer(modifier = Modifier.height(4.dp))
                         IconButton(
-                            onClick = {/* Удаление ивента */ },
-                            modifier = Modifier
-                                .border(
+                            onClick = {/* Удаление ивента */ }, modifier = Modifier.border(
                                     2.dp,
                                     colorResource(R.color.main_pink),
                                     RoundedCornerShape(16.dp)

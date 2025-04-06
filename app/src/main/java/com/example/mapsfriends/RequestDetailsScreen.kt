@@ -39,8 +39,7 @@ fun RequestDetailsScreen(navController: NavHostController) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue),
-                        colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
                     )
                 )
             )
@@ -107,8 +106,7 @@ fun RequestDetailsScreen(navController: NavHostController) {
             Text(
                 text = mockEvents[0].description,
                 fontSize = 16.sp,
-                modifier = Modifier
-                    .padding(10.dp)
+                modifier = Modifier.padding(10.dp)
             )
         }
         Row(
@@ -143,8 +141,7 @@ fun RequestDetailsScreen(navController: NavHostController) {
                 modifier = Modifier.padding(start = 10.dp, top = 10.dp)
             )
             Box(
-                modifier = Modifier
-                    .padding(10.dp)
+                modifier = Modifier.padding(10.dp)
             ) {
                 MapScreen()
             }
@@ -153,8 +150,7 @@ fun RequestDetailsScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             IconButton(
                 onClick = {/* Принять заявку */ },

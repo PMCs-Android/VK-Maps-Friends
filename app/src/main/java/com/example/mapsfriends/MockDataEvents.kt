@@ -2,7 +2,8 @@ package com.example.mapsfriends
 
 val dateData = listOf(24, 25, 26, 27, 28, 1, 2)
 val weekDays = listOf("пн", "вт", "ср", "чт", "пт", "сб", "вс")
-val monthList = listOf("янв", "фев", "март", "апр", "май", "июн", "июл", "авг", "сен", "окт", "нояб", "дек")
+val monthList =
+    listOf("янв", "фев", "март", "апр", "май", "июн", "июл", "авг", "сен", "окт", "нояб", "дек")
 
 data class MockDataEvents(
     val name: String,
@@ -27,12 +28,10 @@ val mockEvents = listOf(
 )
 
 data class Messages(
-    val user: MockDataUsers,
-    val text: String,
-    val time: String
+    val user: MockDataUsers, val text: String, val time: String
 )
 
 val mockMessages = listOf(
-    Messages(mockUsers[1],"Возьмите воды", "18:36"),
-    Messages(mockUsers[0],"Я задержусь ;,,(", "18:41")
+    Messages(mockUsers[1], "Возьмите воды", "18:36"),
+    Messages(mockUsers[0], "Я задержусь ;,,(", "18:41")
 )

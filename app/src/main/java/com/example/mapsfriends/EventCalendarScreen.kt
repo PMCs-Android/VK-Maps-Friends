@@ -42,24 +42,21 @@ fun EventCalendarScreen(navController: NavHostController) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue),
-                        colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
                     )
                 )
             )
             .padding(horizontal = 10.dp, vertical = 30.dp)
     ) {
         Column(
-            modifier = Modifier
-                .weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
             Box(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 IconButton(
                     onClick = { navController.popBackStack() },
-                    modifier = Modifier
-                        .border(4.dp, Color.White, RoundedCornerShape(12.dp))
+                    modifier = Modifier.border(4.dp, Color.White, RoundedCornerShape(12.dp))
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -91,9 +88,7 @@ fun EventCalendarScreen(navController: NavHostController) {
                                 .background(Color.White, RoundedCornerShape(8.dp))
                         ) {
                             Text(
-                                text = date.toString(),
-                                fontSize = 16.sp,
-                                color = Color.Black
+                                text = date.toString(), fontSize = 16.sp, color = Color.Black
                             )
                         }
                         Text(
@@ -127,8 +122,7 @@ fun EventCalendarScreen(navController: NavHostController) {
                             .clickable { navController.navigate("eventDetails") }
                             .weight(1f)
                             .background(Color.White, RoundedCornerShape(20.dp))
-                            .padding(16.dp)
-                    ) {
+                            .padding(16.dp)) {
                         Column(
                             modifier = Modifier.weight(1f)
                         ) {
@@ -166,8 +160,7 @@ fun EventCalendarScreen(navController: NavHostController) {
                             )
                         }
                         IconButton(
-                            onClick = {/* Удаление ивента */ },
-                            modifier = Modifier
+                            onClick = {/* Удаление ивента */ }, modifier = Modifier
                                 .border(
                                     2.dp,
                                     colorResource(R.color.main_pink),
@@ -187,12 +180,11 @@ fun EventCalendarScreen(navController: NavHostController) {
             }
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             TextButton(
-                onClick = {navController.navigate("requests")},
+                onClick = { navController.navigate("requests") },
                 modifier = Modifier
                     .height(64.dp)
                     .width(104.dp)
@@ -221,7 +213,7 @@ fun EventCalendarScreen(navController: NavHostController) {
                 )
             }
             TextButton(
-                onClick = {navController.navigate("create") },
+                onClick = { navController.navigate("create") },
                 modifier = Modifier
                     .height(64.dp)
                     .width(104.dp)

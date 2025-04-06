@@ -98,8 +98,7 @@ fun CreateEventScreen(navController: NavHostController) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
-                        colorResource(R.color.bg_blue),
-                        colorResource(R.color.bg_pink)
+                        colorResource(R.color.bg_blue), colorResource(R.color.bg_pink)
                     )
                 )
             )
@@ -150,8 +149,7 @@ fun CreateEventScreen(navController: NavHostController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(10.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .padding(10.dp), horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             TextButton(
                 onClick = {/* Добавление ивента */
@@ -163,8 +161,11 @@ fun CreateEventScreen(navController: NavHostController) {
                         emptyList()
                     )
                 },
-                modifier = Modifier
-                    .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(20.dp))
+                modifier = Modifier.border(
+                        4.dp,
+                        colorResource(R.color.main_blue),
+                        RoundedCornerShape(20.dp)
+                    )
             ) {
                 Text(
                     text = "Готово!",
@@ -199,14 +200,11 @@ fun CreateEventTitleInput(title: MutableState<String>) {
         ),
         placeholder = {
             Text(
-                text = "Название",
-                fontSize = 12.sp,
-                color = Color.Gray
+                text = "Название", fontSize = 12.sp, color = Color.Gray
             )
         },
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            hintLocales = LocaleList(Locale("ru"))
+            keyboardType = KeyboardType.Text, hintLocales = LocaleList(Locale("ru"))
         )
     )
 }
@@ -224,15 +222,13 @@ fun CreateEventDateInput(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (selectedDate.value == ""){
+        if (selectedDate.value == "") {
             EventDateText()
-        }
-        else {
+        } else {
             EventDateText(selectedDate.value)
         }
         IconButton(
-            onClick = { showDatePicker.value = true }
-        ) {
+            onClick = { showDatePicker.value = true }) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.calendar),
                 contentDescription = "Date Picker",
@@ -244,8 +240,7 @@ fun CreateEventDateInput(
 
 @Composable
 fun CreateEventTimeInput(
-    showTimePicker: MutableState<Boolean>,
-    selectedTime: MutableState<String>
+    showTimePicker: MutableState<Boolean>, selectedTime: MutableState<String>
 ) {
     Row(
         modifier = Modifier
@@ -254,16 +249,14 @@ fun CreateEventTimeInput(
             .padding(start = 10.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
-        ) {
-        if (selectedTime.value == ""){
+    ) {
+        if (selectedTime.value == "") {
             EventTimeText()
-        }
-        else {
+        } else {
             EventTimeText(selectedTime.value)
         }
         IconButton(
-            onClick = { showTimePicker.value = true }
-        ) {
+            onClick = { showTimePicker.value = true }) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.clock),
                 contentDescription = "Time Picker",
@@ -282,7 +275,7 @@ fun EventDateText(date: String = "Дата") {
 }
 
 @Composable
-fun EventTimeText(time : String = "Время") {
+fun EventTimeText(time: String = "Время") {
     Text(
         text = time,
         fontSize = 16.sp,
@@ -308,14 +301,11 @@ fun CreateEventDescriptionInput(descrip: MutableState<String>) {
         ),
         placeholder = {
             Text(
-                text = "Описание",
-                fontSize = 16.sp,
-                color = Color.Gray
+                text = "Описание", fontSize = 16.sp, color = Color.Gray
             )
         },
         keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text,
-            hintLocales = LocaleList(Locale("ru"))
+            keyboardType = KeyboardType.Text, hintLocales = LocaleList(Locale("ru"))
         )
     )
 }
@@ -324,8 +314,7 @@ fun CreateEventDescriptionInput(descrip: MutableState<String>) {
 @Composable
 fun CreateEventAddParticipants() {
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier
@@ -345,8 +334,7 @@ fun CreateEventAddParticipants() {
                 )
             }
             IconButton(
-                onClick = {/* Добавить человека */ },
-                modifier = Modifier
+                onClick = {/* Добавить человека */ }, modifier = Modifier
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.add_plus),
@@ -374,8 +362,7 @@ fun CreateEventAddLocation() {
             modifier = Modifier.padding(start = 10.dp, top = 10.dp)
         )
         Box(
-            modifier = Modifier
-                .padding(10.dp)
+            modifier = Modifier.padding(10.dp)
         ) {
             MapScreen()
         }
@@ -394,34 +381,29 @@ fun DateInput(
     if (showDatePicker.value) {
         DatePickerDialog(
             onDismissRequest = {
+            showDatePicker.value = false
+        }, confirmButton = {
+            TextButton(onClick = {
+                state.selectedDateMillis?.let {
+                    val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+                    selectedDate.value = "${date.dayOfMonth + 1}.${date.month.ordinal + 1}"
+                }
                 showDatePicker.value = false
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    state.selectedDateMillis?.let {
-                        val date = Instant.ofEpochMilli(it)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate()
-                        selectedDate.value = "${date.dayOfMonth + 1}.${date.month.ordinal + 1}"
-                    }
-                    showDatePicker.value = false
-                }) {
-                    Text("OK")
-                }
-                TextButton(
-                    onClick = { showDatePicker.value = false }
-                ) {
-                    Text(text = "Cancel")
-                }
-            },
-            colors = DatePickerDefaults.colors(
-                containerColor = Color.White,
-                headlineContentColor = colorResource(R.color.main_purple),
-                selectedDayContainerColor = colorResource(R.color.main_purple),
-                selectedDayContentColor = Color.White,
-                todayContentColor = colorResource(R.color.main_purple),
-                todayDateBorderColor = colorResource(R.color.main_blue)
-            )
+            }) {
+                Text("OK")
+            }
+            TextButton(
+                onClick = { showDatePicker.value = false }) {
+                Text(text = "Cancel")
+            }
+        }, colors = DatePickerDefaults.colors(
+            containerColor = Color.White,
+            headlineContentColor = colorResource(R.color.main_purple),
+            selectedDayContainerColor = colorResource(R.color.main_purple),
+            selectedDayContentColor = Color.White,
+            todayContentColor = colorResource(R.color.main_purple),
+            todayDateBorderColor = colorResource(R.color.main_blue)
+        )
         ) {
             DatePicker(state = state)
         }
@@ -444,22 +426,20 @@ fun TimeInput(
             Surface(
                 shape = MaterialTheme.shapes.extraLarge,
                 tonalElevation = 6.dp,
-                modifier =
-                    Modifier
-                        .width(IntrinsicSize.Min)
-                        .height(IntrinsicSize.Min)
-                        .background(
-                            shape = MaterialTheme.shapes.extraLarge,
-                            color = MaterialTheme.colorScheme.surface
-                        ),
+                modifier = Modifier
+                    .width(IntrinsicSize.Min)
+                    .height(IntrinsicSize.Min)
+                    .background(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surface
+                    ),
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     TimePicker(
-                        state = state,
-                        colors = TimePickerDefaults.colors(
+                        state = state, colors = TimePickerDefaults.colors(
                             containerColor = Color.White,
                             clockDialColor = Color.White,
                             selectorColor = colorResource(R.color.main_blue),
@@ -481,10 +461,8 @@ fun TimeInput(
                         TextButton(
                             onClick = {
                                 showTimePicker.value = false
-                                selectedTime.value =
-                                    "${state.hour}:${state.minute}"
-                            }
-                        ) { Text("OK") }
+                                selectedTime.value = "${state.hour}:${state.minute}"
+                            }) { Text("OK") }
                     }
                 }
             }
