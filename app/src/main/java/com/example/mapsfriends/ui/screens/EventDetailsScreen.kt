@@ -33,9 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.mapsfriends.R
-import com.example.mapsfriends.data.mockEvents
-import com.example.mapsfriends.data.monthList
-import com.example.mapsfriends.ui.components.MapScreen
+import com.example.mapsfriends.mockEvents
+import com.example.mapsfriends.monthList
 
 @Composable
 fun EventDetailsScreen(navController: NavHostController) {
@@ -56,12 +55,12 @@ fun EventDetailsScreen(navController: NavHostController) {
         EventDescription()
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
         ) {
             EventMembers()
             Spacer(modifier = Modifier.width(16.dp))
             IconButton(
-                onClick = {navController.navigate("messenger")},
+                onClick = { navController.navigate("messenger") },
                 modifier = Modifier
                     .background(Color.White, RoundedCornerShape(20.dp))
             ) {
@@ -117,7 +116,7 @@ fun EventHeader(navController: NavHostController) {
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = mockEvents[0].day.toString() + " " + monthList[mockEvents[0].month - 1],
+                text = "${mockEvents[0].day} ${monthList[mockEvents[0].month - 1]}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -133,7 +132,7 @@ fun EventHeader(navController: NavHostController) {
 }
 
 @Composable
-fun EventDescription()  {
+fun EventDescription() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -170,7 +169,7 @@ fun EventMembers() {
             )
         }
         IconButton(
-            onClick = {/* Добавить человека */ },
+            onClick = { /* Добавить человека */ },
             modifier = Modifier
         ) {
             Icon(
@@ -189,7 +188,6 @@ fun EventLocation() {
             .padding(vertical = 10.dp)
             .height(300.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
-
     ) {
         Text(
             text = mockEvents[0].location,
@@ -201,7 +199,7 @@ fun EventLocation() {
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            //MapScreen()
+            // MapScreen()
         }
     }
 }
@@ -216,7 +214,7 @@ fun EventDeleteButton() {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         TextButton(
-            onClick = {/* Удаление ивента */ },
+            onClick = { /* Удаление ивента */ },
             modifier = Modifier
                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
         ) {

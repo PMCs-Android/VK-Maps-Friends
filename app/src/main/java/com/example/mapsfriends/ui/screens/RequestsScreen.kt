@@ -1,4 +1,4 @@
-package com.example.mapsfriends.ui.screens
+package com.example.mapsfriends
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,18 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.mapsfriends.R
-import com.example.mapsfriends.data.MockDataEvents
-import com.example.mapsfriends.data.mockEvents
-import com.example.mapsfriends.data.mockUsers
-import com.example.mapsfriends.data.monthList
 
 @Composable
 fun RequestsScreen(navController: NavHostController) {
@@ -63,7 +58,6 @@ fun RequestsScreen(navController: NavHostController) {
         }
     }
 }
-
 
 @Composable
 fun RequestsHeader(navController: NavHostController) {
@@ -97,14 +91,13 @@ fun RequestButtons() {
         modifier = Modifier
     ) {
         IconButton(
-            onClick = {/* Удаление ивента */ },
+            onClick = { /* Удаление ивента */ },
             modifier = Modifier
                 .border(
                     2.dp,
                     colorResource(R.color.main_blue),
                     RoundedCornerShape(16.dp)
                 )
-
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.acception),
@@ -114,14 +107,13 @@ fun RequestButtons() {
         }
         Spacer(modifier = Modifier.height(4.dp))
         IconButton(
-            onClick = {/* Удаление ивента */ },
+            onClick = { /* Удаление ивента */ },
             modifier = Modifier
                 .border(
                     2.dp,
                     colorResource(R.color.main_pink),
                     RoundedCornerShape(16.dp)
                 )
-
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -131,7 +123,6 @@ fun RequestButtons() {
         }
     }
 }
-
 
 @Composable
 fun OneRequest(navController: NavHostController, event: MockDataEvents) {

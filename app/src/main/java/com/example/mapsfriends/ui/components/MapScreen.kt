@@ -14,10 +14,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.mapsfriends.utils.MapViewModel
 import com.example.mapsfriends.R
-import com.example.mapsfriends.data.mockUsers
+import com.example.mapsfriends.mockUsers
 import com.example.mapsfriends.ui.screens.MarkerData
+import com.example.mapsfriends.utils.MapViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -62,7 +62,13 @@ fun MapScreen(
             )
         ) {
             viewModel.markers.forEach { markerData ->
-                CreateMapMarker(markerData, viewModel, navController, coroutineScope, cameraPositionState)
+                CreateMapMarker(
+                    markerData = markerData,
+                    viewModel = viewModel,
+                    navController = navController,
+                    coroutineScope = coroutineScope,
+                    cameraPositionState = cameraPositionState
+                )
             }
         }
 
@@ -92,7 +98,15 @@ private fun CreateMapMarker(
         Marker(
             state = MarkerState(position = markerData.position),
             icon = it,
-            onClick = { handleMarkerClick(markerData, viewModel, navController, coroutineScope, cameraPositionState) }
+            onClick = {
+                handleMarkerClick(
+                    markerData = markerData,
+                    viewModel = viewModel,
+                    navController = navController,
+                    coroutineScope = coroutineScope,
+                    cameraPositionState = cameraPositionState
+                )
+            }
         )
     }
 }

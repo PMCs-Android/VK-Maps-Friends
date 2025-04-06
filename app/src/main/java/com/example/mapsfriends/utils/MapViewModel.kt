@@ -5,7 +5,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mapsfriends.data.mockUsers
+import com.example.mapsfriends.calculateMarkerSize
+import com.example.mapsfriends.createMarkerWithBorderAndTail
+import com.example.mapsfriends.loadOriginalBitmapFromUrl
+import com.example.mapsfriends.mockUsers
 import com.example.mapsfriends.ui.screens.MarkerData
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.coroutines.launch

@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mapsfriends.RequestsScreen
 import com.example.mapsfriends.ui.components.MapScreen
 import com.example.mapsfriends.ui.screens.EventCalendarScreen
 import com.example.mapsfriends.ui.screens.EventDetailsScreen
@@ -13,7 +14,6 @@ import com.example.mapsfriends.ui.screens.MainScreen
 import com.example.mapsfriends.ui.screens.MessengerScreen
 import com.example.mapsfriends.ui.screens.ProfileScreen
 import com.example.mapsfriends.ui.screens.RequestDetailsScreen
-import com.example.mapsfriends.ui.screens.RequestsScreen
 
 @Composable
 fun App() {

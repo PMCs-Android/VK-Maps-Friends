@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Maps&Friends"
 include(":app")
- 

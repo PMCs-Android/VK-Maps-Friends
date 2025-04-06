@@ -27,11 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.mapsfriends.R
-import com.example.mapsfriends.data.mockUsers
-
+import com.example.mapsfriends.mockUsers
 
 @Composable
-fun ProfileScreen(navController: NavHostController, id : Int) {
+fun ProfileScreen(navController: NavHostController, id: Int) {
     val user = remember(id) {
         mockUsers.firstOrNull { it.id == id } ?: mockUsers.first()
     }

@@ -27,19 +27,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.mapsfriends.data.MockDataEvents
+import com.example.mapsfriends.MockDataEvents
 import com.example.mapsfriends.R
-import com.example.mapsfriends.data.mockUsers
-import com.example.mapsfriends.data.mockEvents
-import com.example.mapsfriends.data.monthList
+import com.example.mapsfriends.mockEvents
+import com.example.mapsfriends.mockUsers
+import com.example.mapsfriends.monthList
 
 @Composable
 fun EventCalendarScreen(navController: NavHostController) {
@@ -94,10 +94,8 @@ fun MyEventsHeader(navController: NavHostController) {
 }
 
 @Composable
-fun OneEvent(event : MockDataEvents, navController: NavHostController) {
-    Row(
-        modifier = Modifier.fillMaxWidth()
-    ) {
+fun OneEvent(event: MockDataEvents, navController: NavHostController) {
+    Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = event.time,
             fontSize = 16.sp,
@@ -113,16 +111,15 @@ fun OneEvent(event : MockDataEvents, navController: NavHostController) {
                 .clickable { navController.navigate("eventDetails") }
                 .weight(1f)
                 .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = event.name,
                     fontSize = 20.sp,
                     color = Color.Black,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Bold
                 )
                 Row {
                     event.members.forEach { member ->
@@ -133,42 +130,44 @@ fun OneEvent(event : MockDataEvents, navController: NavHostController) {
                         )
                     }
                     Text(
-                        text = event.members.size.toString() + "/" + mockUsers.size.toString(),
+                        text = "${event.members.size}/${mockUsers.size}",
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal,
                         modifier = Modifier
-                            .align(Alignment.CenterVertically)
                             .padding(horizontal = 4.dp)
+                            .align(Alignment.CenterVertically)
                     )
                 }
                 Text(
-                    text = event.day.toString() + " " + monthList[event.month - 1],
+                    text = "${event.day} ${monthList[event.month - 1]}",
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 10.dp)
                 )
                 Text(
-                    text = "~" + event.time,
-                    fontSize = 12.sp,
+                    text = "~${event.time}",
+                    fontSize = 12.sp
                 )
             }
-            IconButton(
-                onClick = {/* Удаление ивента */ },
-                modifier = Modifier
-                    .border(
-                        2.dp,
-                        colorResource(R.color.main_pink),
-                        RoundedCornerShape(16.dp)
-                    )
-                    .align(Alignment.CenterVertically)
-
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.cross),
-                    contentDescription = "Delete",
-                    tint = colorResource(R.color.main_pink),
-                )
-            }
+            DeleteEvent(modifier = Modifier)
         }
+    }
+}
+
+@Composable
+fun DeleteEvent(modifier: Modifier) {
+    IconButton(
+        onClick = { /* Удаление ивента */ },
+        modifier = modifier
+            .border(
+                2.dp,
+                colorResource(R.color.main_pink),
+                RoundedCornerShape(16.dp)
+            )
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.cross),
+            contentDescription = "Delete",
+            tint = colorResource(R.color.main_pink)
+        )
     }
 }
 
@@ -194,7 +193,7 @@ fun BottomBar(navController: NavHostController) {
             )
         }
         TextButton(
-            onClick = {/* Обновление данных ивентов */ },
+            onClick = { /* Обновление данных ивентов */ },
             modifier = Modifier
                 .height(64.dp)
                 .width(104.dp)
@@ -261,7 +260,7 @@ fun NotEmptyEvents(navController: NavHostController) {
         }
     }
     LazyColumn {
-        items(mockEvents) { event->
+        items(mockEvents) { event ->
             OneEvent(event, navController)
         }
     }

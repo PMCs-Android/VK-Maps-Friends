@@ -39,11 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.mapsfriends.data.Messages
+import com.example.mapsfriends.Messages
 import com.example.mapsfriends.R
-import com.example.mapsfriends.data.mockEvents
-import com.example.mapsfriends.data.mockMessages
-import com.example.mapsfriends.data.monthList
+import com.example.mapsfriends.mockEvents
+import com.example.mapsfriends.mockMessages
+import com.example.mapsfriends.monthList
 
 @Composable
 fun MessengerScreen(navController: NavHostController) {
@@ -73,7 +73,6 @@ fun MessengerScreen(navController: NavHostController) {
         MessageInput()
     }
 }
-
 
 @Composable
 fun MessageInput() {
@@ -112,7 +111,7 @@ fun MessageInput() {
         )
         Spacer(modifier = Modifier.width(10.dp))
         IconButton(
-            onClick = {/* Отправление сообщения */ },
+            onClick = { /* Отправление сообщения */ },
             modifier = Modifier
                 .background(colorResource(R.color.main_purple), CircleShape)
                 .align(Alignment.Top)
@@ -127,7 +126,7 @@ fun MessageInput() {
 }
 
 @Composable
-fun MessagesOutput(message: Messages){
+fun MessagesOutput(message: Messages) {
     Row {
         Icon(
             imageVector = Icons.Default.AccountCircle,
@@ -163,7 +162,6 @@ fun MessagesOutput(message: Messages){
         }
     }
 }
-
 
 @Composable
 fun MessengerHeader(navController: NavHostController) {
@@ -227,4 +225,3 @@ fun MessengerHeader(navController: NavHostController) {
         }
     }
 }
-
