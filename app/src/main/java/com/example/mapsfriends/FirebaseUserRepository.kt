@@ -150,4 +150,10 @@ class FirebaseUserRepository : UserRepository {
             )
         }
     }
+
+    override suspend fun addEventToUser(creatorID: String, eventId: String) {
+        val userRef = db.document(creatorID)
+        val currentEvents = userRef.get().await().get("events") as? List<String> ?: emptyList()
+        userRef.update("events", currentEvents + eventId).await()
+    }
 }

@@ -50,7 +50,7 @@ interface UserRepository {
         friends: List<String>,
         location: GeoPoint
     )
-
+    suspend fun addEventToUser(creatorID: String, eventId: String)
     suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit)
     suspend fun addFreind(userId: String, friendId: String)
 }
