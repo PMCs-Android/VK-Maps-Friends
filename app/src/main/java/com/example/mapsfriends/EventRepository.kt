@@ -42,4 +42,8 @@ interface EventRepository {
     suspend fun createEvent(event: Event)
     suspend fun getEventById(eventId: String): Event?
     suspend fun addParticipant(eventId: String, userId: String)
+    suspend fun deleteEvent(eventId: String)
+    suspend fun deleteParticipant(eventId: String, userId: String)
+    suspend fun getParticipants(eventId: String): List<User>
+    suspend fun getEventsByUserId(userId: String): List<Event>
 }

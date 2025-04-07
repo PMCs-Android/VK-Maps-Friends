@@ -1,5 +1,6 @@
 package com.example.mapsfriends
 
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
@@ -102,5 +103,51 @@ class FirebaseUserRepository : UserRepository {
         db.document(userId)
             .set(user)
             .await()
+    }
+
+    override suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit) {
+        db
+            .document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("LocationObserver", "Ошибка подписки: ${error.message}")
+                    return@addSnapshotListener
+                }
+
+                val newLocation = snapshot?.getGeoPoint("location")
+                if (newLocation != null) {
+                    callback(newLocation)
+                }
+            }
+    }
+
+    override suspend fun addFreind(userId: String, friendId: String) {
+        if (userId == friendId) {
+            return
+        }
+        Firebase.firestore.runTransaction { transaction ->
+            val userDocument = transaction.get(db.document(userId))
+            if (!userDocument.exists()) {
+                throw NoSuchElementException("User with ID $userId not found")
+            }
+
+            val friendDocument = transaction.get(db.document(friendId))
+
+            if (!friendDocument.exists()) {
+                throw NoSuchElementException("Friend with ID $friendId not found")
+            }
+
+            val currentFriends = userDocument.get("friends") as? List<String> ?: emptyList()
+
+            if (currentFriends.contains(friendId)) {
+                throw IllegalStateException("User $userId already has friend $friendId")
+            }
+
+            transaction.update(
+                db.document(userId),
+                "friends",
+                currentFriends + friendId
+            )
+        }
     }
 }

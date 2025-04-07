@@ -2,13 +2,13 @@ package com.example.mapsfriends
 
 import com.google.firebase.firestore.GeoPoint
 
-data class User(
-    val userId: String = "",
-    val username: String = "",
-    val avatarUrl: String = "",
-    val friends: List<String> = emptyList(),
-    val location: GeoPoint = GeoPoint(0.0, 0.0)
-) {
+    data class User(
+        val userId: String = "",
+        val username: String = "",
+        val avatarUrl: String = "",
+        val friends: List<String> = emptyList(),
+        val location: GeoPoint = GeoPoint(0.0, 0.0)
+    ) {
     companion object {
         fun fromFirestore(map: Map<String, Any>): User {
             return User(
@@ -32,6 +32,7 @@ data class User(
 }
 
 interface UserRepository {
+
     suspend fun getUserById(userId: String): User?
 
     suspend fun getFriendsList(userId: String): List<User>?
@@ -49,4 +50,7 @@ interface UserRepository {
         friends: List<String>,
         location: GeoPoint
     )
+
+    suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit)
+    suspend fun addFreind(userId: String, friendId:String)
 }
