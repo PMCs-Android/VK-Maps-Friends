@@ -64,7 +64,7 @@ class FirebaseEventRepository : EventRepository {
         try {
             database.runTransaction { transaction ->
                 val event = transaction.get(events.document(eventId))
-                if(!event.exists()) {
+                if (!event.exists()) {
                     throw NoSuchElementException("Event with ID $eventId doesn't exist")
                 }
                 events.document(eventId).delete()
@@ -89,7 +89,7 @@ class FirebaseEventRepository : EventRepository {
                 val participantsId = document.get("participants") as? List<String>
                 participantsId?.let {
                     participantsId.mapNotNull { participantId ->
-                       FirebaseUserRepository().getUserById(participantId)
+                        FirebaseUserRepository().getUserById(participantId)
                     }
                 } ?: emptyList()
             } else {
@@ -109,7 +109,7 @@ class FirebaseEventRepository : EventRepository {
 
     override suspend fun getEventsByUserId(userId: String): List<Event> {
         return try {
-            val document = events.whereArrayContains("participants",userId)
+            val document = events.whereArrayContains("participants", userId)
                 .get()
                 .await()
             document.documents.mapNotNull { doc ->
