@@ -15,7 +15,7 @@ fi
 
 if [ $CI ]; then
   export REVIEWDOG_GITHUB_API_TOKEN="${GITHUB_TOKEN}"
-  $DETEKT_BIN --config .github/workflows/assets/detekt.yml --report xml:detekt_report.xml
+  $DETEKT_BIN --config .github/workflows/assets/detekt.yml --report xml:detekt_report.xml --baseline baseline.xml
 
   reviewdog -f=checkstyle \
       -name="detekt" \
