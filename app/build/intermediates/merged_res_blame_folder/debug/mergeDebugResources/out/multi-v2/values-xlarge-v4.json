@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-66:/values-xlarge-v4/values-xlarge-v4.xml",
+            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-70:/values-xlarge-v4/values-xlarge-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\listk\\.gradle\\caches\\8.11.1\\transforms\\b62bad41f451ed41996fc4ca017d1ec3\\transformed\\appcompat-1.7.0\\res\\values-xlarge-v4\\values-xlarge-v4.xml",
+                    "source": "C:\\Users\\Vanya\\.gradle\\caches\\8.11.1\\transforms\\e4268d0a55edfb7fa8a3e08451d30d1c\\transformed\\appcompat-1.7.0\\res\\values-xlarge-v4\\values-xlarge-v4.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7",
                         "startColumns": "4,4,4,4,4,4",

@@ -19,9 +19,15 @@
     <dimen name="marker_tail_height">8dp</dimen>
     <string name="app_name">Maps&amp;Friends</string>
     <string name="dalete">Удалить</string>
+    <string name="gcm_defaultSenderId" translatable="false">383873723936</string>
+    <string name="google_api_key" translatable="false">AIzaSyDKJCQLVAZ4cH81gCleulBNNjJLMHxfIj0</string>
+    <string name="google_app_id" translatable="false">1:383873723936:android:4a77962d35f4c7db771645</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDKJCQLVAZ4cH81gCleulBNNjJLMHxfIj0</string>
+    <string name="google_storage_bucket" translatable="false">maps-and-friends.firebasestorage.app</string>
     <string name="message_placefolder">Сообщение</string>
     <string name="my_events">Мои ивенты</string>
     <string name="new_event">Создать</string>
+    <string name="project_id" translatable="false">maps-and-friends</string>
     <string name="requests">Заявки</string>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         
