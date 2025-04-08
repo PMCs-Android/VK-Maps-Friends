@@ -6,8 +6,12 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.*
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 
@@ -49,7 +53,10 @@ class LocationManager(private val context: Context) {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
         ).all { permission ->
-            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context,
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
         }
 
     fun startLocationUpdates() {
@@ -95,7 +102,8 @@ class LocationManager(private val context: Context) {
 
     private fun handleLocationUpdate(location: Location) {
         val currentTime = System.currentTimeMillis()
-        val isSignificantChange = lastLocation == null || location.distanceTo(lastLocation!!) >= LOCATION_CHANGE_THRESHOLD_METERS
+        val isSignificantChange = lastLocation == null ||
+                location.distanceTo(lastLocation!!) >= LOCATION_CHANGE_THRESHOLD_METERS
 
         if (isSignificantChange) {
             if (!isHighFrequencyMode) {
@@ -104,24 +112,29 @@ class LocationManager(private val context: Context) {
             }
             lastLocation = location
             lastUpdateTime = currentTime
-
             listener?.onLocationUpdated(location)
             userId?.let { id ->
                 sendLocationToFirestore(id, location.latitude, location.longitude)
             }
         } else {
-            if (currentTime - lastUpdateTime > LOW_FREQUENCY_INTERVAL_MILLIS && isHighFrequencyMode) {
+            if (currentTime - lastUpdateTime > LOW_FREQUENCY_INTERVAL_MILLIS &&
+                isHighFrequencyMode
+            ) {
                 isHighFrequencyMode = false
                 requestLocationUpdates(LOW_FREQUENCY_INTERVAL_MILLIS)
             }
         }
     }
 
-    private fun sendLocationToFirestore(userId: String, latitude: Double, longitude: Double) {
-
+    private fun sendLocationToFirestore(
+        userId: String,
+        latitude: Double,
+        longitude: Double
+    ) {
         val firestore = FirebaseFirestore.getInstance()
         val locationData = GeoPoint(latitude, longitude)
-        firestore.collection("users").document(userId)
+        firestore.collection("users")
+            .document(userId)
             .update("location", locationData)
     }
 }
