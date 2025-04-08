@@ -103,7 +103,7 @@ class LocationManager(private val context: Context) {
     private fun handleLocationUpdate(location: Location) {
         val currentTime = System.currentTimeMillis()
         val isSignificantChange = lastLocation == null ||
-                location.distanceTo(lastLocation!!) >= LOCATION_CHANGE_THRESHOLD_METERS
+            location.distanceTo(lastLocation!!) >= LOCATION_CHANGE_THRESHOLD_METERS
 
         if (isSignificantChange) {
             if (!isHighFrequencyMode) {
