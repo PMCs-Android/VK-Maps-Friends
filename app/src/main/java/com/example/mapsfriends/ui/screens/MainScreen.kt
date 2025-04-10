@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.ui.screens
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
@@ -24,6 +24,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.mapsfriends.ui.components.MapScreen
+import com.example.mapsfriends.R
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 

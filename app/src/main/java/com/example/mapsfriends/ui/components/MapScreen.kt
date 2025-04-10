@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.ui.components
 
 import ZoomSlider
 import androidx.compose.foundation.layout.Box
@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mapsfriends.viewmodels.MapViewModel
+import com.example.mapsfriends.R
+import com.example.mapsfriends.data.mockdata.mockUsers
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions

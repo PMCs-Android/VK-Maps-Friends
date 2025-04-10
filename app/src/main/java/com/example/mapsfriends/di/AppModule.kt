@@ -1,6 +1,10 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.di
 
 import android.app.Application
+import com.example.mapsfriends.data.repositories.UserRepository
+import com.example.mapsfriends.data.repositories.EventRepository
+import com.example.mapsfriends.data.repositories.FirebaseEventRepository
+import com.example.mapsfriends.data.repositories.FirebaseUserRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +35,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mapsfriends.data.mockdata.MockDataEvents
+import com.example.mapsfriends.R
+import com.example.mapsfriends.data.mockdata.mockEvents
+import com.example.mapsfriends.data.mockdata.mockUsers
+import com.example.mapsfriends.data.mockdata.monthList
 
 @Composable
 fun EventCalendarScreen(navController: NavHostController) {

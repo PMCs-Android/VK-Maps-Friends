@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.data.repositories
 
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException

@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.data.utils
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import coil.imageLoader
 import coil.request.ImageRequest
+import com.example.mapsfriends.R
 import kotlin.math.pow
 
 suspend fun loadOriginalBitmapFromUrl(context: Context, url: String): Bitmap? {

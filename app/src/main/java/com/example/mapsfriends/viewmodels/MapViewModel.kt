@@ -1,9 +1,14 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.viewmodels
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mapsfriends.data.utils.calculateMarkerSize
+import com.example.mapsfriends.data.utils.createMarkerWithBorderAndTail
+import com.example.mapsfriends.data.utils.loadOriginalBitmapFromUrl
+import com.example.mapsfriends.data.mockdata.mockUsers
+import com.example.mapsfriends.ui.screens.MarkerData
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.coroutines.launch
 

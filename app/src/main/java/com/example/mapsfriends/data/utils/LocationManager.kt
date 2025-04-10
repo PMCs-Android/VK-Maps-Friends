@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.data.utils
 
 import android.Manifest
 import android.content.Context

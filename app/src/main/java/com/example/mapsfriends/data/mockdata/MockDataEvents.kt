@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.data.mockdata
 
 val monthList = listOf(
     "янв", "фев", "март", "апр", "май", "июн",

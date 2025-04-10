@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.data.repositories
 
 import android.util.Log
 import com.google.firebase.Firebase

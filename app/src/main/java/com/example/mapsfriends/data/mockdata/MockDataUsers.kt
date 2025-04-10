@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.data.mockdata
 
 import com.google.android.gms.maps.model.LatLng
 

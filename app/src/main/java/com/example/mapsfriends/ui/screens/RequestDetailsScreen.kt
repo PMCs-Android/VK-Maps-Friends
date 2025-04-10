@@ -1,4 +1,4 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +21,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.mapsfriends.R
 
 @Composable
 fun RequestDetailsScreen(navController: NavHostController) {
