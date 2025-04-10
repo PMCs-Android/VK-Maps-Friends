@@ -9,7 +9,6 @@ data class MockDataUsers(
     val location: LatLng
 )
 
-// Моковые данные пользователей
 val mockUsers = listOf(
     MockDataUsers(
         id = 1,

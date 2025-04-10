@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 
 data class MarkerData(
+    val id: Int,
     val position: LatLng,
     val title: String,
     val originalBitmap: Bitmap,
@@ -41,7 +42,7 @@ fun MainScreen(navController: NavHostController) {
             .fillMaxSize()
             .padding(vertical = 30.dp)
     ) {
-        MapScreen()
+        MapScreen(navController)
 
         Column(
             modifier = Modifier
@@ -76,7 +77,6 @@ fun MainScreen(navController: NavHostController) {
                 )
             }
         }
-
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -95,11 +95,10 @@ fun MainScreen(navController: NavHostController) {
                     tint = colorResource(R.color.main_purple)
                 )
             }
-
             Spacer(modifier = Modifier.height(10.dp))
-
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween
+
             ) {
                 IconButton(
                     onClick = { /* Показать чаты */ },
@@ -114,7 +113,6 @@ fun MainScreen(navController: NavHostController) {
                         tint = colorResource(R.color.main_blue)
                     )
                 }
-
                 Spacer(modifier = Modifier.width(10.dp))
 
                 IconButton(
@@ -132,9 +130,7 @@ fun MainScreen(navController: NavHostController) {
                         tint = colorResource(R.color.main_purple)
                     )
                 }
-
                 Spacer(modifier = Modifier.width(10.dp))
-
                 IconButton(
                     onClick = { /* Показать друзей */ },
                     modifier = Modifier

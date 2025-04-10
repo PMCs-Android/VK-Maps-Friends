@@ -52,7 +52,7 @@ fun EventDetailsScreen(navController: NavHostController) {
         EventDescription()
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
         ) {
             EventMembers()
             Spacer(modifier = Modifier.width(16.dp))
@@ -113,7 +113,7 @@ fun EventHeader(navController: NavHostController) {
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = mockEvents[0].day.toString() + " " + monthList[mockEvents[0].month - 1],
+                text = "${mockEvents[0].day} ${monthList[mockEvents[0].month - 1]}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -185,7 +185,6 @@ fun EventLocation() {
             .padding(vertical = 10.dp)
             .height(300.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
-
     ) {
         Text(
             text = mockEvents[0].location,
@@ -197,7 +196,7 @@ fun EventLocation() {
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            MapScreen()
+            // MapScreen()
         }
     }
 }
