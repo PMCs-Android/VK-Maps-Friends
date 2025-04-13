@@ -15,26 +15,34 @@ class MapViewModel : ViewModel() {
     val selectedMarkerId = mutableStateOf<String?>(null)
     val userRepository = FirebaseUserRepository()
 
-    fun loadMarkersIntoMap(context: Context, userId: String) {
+    fun setupMarkersAndObserveLocations(context: Context, userId: String) {
         viewModelScope.launch {
-            val friends = userRepository.getFriendsList(userId)
-            println(friends)
-            friends?.forEach { user ->
-                val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
-                originalBitmap?.let {
-                    val initialSize = calculateMarkerSize(18f) // start zoom
-                    markers.add(
-                        MarkerData(
-                            id = user.userId,
-                            position = convertToLatLng(user.location),
-                            title = user.username,
-                            originalBitmap = it,
-                            icon = BitmapDescriptorFactory.fromBitmap(
-                                createMarkerWithBorderAndTail(context, it, initialSize)
-                            )
+            loadMarkersIntoMap(context, userId)
+            markers.forEach { marker ->
+                userRepository.observeLocation(marker.id) { newLocation ->
+                    updateMarkerPosition(marker.id, newLocation)
+                }
+            }
+        }
+    }
+
+    private suspend fun loadMarkersIntoMap(context: Context, userId: String) {
+        val friends = userRepository.getFriendsList(userId)
+        friends?.forEach { user ->
+            val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
+            originalBitmap?.let {
+                val initialSize = calculateMarkerSize(18f) // start zoom
+                markers.add(
+                    MarkerData(
+                        id = user.userId,
+                        position = convertToLatLng(user.location),
+                        title = user.username,
+                        originalBitmap = it,
+                        icon = BitmapDescriptorFactory.fromBitmap(
+                            createMarkerWithBorderAndTail(context, it, initialSize)
                         )
                     )
-                }
+                )
             }
         }
     }
@@ -45,6 +53,14 @@ class MapViewModel : ViewModel() {
             marker.icon = BitmapDescriptorFactory.fromBitmap(
                 createMarkerWithBorderAndTail(context, marker.originalBitmap, newSize)
             )
+        }
+    }
+
+    private fun updateMarkerPosition(userId: String, newLocation: GeoPoint) {
+        val markerIndex = markers.indexOfFirst { it.id == userId }
+        if (markerIndex != -1) {
+            val updatedMarker = markers[markerIndex].copy(position = convertToLatLng(newLocation))
+            markers[markerIndex] = updatedMarker
         }
     }
 

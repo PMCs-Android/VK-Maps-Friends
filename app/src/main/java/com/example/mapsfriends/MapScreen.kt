@@ -39,7 +39,9 @@ fun MapScreen(
         position = CameraPosition.fromLatLngZoom(currentUser.location, 18f)
     }
 
-    LaunchedEffect(Unit) { viewModel.loadMarkersIntoMap(context, currentUser.id) }
+    LaunchedEffect(Unit) {
+        viewModel.setupMarkersAndObserveLocations(context, currentUser.id)
+    }
     LaunchedEffect(cameraPositionState.position.zoom) {
         viewModel.updateMarkerIcons(cameraPositionState.position.zoom, context)
     }

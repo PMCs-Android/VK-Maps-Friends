@@ -121,7 +121,7 @@ class FirebaseUserRepository : UserRepository {
             }
     }
 
-    override suspend fun addFreind(userId: String, friendId: String) {
+    override suspend fun addFriend(userId: String, friendId: String) {
         if (userId == friendId) {
             return
         }
