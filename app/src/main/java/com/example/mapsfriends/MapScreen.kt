@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -30,8 +30,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun MapScreen(
     navController: NavHostController,
-    viewModel: MapViewModel = viewModel()
-) {
+    viewModel: MapViewModel = hiltViewModel()
+){
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val currentUser = remember { mockUsers.firstOrNull { it.id == "1" } ?: mockUsers.first() }
