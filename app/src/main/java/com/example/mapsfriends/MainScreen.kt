@@ -28,7 +28,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 
 data class MarkerData(
-    val id: Int,
+    val id: String,
     val position: LatLng,
     val title: String,
     val originalBitmap: Bitmap,
