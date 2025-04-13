@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,8 +34,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,9 +56,14 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.google.firebase.firestore.GeoPoint
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.UUID
 
 object Constants {
     const val BORDER = 4
@@ -64,6 +74,40 @@ object Constants {
     const val LARGE = 30
 }
 
+val currentUser = User(
+    userId = "111",
+    username = "test user",
+    avatarUrl = "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818.jpeg/orig",
+    friends = listOf("112", "113"),
+    location = GeoPoint(55.751244, 37.618423)
+)
+
+val friend1 = User(
+    userId = "112",
+    username = "test user2",
+    avatarUrl = "https://avatars.mds.yandex.net/get-entity_search/1969011/918366713/orig",
+    friends = listOf(),
+    location = GeoPoint(55.740000, 37.600000)
+)
+
+val friend2 = User(
+    userId = "113",
+    username = "test user3",
+    avatarUrl = "https://i.pinimg.com/736x/be/46/46/be4646a42ab267d93f035f93752eb796.jpg",
+    friends = listOf(),
+    location = GeoPoint(55.760000, 37.620000)
+)
+
+val event1 = Event(
+    "1",
+    "111",
+    "gegege",
+    "aaaaaaaaaaaa",
+    GeoPoint(50.004, 23.004),
+    "13.4.25 12:10",
+    listOf("111", "112", "113")
+)
+
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +117,7 @@ fun CreateEventScreen(navController: NavHostController) {
     val date = remember { mutableStateOf("") }
     val time = remember { mutableStateOf("") }
 //    val location = remember { mutableStateOf(GeoPoint(0.0, 0.0)) }
+
     val showDatePicker = remember { mutableStateOf(false) }
     val showTimePicker = remember { mutableStateOf(false) }
     val state = rememberDatePickerState()
@@ -81,8 +126,26 @@ fun CreateEventScreen(navController: NavHostController) {
         initialMinute = LocalDateTime.now().minute,
         is24Hour = true,
     )
+
     val viewModel = hiltViewModel<EventViewModel>()
-//    val data by viewModel.data.collectAsState()
+
+//    LaunchedEffect(Unit) {
+//        if (viewModel.eventId.value == null) {
+//            viewModel.generateNewEventId()
+//        }
+//    }
+    val createdEventId = viewModel.eventId
+
+    val showAddFriend = remember { mutableStateOf(false) }
+
+    viewModel.createEvent(
+        "1",
+        "gegege",
+        "aaaaaaaaaaaa",
+        GeoPoint(50.004, 23.004),
+        "13.4.25 12:10",
+        listOf("111", "112", "113")
+    )
 
     Column(
         modifier = Modifier
@@ -119,7 +182,9 @@ fun CreateEventScreen(navController: NavHostController) {
             TimeInput(showTimePicker, timePickerState, time)
         }
         CreateEventDescriptionInput(descrip)
-        CreateEventAddParticipants()
+
+        CreateEventAddParticipants(showAddFriend, viewModel)
+
         CreateEventAddLocation()
         Row(
             modifier = Modifier
@@ -131,12 +196,15 @@ fun CreateEventScreen(navController: NavHostController) {
             TextButton(
                 onClick = { /* Добавление ивента */
                     viewModel.createEvent(
+                        createdEventId.toString(),
                         title.value,
                         descrip.value,
                         GeoPoint(54.0, 20.0),
                         date.value + " " + time.value,
-                        emptyList()
+                        viewModel.participants.value.map { it.userId }
                     )
+                    navController.navigate("events")
+//                    viewModel.resetEventId()
                 },
                 modifier = Modifier.border(
                     4.dp,
@@ -156,7 +224,7 @@ fun CreateEventScreen(navController: NavHostController) {
 }
 
 @Composable
-fun ExitButton(navController : NavHostController) {
+fun ExitButton(navController: NavHostController) {
     IconButton(
         onClick = { navController.popBackStack() },
         modifier = Modifier
@@ -180,7 +248,7 @@ fun CreateEventTitleInput(title: MutableState<String>) {
         shape = RoundedCornerShape(Constants.MEDIUM2.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp)
+            .height(68.dp)
             .padding(top = Constants.SMALL1.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
@@ -191,7 +259,7 @@ fun CreateEventTitleInput(title: MutableState<String>) {
         placeholder = {
             Text(
                 text = "Название",
-                fontSize = Constants.SMALL2.sp,
+                fontSize = Constants.MEDIUM1.sp,
                 color = Color.Gray
             )
         },
@@ -309,9 +377,22 @@ fun CreateEventDescriptionInput(descrip: MutableState<String>) {
     )
 }
 
-// нужно подтянуть друзей из вк
 @Composable
-fun CreateEventAddParticipants() {
+fun CreateEventAddParticipants(
+    showAddFriend: MutableState<Boolean>,
+    viewModel: EventViewModel
+) {
+//    val viewModel = hiltViewModel<EventViewModel>()
+    val participants by viewModel.participants.collectAsState()
+    val createdEventId = viewModel.eventId
+
+    // Автоматическое обновление при изменении состояния showAddFriend
+    LaunchedEffect(showAddFriend.value) {
+        if (!showAddFriend.value) {
+            viewModel.loadParticipants()
+        }
+    }
+
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -319,30 +400,42 @@ fun CreateEventAddParticipants() {
             modifier = Modifier
                 .height(48.dp)
                 .background(Color.White, RoundedCornerShape(Constants.MEDIUM2.dp))
-                .padding(start = Constants.SMALL1.dp)
+                .padding(start = Constants.SMALL1.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+
         ) {
-            mockEvents[0].members.forEach { member ->
+//            Text(
+//                text = createdEventId
+//            )
+            participants.forEach { participant ->
+//                AsyncImage(
+//                    model = participant.avatarUrl,
+//                    contentDescription = "Friend Avatar",
+//                    modifier = Modifier
+//                        .size(36.dp)
+//                )
                 Icon(
                     imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "MemberIcon",
-                    tint = colorResource(R.color.bg_pink),
-                    modifier = Modifier
-                        .width(36.dp)
-                        .height(36.dp)
-                        .align(Alignment.CenterVertically)
+                    contentDescription = ""
                 )
             }
             IconButton(
-                onClick = { /* Добавить человека */ },
+                onClick = { showAddFriend.value = true },
                 modifier = Modifier
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.add_plus),
-                    contentDescription = "Add member",
+                    contentDescription = "Add participants",
                     tint = colorResource(R.color.main_purple)
                 )
             }
         }
+    }
+    if (showAddFriend.value) {
+        AddParticipantsScreen(
+            viewModel, showAddFriend
+        )
     }
 }
 

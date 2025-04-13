@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 
 @Composable
@@ -89,7 +90,7 @@ fun MyEventsHeader(navController: NavHostController) {
 }
 
 @Composable
-fun OneEvent(event: MockDataEvents, navController: NavHostController) {
+fun OneEvent(event : Event, navController: NavHostController) {
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = event.time,
@@ -111,36 +112,36 @@ fun OneEvent(event: MockDataEvents, navController: NavHostController) {
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = event.name,
+                    text = event.title,
                     fontSize = 20.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold
                 )
                 Row {
-                    event.members.forEach { member ->
+                    event.participants.forEach { member ->
                         Icon(
                             imageVector = Icons.Default.AccountCircle,
                             contentDescription = "MemberIcon",
                             tint = colorResource(R.color.main_purple)
                         )
                     }
-                    Text(
-                        text = "${event.members.size}/${mockUsers.size}",
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                            .padding(horizontal = 4.dp)
-                            .align(Alignment.CenterVertically)
-                    )
+//                    Text(
+//                        text = "${event.participants.size}/${mockUsers.size}",
+//                        fontSize = 16.sp,
+//                        modifier = Modifier
+//                            .padding(horizontal = 4.dp)
+//                            .align(Alignment.CenterVertically)
+//                    )
                 }
                 Text(
-                    text = "${event.day} ${monthList[event.month - 1]}",
+                    text = event.time,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 10.dp)
                 )
-                Text(
-                    text = "~${event.time}",
-                    fontSize = 12.sp
-                )
+//                Text(
+//                    text = "~${event.time}",
+//                    fontSize = 12.sp
+//                )
             }
             DeleteEvent(modifier = Modifier)
         }
@@ -221,13 +222,18 @@ fun BottomBar(navController: NavHostController) {
 
 @Composable
 fun NotEmptyEvents(navController: NavHostController) {
+    val viewModel = hiltViewModel<EventViewModel>()
+    val events = viewModel.getEventsByUserId(currentUser.userId)
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        mockEvents.forEach { event ->
+        Text(
+            text = events.size.toString()
+        )
+        events.forEach { event ->
             Column {
                 TextButton(
                     onClick = { /* Переход на день */ },
@@ -237,7 +243,7 @@ fun NotEmptyEvents(navController: NavHostController) {
                         .background(Color.White, RoundedCornerShape(8.dp))
                 ) {
                     Text(
-                        text = event.day.toString(),
+                        text = event.time,
                         fontSize = 16.sp,
                         color = Color.Black
                     )
@@ -255,7 +261,7 @@ fun NotEmptyEvents(navController: NavHostController) {
         }
     }
     LazyColumn {
-        items(mockEvents) { event ->
+        items(events) { event ->
             OneEvent(event, navController)
         }
     }
