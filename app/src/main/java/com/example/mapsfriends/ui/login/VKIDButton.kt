@@ -60,18 +60,13 @@ fun VKIDButton() {
                     Toast.makeText(
                         context,
                         fail.description,
-<<<<<<< HEAD
                         Toast.LENGTH_LONG,
-=======
-                        Toast.LENGTH_LONG
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
                     ).show()
                 }
             }
         },
         scenario = OneTapTitleScenario.SignIn,
         signInAnotherAccountButtonEnabled = true,
-<<<<<<< HEAD
         style =
             OneTapStyle
                 .Light(
@@ -87,37 +82,6 @@ fun VKIDButton() {
     )
 }
 
-fun getUserInfo(
-    token: String,
-    onResult: (Map<String, String>) -> Unit,
-) {
-    CoroutineScope(Dispatchers.Main).launch {
-        VKID.instance.getUserData(
-            callback =
-                object : VKIDGetUserCallback {
-                    override fun onSuccess(user: VKIDUser) {
-                        val userInfo =
-                            mapOf(
-                                "Name" to user.firstName,
-                                "LastName" to user.lastName,
-                            )
-                        onResult(userInfo)
-                    }
-
-=======
-        style = OneTapStyle
-            .Light(
-                cornersStyle = OneTapButtonCornersStyle.Custom(2f),
-                sizeStyle = OneTapButtonSizeStyle.SMALL_32,
-                elevationStyle = OneTapButtonElevationStyle.Custom(4f)
-            ),
-        authParams = VKIDAuthUiParams {
-            scopes = setOf("friends")
-        },
-        modifier = Modifier.padding(16.dp)
-    )
-}
-
 fun getUserInfo(token: String, onResult: (Map<String, String>) -> Unit) {
     CoroutineScope(Dispatchers.Main).launch {
         try {
@@ -130,7 +94,7 @@ fun getUserInfo(token: String, onResult: (Map<String, String>) -> Unit) {
                         )
                         onResult(userInfo)
                     }
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
+
                     override fun onFail(fail: VKIDGetUserFail) {
                         when (fail) {
                             is VKIDGetUserFail.FailedApiCall -> fail.description
@@ -138,17 +102,12 @@ fun getUserInfo(token: String, onResult: (Map<String, String>) -> Unit) {
                             is VKIDGetUserFail.NotAuthenticated -> fail.description
                         }
                     }
-<<<<<<< HEAD
                 },
-        )
-    }
-}
-=======
-                }
             )
-        } catch (e: Exception) {
+        }
+        catch (e: Exception) {
             println(e.message)
         }
     }
 }
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
+

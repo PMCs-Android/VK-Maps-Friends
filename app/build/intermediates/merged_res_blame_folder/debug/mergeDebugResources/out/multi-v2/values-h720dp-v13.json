@@ -4,7 +4,7 @@
             "outputFile": "com.example.mapsfriends.app-mergeDebugResources-87:/values-h720dp-v13/values-h720dp-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.11.1\\transforms\\99d99ee4b3afd6dc3eaffaa87febacb0\\transformed\\appcompat-1.7.0\\res\\values-h720dp-v13\\values-h720dp-v13.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\2ed061989182ae69f3692e0a51185c5a\\transformed\\appcompat-1.7.0\\res\\values-h720dp-v13\\values-h720dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

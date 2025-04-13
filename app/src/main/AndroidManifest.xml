@@ -3,25 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-<<<<<<< HEAD
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-
-=======
-
-    <application
-        android:name=".App"
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-<<<<<<< HEAD
         android:theme="@style/Theme.MapsFriends"
         tools:targetApi="31">
 
@@ -32,38 +17,19 @@
         <meta-data
                 android:name="com.vk.sdk.VKApplicationId"
                 android:value="53221768" />
-=======
-        android:theme="@style/Theme.Vkid"
-        tools:targetApi="31">
-
-        <meta-data
-            android:name="com.vk.sdk.VKApplicationId"
-            android:value="53221768" />
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-<<<<<<< HEAD
             android:theme="@style/AppTheme">
-=======
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Vkid">
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
 
 
     </application>
 
-
-=======
-    </application>
-
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 </manifest>

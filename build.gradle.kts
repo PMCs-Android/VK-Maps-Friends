@@ -6,8 +6,5 @@ plugins {
 
     alias(libs.plugins.gms) apply false
     alias(libs.plugins.plugin.serialization) apply false
-<<<<<<< HEAD
     alias(libs.plugins.ktlint) apply false
-=======
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 }

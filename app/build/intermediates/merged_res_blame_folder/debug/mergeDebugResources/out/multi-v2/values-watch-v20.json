@@ -4,7 +4,7 @@
             "outputFile": "com.example.mapsfriends.app-mergeDebugResources-87:/values-watch-v20/values-watch-v20.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.11.1\\transforms\\3614eced7d03f62afeeb64f3645d06e5\\transformed\\play-services-auth-20.7.0\\res\\values-watch-v20\\values.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\0a33976411f51cefeae43bc52fc8ebe9\\transformed\\play-services-auth-20.7.0\\res\\values-watch-v20\\values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11",
                         "startColumns": "0,0,0,0,0,0,0,0",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.11.1\\transforms\\99d99ee4b3afd6dc3eaffaa87febacb0\\transformed\\appcompat-1.7.0\\res\\values-watch-v20\\values-watch-v20.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\2ed061989182ae69f3692e0a51185c5a\\transformed\\appcompat-1.7.0\\res\\values-watch-v20\\values-watch-v20.xml",
                     "from": {
                         "startLines": "2,5,8",
                         "startColumns": "4,4,4",

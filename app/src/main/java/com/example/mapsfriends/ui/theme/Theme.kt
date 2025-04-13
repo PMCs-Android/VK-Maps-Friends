@@ -10,7 +10,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
-<<<<<<< HEAD
 private val DarkColorScheme =
     darkColorScheme(
         primary = Purple80,
@@ -23,19 +22,6 @@ private val LightColorScheme =
         primary = Purple40,
         secondary = PurpleGrey40,
         tertiary = Pink40,
-=======
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
     surface = Color(0xFFFFFBFE),
@@ -44,7 +30,6 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
-<<<<<<< HEAD
      */
     )
 
@@ -72,9 +57,6 @@ fun MapsFriendsTheme(
         content = content,
     )
 }
-=======
-    */
-)
 
 @Composable
 fun VkidTheme(
@@ -99,4 +81,3 @@ fun VkidTheme(
         content = content
     )
 }
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671

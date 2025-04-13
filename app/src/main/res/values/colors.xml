@@ -7,7 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-<<<<<<< HEAD
     <color name="main_purple">#9419FF</color>
     <color name="main_pink">#EB00FF</color>
     <color name="main_blue">#0047FF</color>
@@ -15,6 +14,4 @@
     <color name="bg_pink">#F68EFF</color>
     <color name="marker_border">#ABBACA</color>
     <color name="marker_tail">#ABBACA</color>
-=======
->>>>>>> ffa6dfdfb23959ad72d9b30a9c1f6f1099a32671
 </resources>
