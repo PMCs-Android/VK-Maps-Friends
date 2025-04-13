@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 fun MapScreen(
     navController: NavHostController,
     viewModel: MapViewModel = hiltViewModel()
-){
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val currentUser = remember { mockUsers.firstOrNull { it.id == "1" } ?: mockUsers.first() }
