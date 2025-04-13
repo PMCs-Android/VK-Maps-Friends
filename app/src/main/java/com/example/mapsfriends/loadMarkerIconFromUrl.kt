@@ -15,16 +15,12 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import kotlin.math.pow
 
-suspend fun loadOriginalBitmapFromUrl(
-    context: Context,
-    url: String,
-): Bitmap? {
+suspend fun loadOriginalBitmapFromUrl(context: Context, url: String): Bitmap? {
     return try {
-        val request =
-            ImageRequest.Builder(context)
-                .data(url)
-                .allowHardware(false)
-                .build()
+        val request = ImageRequest.Builder(context)
+            .data(url)
+            .allowHardware(false)
+            .build()
         val result = context.imageLoader.execute(request)
         result.drawable?.toBitmap()
     } catch (e: Exception) {
@@ -46,7 +42,7 @@ fun calculateMarkerSize(zoom: Float): Int {
 fun createMarkerWithBorderAndTail(
     context: Context,
     original: Bitmap,
-    size: Int,
+    size: Int
 ): Bitmap {
     val borderWidthPx = (size * 0.05f).toInt().coerceIn(2, 8)
     val tailHeightPx = (size * 0.2f).toInt().coerceIn(4, 16)
@@ -74,26 +70,35 @@ fun createMarkerWithBorderAndTail(
     canvas.drawPath(tailPath, bgPaint)
 
     val scaledBitmap = Bitmap.createScaledBitmap(
-        original, contentSize, contentSize, true,
+        original,
+        contentSize,
+        contentSize,
+        true
     )
 
     val mask = Bitmap.createBitmap(contentSize, contentSize, Bitmap.Config.ARGB_8888)
-    Canvas(mask).apply { drawRoundRect(
-            0f, 0f,
-            contentSize.toFloat(), contentSize.toFloat(),
-            cornerRadiusPx.toFloat(), cornerRadiusPx.toFloat(),
-            Paint(Paint.ANTI_ALIAS_FLAG),
+    Canvas(mask).apply {
+        drawRoundRect(
+            0f,
+            0f,
+            contentSize.toFloat(),
+            contentSize.toFloat(),
+            cornerRadiusPx.toFloat(),
+            cornerRadiusPx.toFloat(),
+            Paint(Paint.ANTI_ALIAS_FLAG)
         )
     }
 
     val combined = Bitmap.createBitmap(contentSize, contentSize, Bitmap.Config.ARGB_8888)
-    Canvas(combined).apply { drawBitmap(mask, 0f, 0f, null)
+    Canvas(combined).apply {
+        drawBitmap(mask, 0f, 0f, null)
         drawBitmap(
             scaledBitmap,
-            0f, 0f,
+            0f,
+            0f,
             Paint().apply {
                 xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
-            },
+            }
         )
     }
 
@@ -107,11 +112,13 @@ fun createMarkerWithBorderAndTail(
         strokeWidth = 4f
     }
     canvas.drawRoundRect(
-        left - 1, top - 1,
-        left + contentSize + 1, top + contentSize + 1,
+        left - 1,
+        top - 1,
+        left + contentSize + 1,
+        top + contentSize + 1,
         cornerRadiusPx.toFloat(),
         cornerRadiusPx.toFloat(),
-        borderPaint,
+        borderPaint
     )
 
     return result

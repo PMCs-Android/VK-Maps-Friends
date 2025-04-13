@@ -1,5 +1,6 @@
 package com.example.mapsfriends
 
+import ZoomSlider
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,80 +13,117 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import com.example.mapsfriends.utils.MapViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import ZoomSlider
 
 @Composable
-fun MapScreen(viewModel: MapViewModel = viewModel()) {
+fun MapScreen(
+    navController: NavHostController,
+    viewModel: MapViewModel = viewModel()
+) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-
-    val currentUser =
-        remember {
-            mockUsers.firstOrNull { it.id == 1 } ?: mockUsers.first()
-        }
-
-    val cameraPositionState =
-        rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(currentUser.location, 18f)
-        }
-
-    LaunchedEffect(Unit) {
-        viewModel.loadMarkersIntoMap(context)
+    val currentUser = remember { mockUsers.firstOrNull { it.id == 1 } ?: mockUsers.first() }
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(currentUser.location, 18f)
     }
 
+    LaunchedEffect(Unit) { viewModel.loadMarkersIntoMap(context) }
     LaunchedEffect(cameraPositionState.position.zoom) {
         viewModel.updateMarkerIcons(cameraPositionState.position.zoom, context)
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
         GoogleMap(
-            properties =
-                MapProperties(
-                    mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style),
-                ),
+            properties = MapProperties(
+                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+            ),
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            uiSettings =
-                MapUiSettings(
-                    zoomControlsEnabled = false,
-                    myLocationButtonEnabled = false,
-                    compassEnabled = false,
-                ),
+            uiSettings = MapUiSettings(
+                zoomControlsEnabled = false,
+                myLocationButtonEnabled = false,
+                compassEnabled = false
+            )
         ) {
             viewModel.markers.forEach { markerData ->
-                markerData.icon?.let {
-                    Marker(
-                        state = MarkerState(position = markerData.position),
-                        title = markerData.title,
-                        icon = it,
-                        onClick = { false },
-                    )
-                }
+                CreateMapMarker(
+                    markerData = markerData,
+                    viewModel = viewModel,
+                    navController = navController,
+                    coroutineScope = coroutineScope,
+                    cameraPositionState = cameraPositionState
+                )
             }
         }
 
         ZoomSlider(
-            modifier = Modifier.align(Alignment.CenterEnd)
-                    .padding(end = 8.dp),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 8.dp),
             onZoomChange = { newZoom ->
                 coroutineScope.launch {
-                    cameraPositionState.animate(
-                        CameraUpdateFactory.zoomTo(newZoom),
-                        150,
-                    )
+                    cameraPositionState.animate(CameraUpdateFactory.zoomTo(newZoom), 150)
                 }
             },
-            initialZoom = cameraPositionState.position.zoom,
+            initialZoom = cameraPositionState.position.zoom
         )
+    }
+}
+
+@Composable
+private fun CreateMapMarker(
+    markerData: MarkerData,
+    viewModel: MapViewModel,
+    navController: NavHostController,
+    coroutineScope: CoroutineScope,
+    cameraPositionState: CameraPositionState
+) {
+    markerData.icon?.let {
+        Marker(
+            state = MarkerState(position = markerData.position),
+            icon = it,
+            onClick = {
+                handleMarkerClick(
+                    markerData = markerData,
+                    viewModel = viewModel,
+                    navController = navController,
+                    coroutineScope = coroutineScope,
+                    cameraPositionState = cameraPositionState
+                )
+            }
+        )
+    }
+}
+
+private fun handleMarkerClick(
+    markerData: MarkerData,
+    viewModel: MapViewModel,
+    navController: NavHostController,
+    coroutineScope: CoroutineScope,
+    cameraPositionState: CameraPositionState
+): Boolean {
+    return if (viewModel.selectedMarkerId.value == markerData.id) {
+        navController.navigate("profile/${markerData.id}")
+        viewModel.selectedMarkerId.value = null
+        true
+    } else {
+        coroutineScope.launch {
+            cameraPositionState.animate(CameraUpdateFactory.newLatLng(markerData.position), 150)
+        }
+        viewModel.selectedMarkerId.value = markerData.id
+        true
     }
 }

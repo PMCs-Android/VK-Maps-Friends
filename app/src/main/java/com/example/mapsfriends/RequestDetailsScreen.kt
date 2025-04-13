@@ -25,20 +25,17 @@ import androidx.navigation.NavHostController
 @Composable
 fun RequestDetailsScreen(navController: NavHostController) {
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(
-                    brush =
-                        Brush.horizontalGradient(
-                            colors =
-                                listOf(
-                                    colorResource(R.color.bg_blue),
-                                    colorResource(R.color.bg_pink),
-                                ),
-                        ),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        colorResource(R.color.bg_blue),
+                        colorResource(R.color.bg_pink)
+                    )
                 )
-                .padding(vertical = 30.dp, horizontal = 10.dp),
+            )
+            .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
         EventHeader(navController)
         EventDescription()
@@ -51,37 +48,34 @@ fun RequestDetailsScreen(navController: NavHostController) {
 @Composable
 fun RequestAcceptRefuseButtons() {
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(10.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(20.dp))
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(
             onClick = { /* Принять заявку */ },
-            modifier =
-                Modifier
-                    .width(64.dp)
-                    .border(2.dp, colorResource(R.color.main_blue), RoundedCornerShape(16.dp)),
+            modifier = Modifier
+                .width(64.dp)
+                .border(2.dp, colorResource(R.color.main_blue), RoundedCornerShape(16.dp))
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.acception),
                 contentDescription = "Accept",
-                tint = colorResource(R.color.main_blue),
+                tint = colorResource(R.color.main_blue)
             )
         }
         IconButton(
             onClick = { /* Отклонить заявку */ },
-            modifier =
-                Modifier
-                    .width(64.dp)
-                    .border(2.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp)),
+            modifier = Modifier
+                .width(64.dp)
+                .border(2.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp))
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
                 contentDescription = "Refuse",
-                tint = colorResource(R.color.main_pink),
+                tint = colorResource(R.color.main_pink)
             )
         }
     }

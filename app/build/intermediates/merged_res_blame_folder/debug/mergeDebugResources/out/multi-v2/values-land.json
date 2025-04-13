@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-87:/values-land/values-land.xml",
+            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-89:/values-land/values-land.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\2ed061989182ae69f3692e0a51185c5a\\transformed\\appcompat-1.7.0\\res\\values-land\\values-land.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\4a793f6f568a0c74dc6fc81e69746b63\\transformed\\appcompat-1.7.0\\res\\values-land\\values-land.xml",
                     "from": {
                         "startLines": "2,3,4",
                         "startColumns": "4,4,4",

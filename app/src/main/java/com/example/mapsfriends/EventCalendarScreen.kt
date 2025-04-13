@@ -39,26 +39,22 @@ import androidx.navigation.NavHostController
 @Composable
 fun EventCalendarScreen(navController: NavHostController) {
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(
-                    brush =
-                        Brush.horizontalGradient(
-                            colors =
-                                listOf(
-                                    colorResource(R.color.bg_blue),
-                                    colorResource(R.color.bg_pink),
-                                ),
-                        ),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        colorResource(R.color.bg_blue),
+                        colorResource(R.color.bg_pink)
+                    )
                 )
-                .padding(horizontal = 10.dp, vertical = 30.dp),
+            )
+            .padding(horizontal = 10.dp, vertical = 30.dp)
     ) {
         MyEventsHeader(navController)
         Column(
-            modifier =
-                Modifier
-                    .weight(1f),
+            modifier = Modifier
+                .weight(1f)
         ) {
             NotEmptyEvents(navController)
         }
@@ -69,18 +65,17 @@ fun EventCalendarScreen(navController: NavHostController) {
 @Composable
 fun MyEventsHeader(navController: NavHostController) {
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
     ) {
         IconButton(
             onClick = { navController.popBackStack() },
-            modifier =
-                Modifier
-                    .border(4.dp, Color.White, RoundedCornerShape(12.dp)),
+            modifier = Modifier
+                .border(4.dp, Color.White, RoundedCornerShape(12.dp))
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
                 contentDescription = "Back",
-                tint = Color.White,
+                tint = Color.White
             )
         }
         Text(
@@ -88,127 +83,137 @@ fun MyEventsHeader(navController: NavHostController) {
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
 
 @Composable
-fun OneEvent(
-    event: MockDataEvents,
-    navController: NavHostController
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-    ) {
+fun OneEvent(event: MockDataEvents, navController: NavHostController) {
+    Row(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = event.time, fontSize = 16.sp, color = Color.White, fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.CenterVertically).padding(10.dp),
+            text = event.time,
+            fontSize = 16.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .padding(10.dp)
         )
         Row(
-            modifier = Modifier.fillMaxWidth()
-                    .clickable { navController.navigate("eventDetails") }
-                    .weight(1f).background(Color.White, RoundedCornerShape(20.dp))
-                    .padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { navController.navigate("eventDetails") }
+                .weight(1f)
+                .background(Color.White, RoundedCornerShape(20.dp))
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = event.name, fontSize = 20.sp,
-                    color = Color.Black, fontWeight = FontWeight.Bold,
+                    text = event.name,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold
                 )
                 Row {
                     event.members.forEach { member ->
                         Icon(
                             imageVector = Icons.Default.AccountCircle,
                             contentDescription = "MemberIcon",
-                            tint = colorResource(R.color.main_purple),
+                            tint = colorResource(R.color.main_purple)
                         )
                     }
                     Text(
-                        text = event.members.size.toString() + "/" + mockUsers.size.toString(),
-                        fontSize = 16.sp, fontWeight = FontWeight.Normal,
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                                .padding(horizontal = 4.dp),
+                        text = "${event.members.size}/${mockUsers.size}",
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .align(Alignment.CenterVertically)
                     )
                 }
                 Text(
-                    text = event.day.toString() + " " + monthList[event.month - 1],
-                    fontSize = 12.sp, modifier = Modifier.padding(top = 10.dp),
+                    text = "${event.day} ${monthList[event.month - 1]}",
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 10.dp)
                 )
                 Text(
-                    text = "~" + event.time, fontSize = 12.sp,
+                    text = "~${event.time}",
+                    fontSize = 12.sp
                 )
             }
-            IconButton(
-                onClick = { /* Удаление ивента */ },
-                modifier = Modifier.border(
-                                2.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp),
-                            )
-                        .align(Alignment.CenterVertically),
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.cross),
-                    contentDescription = "Delete", tint = colorResource(R.color.main_pink),
-                )
-            }
+            DeleteEvent(modifier = Modifier)
         }
+    }
+}
+
+@Composable
+fun DeleteEvent(modifier: Modifier) {
+    IconButton(
+        onClick = { /* Удаление ивента */ },
+        modifier = modifier
+            .border(
+                2.dp,
+                colorResource(R.color.main_pink),
+                RoundedCornerShape(16.dp)
+            )
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.cross),
+            contentDescription = "Delete",
+            tint = colorResource(R.color.main_pink)
+        )
     }
 }
 
 @Composable
 fun BottomBar(navController: NavHostController) {
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         TextButton(
             onClick = { navController.navigate("requests") },
-            modifier =
-                Modifier
-                    .height(64.dp)
-                    .width(104.dp)
-                    .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(12.dp)),
+            modifier = Modifier
+                .height(64.dp)
+                .width(104.dp)
+                .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(12.dp))
         ) {
             Text(
                 text = stringResource(R.string.requests),
                 fontSize = 20.sp,
                 color = colorResource(R.color.main_blue),
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Bold
             )
         }
         TextButton(
             onClick = { /* Обновление данных ивентов */ },
-            modifier =
-                Modifier
-                    .height(64.dp)
-                    .width(104.dp)
-                    .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp)),
+            modifier = Modifier
+                .height(64.dp)
+                .width(104.dp)
+                .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
         ) {
             Text(
                 text = stringResource(R.string.my_events),
                 fontSize = 20.sp,
                 color = colorResource(R.color.main_purple),
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
         }
         TextButton(
             onClick = { navController.navigate("create") },
-            modifier =
-                Modifier
-                    .height(64.dp)
-                    .width(104.dp)
-                    .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp)),
+            modifier = Modifier
+                .height(64.dp)
+                .width(104.dp)
+                .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp))
         ) {
             Text(
                 text = stringResource(R.string.new_event),
                 fontSize = 20.sp,
                 color = colorResource(R.color.main_pink),
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -217,26 +222,24 @@ fun BottomBar(navController: NavHostController) {
 @Composable
 fun NotEmptyEvents(navController: NavHostController) {
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         mockEvents.forEach { event ->
             Column {
                 TextButton(
                     onClick = { /* Переход на день */ },
-                    modifier =
-                        Modifier
-                            .width(44.dp)
-                            .height(60.dp)
-                            .background(Color.White, RoundedCornerShape(8.dp)),
+                    modifier = Modifier
+                        .width(44.dp)
+                        .height(60.dp)
+                        .background(Color.White, RoundedCornerShape(8.dp))
                 ) {
                     Text(
                         text = event.day.toString(),
                         fontSize = 16.sp,
-                        color = Color.Black,
+                        color = Color.Black
                     )
                 }
                 Text(
@@ -244,10 +247,9 @@ fun NotEmptyEvents(navController: NavHostController) {
                     fontSize = 16.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Medium,
-                    modifier =
-                        Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(vertical = 4.dp),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(vertical = 4.dp)
                 )
             }
         }

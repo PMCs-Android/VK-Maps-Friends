@@ -28,39 +28,37 @@ import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 
 data class MarkerData(
+    val id: Int,
     val position: LatLng,
     val title: String,
     val originalBitmap: Bitmap,
-    var icon: BitmapDescriptor? = null,
+    var icon: BitmapDescriptor? = null
 )
 
 @Composable
 fun MainScreen(navController: NavHostController) {
     Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(vertical = 30.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 30.dp)
     ) {
-        MapScreen()
+        MapScreen(navController)
 
         Column(
-            modifier =
-                Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(16.dp),
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp)
         ) {
             IconButton(
                 onClick = { navController.navigate("profile") },
-                modifier =
-                    Modifier
-                        .background(colorResource(R.color.white), RoundedCornerShape(12.dp))
-                        .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp)),
+                modifier = Modifier
+                    .background(colorResource(R.color.white), RoundedCornerShape(12.dp))
+                    .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.profile),
                     contentDescription = "Profile",
-                    tint = colorResource(R.color.main_purple),
+                    tint = colorResource(R.color.main_purple)
                 )
             }
 
@@ -68,87 +66,82 @@ fun MainScreen(navController: NavHostController) {
 
             IconButton(
                 onClick = { /* Показать статистику шагов */ },
-                modifier =
-                    Modifier
-                        .background(Color.White, RoundedCornerShape(12.dp))
-                        .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp)),
+                modifier = Modifier
+                    .background(Color.White, RoundedCornerShape(12.dp))
+                    .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.footstep_boot),
                     contentDescription = "Footsteps",
-                    tint = colorResource(R.color.main_purple),
+                    tint = colorResource(R.color.main_purple)
                 )
             }
         }
         Column(
-            modifier =
-                Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 30.dp),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 30.dp)
         ) {
             IconButton(
                 onClick = { /* Центрировать геоположение */ },
-                modifier =
-                    Modifier
-                        .background(Color.White, RoundedCornerShape(16.dp))
-                        .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(16.dp))
-                        .align(Alignment.CenterHorizontally),
+                modifier = Modifier
+                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(16.dp))
+                    .align(Alignment.CenterHorizontally)
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.gps_focus),
                     contentDescription = "Location",
-                    tint = colorResource(R.color.main_purple),
+                    tint = colorResource(R.color.main_purple)
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
             Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.SpaceBetween
+
             ) {
                 IconButton(
                     onClick = { /* Показать чаты */ },
-                    modifier =
-                        Modifier
-                            .background(Color.White, RoundedCornerShape(12.dp))
-                            .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(12.dp))
-                            .align(Alignment.CenterVertically),
+                    modifier = Modifier
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(12.dp))
+                        .align(Alignment.CenterVertically)
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.chat_main_page),
                         contentDescription = "Chats",
-                        tint = colorResource(R.color.main_blue),
+                        tint = colorResource(R.color.main_blue)
                     )
                 }
                 Spacer(modifier = Modifier.width(10.dp))
 
                 IconButton(
                     onClick = { navController.navigate("events") },
-                    modifier =
-                        Modifier
-                            .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
-                            .background(Color.White, RoundedCornerShape(12.dp))
-                            .padding(horizontal = 10.dp, vertical = 16.dp)
-                            .height(56.dp)
-                            .width(56.dp),
+                    modifier = Modifier
+                        .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .padding(horizontal = 10.dp, vertical = 16.dp)
+                        .height(56.dp)
+                        .width(56.dp)
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.event_calendar),
                         contentDescription = "Events",
-                        tint = colorResource(R.color.main_purple),
+                        tint = colorResource(R.color.main_purple)
                     )
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 IconButton(
                     onClick = { /* Показать друзей */ },
-                    modifier =
-                        Modifier
-                            .background(Color.White, RoundedCornerShape(12.dp))
-                            .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(12.dp))
-                            .align(Alignment.CenterVertically),
+                    modifier = Modifier
+                        .background(Color.White, RoundedCornerShape(12.dp))
+                        .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(12.dp))
+                        .align(Alignment.CenterVertically)
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.friends),
                         contentDescription = "Friends",
-                        tint = colorResource(R.color.main_pink),
+                        tint = colorResource(R.color.main_pink)
                     )
                 }
             }

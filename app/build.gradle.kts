@@ -6,6 +6,9 @@ plugins {
     alias(libs.plugins.gms)
     alias(libs.plugins.plugin.serialization)
     alias(libs.plugins.ktlint)
+
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -15,6 +18,7 @@ android {
     defaultConfig {
         applicationId = "com.example.mapsfriends"
         minSdk = 24
+        //noinspection OldTargetApi
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -23,11 +27,15 @@ android {
 
         addManifestPlaceholders(
             mapOf(
-                "VKIDClientID" to "53221768", // ID вашего приложения (app_id).
-                "VKIDClientSecret" to "MdXayYI8ryeHVJ6uaAKJ", // Ваш защищенный ключ (client_secret).
-                "VKIDRedirectHost" to "vk.com", // Обычно используется vk.com.
-                "VKIDRedirectScheme" to "vk53221768", // Обычно используется vk{ID приложения}.
-            )
+                // ID вашего приложения (app_id).
+                "VKIDClientID" to "53221768",
+                // Ваш защищенный ключ (client_secret).
+                "VKIDClientSecret" to "MdXayYI8ryeHVJ6uaAKJ",
+                // Обычно используется vk.com.
+                "VKIDRedirectHost" to "vk.com",
+                // Обычно используется vk{ID приложения}.
+                "VKIDRedirectScheme" to "vk53221768",
+            ),
         )
     }
 
@@ -36,7 +44,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
+                "proguard-rules.pro"
             )
         }
     }
@@ -54,7 +62,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -70,7 +77,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.ktx)
-
+    implementation(libs.firebase.common.ktx)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,6 +86,11 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
     implementation(libs.vkid)
     implementation(libs.vkid.support)

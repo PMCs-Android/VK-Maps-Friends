@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-87:/values-v21/values-v21.xml",
+            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-89:/values-v21/values-v21.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\e675a6babf031f82d686b016b91f7dbf\\transformed\\core-1.15.0\\res\\values-v21\\values-v21.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\f61fddaae1e1d76acb573d78cf4a8aec\\transformed\\core-1.15.0\\res\\values-v21\\values-v21.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,13",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4",
@@ -23,26 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\b61cad263b246adad2577e5626e7a587\\transformed\\preference-1.2.1\\res\\values-v21\\values-v21.xml",
-                    "from": {
-                        "startLines": "2,3,6",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,120,276",
-                        "endLines": "2,5,8",
-                        "endColumns": "64,12,12",
-                        "endOffsets": "115,271,449"
-                    },
-                    "to": {
-                        "startLines": "6,265,268",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "368,18720,18876",
-                        "endLines": "6,267,270",
-                        "endColumns": "64,12,12",
-                        "endOffsets": "428,18871,19049"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\2ed061989182ae69f3692e0a51185c5a\\transformed\\appcompat-1.7.0\\res\\values-v21\\values-v21.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\4a793f6f568a0c74dc6fc81e69746b63\\transformed\\appcompat-1.7.0\\res\\values-v21\\values-v21.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,19,20,21,22,24,26,27,28,29,30,32,34,36,38,40,42,43,48,50,52,53,54,56,58,59,60,61,62,63,106,109,152,155,158,160,162,164,167,171,174,175,176,179,180,181,182,183,184,187,188,190,192,194,196,200,202,203,204,205,207,211,213,215,216,217,218,219,220,222,223,224,234,235,236,248",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -61,7 +42,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\8b47013175b60158def4b186b46f694f\\transformed\\credentials-play-services-auth-1.2.0-rc01\\res\\values-v21\\values-v21.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\a888c3768cb7847284c92d23d48d1f5f\\transformed\\credentials-play-services-auth-1.2.0-rc01\\res\\values-v21\\values-v21.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -77,6 +58,25 @@
                         "endLines": "282",
                         "endColumns": "12",
                         "endOffsets": "20038"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\21287f3711b983c8568f4526dbfc31ea\\transformed\\preference-1.2.1\\res\\values-v21\\values-v21.xml",
+                    "from": {
+                        "startLines": "2,3,6",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,120,276",
+                        "endLines": "2,5,8",
+                        "endColumns": "64,12,12",
+                        "endOffsets": "115,271,449"
+                    },
+                    "to": {
+                        "startLines": "6,265,268",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "368,18720,18876",
+                        "endLines": "6,267,270",
+                        "endColumns": "64,12,12",
+                        "endOffsets": "428,18871,19049"
                     }
                 }
             ]

@@ -6,5 +6,6 @@ plugins {
 
     alias(libs.plugins.gms) apply false
     alias(libs.plugins.plugin.serialization) apply false
-    alias(libs.plugins.ktlint) apply false
+
+    id("com.google.dagger.hilt.android") version "2.51.1" apply false
 }

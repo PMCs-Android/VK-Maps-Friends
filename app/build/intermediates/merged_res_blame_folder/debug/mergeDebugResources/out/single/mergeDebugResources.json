@@ -1,150 +1,150 @@
 [
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_settings_24px.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/settings_24px.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_event_calendar.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/event_calendar.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_location_on_24px.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/location_on_24px.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/layout_activity_main.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/layout/activity_main.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_profile.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/profile.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-xhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_acception.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/acception.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_chat_main_page.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/chat_main_page.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-xxxhdpi_ic_launcher.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-xxxhdpi/ic_launcher.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_button_round_background.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/button_round_background.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_button_round_background.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/button_round_background.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_friends.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/friends.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_group_24px.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/group_24px.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-mdpi/ic_launcher.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_cross.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/cross.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_add_plus.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/add_plus.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/xml_backup_rules.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/xml/backup_rules.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-xxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-xhdpi_ic_launcher.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-xhdpi/ic_launcher.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-xhdpi_ic_launcher_round.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-xhdpi/ic_launcher_round.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/xml_data_extraction_rules.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/xml/data_extraction_rules.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_ic_launcher_background.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/ic_launcher_background.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_gps_icon_back.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/gps_icon_back.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/raw_map_style.json.flat",
-        "source": "com.example.mapsfriends.app-main-91:/raw/map_style.json"
+        "merged": "com.example.mapsfriends.app-debug-91:/xml_backup_rules.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/xml/backup_rules.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_friends.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/friends.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_ic_my_location.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/ic_my_location.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_back_arrow.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/back_arrow.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_footstep_boot.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/footstep_boot.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_location_on_24px.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/location_on_24px.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_event_chat.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/event_chat.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_profile.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/profile.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-hdpi_ic_launcher.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-hdpi/ic_launcher.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-xxxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_settings_24px.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/settings_24px.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_event_calendar.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/event_calendar.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_send_message.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/send_message.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_footstep_boot.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/footstep_boot.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-mdpi_ic_launcher_round.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-mdpi/ic_launcher_round.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_group_24px.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/group_24px.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-hdpi_ic_launcher_round.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-hdpi/ic_launcher_round.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_cross.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/cross.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_gps_icon_back.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/gps_icon_back.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_ic_my_location.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/ic_my_location.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_add_plus.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/add_plus.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_send_message.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/send_message.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/layout_activity_main.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/layout/activity_main.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-hdpi/ic_launcher.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-xxxhdpi/ic_launcher_round.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_mapsfriends.png.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/mapsfriends.png"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/xml_data_extraction_rules.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/xml/data_extraction_rules.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-hdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-xxhdpi_ic_launcher.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-xxhdpi/ic_launcher.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_chat_main_page.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/chat_main_page.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_event_chat.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/event_chat.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_gps_focus.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/gps_focus.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_acception.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/acception.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_mapsfriends.png.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/mapsfriends.png"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-xxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-mdpi_ic_launcher.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-mdpi/ic_launcher.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/drawable_gps_focus.xml.flat",
+        "source": "com.example.mapsfriends.app-main-93:/drawable/gps_focus.xml"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/drawable_back_arrow.xml.flat",
-        "source": "com.example.mapsfriends.app-main-91:/drawable/back_arrow.xml"
+        "merged": "com.example.mapsfriends.app-debug-91:/raw_map_style.json.flat",
+        "source": "com.example.mapsfriends.app-main-93:/raw/map_style.json"
     },
     {
-        "merged": "com.example.mapsfriends.app-debug-89:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
-        "source": "com.example.mapsfriends.app-main-91:/mipmap-xxhdpi/ic_launcher_round.webp"
+        "merged": "com.example.mapsfriends.app-debug-91:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "com.example.mapsfriends.app-main-93:/mipmap-mdpi/ic_launcher_round.webp"
     }
 ]
