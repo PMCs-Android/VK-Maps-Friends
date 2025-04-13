@@ -17,9 +17,9 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
     val markers = mutableStateListOf<MarkerData>()
     val selectedMarkerId = mutableStateOf<String?>(null)
 
-    fun setupMarkersAndObserveLocations(context: Context, userId: String) {
+    fun setupMarkersAndObserveLocations(context: Context, userId: String, zoom: Float) {
         viewModelScope.launch {
-            loadMarkersIntoMap(context, userId)
+            loadMarkersIntoMap(context, userId, zoom)
             markers.forEach { marker ->
                 userRepository.observeLocation(marker.id) { newLocation ->
                     updateMarkerPosition(marker.id, newLocation)
@@ -28,12 +28,12 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
         }
     }
 
-    private suspend fun loadMarkersIntoMap(context: Context, userId: String) {
+    private suspend fun loadMarkersIntoMap(context: Context, userId: String, zoom: Float) {
         val friends = userRepository.getFriendsList(userId)
         friends?.forEach { user ->
             val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
             originalBitmap?.let {
-                val initialSize = calculateMarkerSize(18f) // start zoom
+                val initialSize = calculateMarkerSize(zoom) // start zoom
                 markers.add(
                     MarkerData(
                         id = user.userId,

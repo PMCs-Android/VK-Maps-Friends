@@ -34,13 +34,17 @@ fun MapScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val currentUser = remember { mockUsers.firstOrNull { it.id == "1" } ?: mockUsers.first() }
+    val currentUser = remember { mockUsers.firstOrNull { it.id == "3" } ?: mockUsers.first() }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(currentUser.location, 18f)
     }
 
     LaunchedEffect(Unit) {
-        viewModel.setupMarkersAndObserveLocations(context, currentUser.id)
+        viewModel.setupMarkersAndObserveLocations(
+            context,
+            currentUser.id,
+            cameraPositionState.position.zoom
+        )
     }
     LaunchedEffect(cameraPositionState.position.zoom) {
         viewModel.updateMarkerIcons(cameraPositionState.position.zoom, context)
