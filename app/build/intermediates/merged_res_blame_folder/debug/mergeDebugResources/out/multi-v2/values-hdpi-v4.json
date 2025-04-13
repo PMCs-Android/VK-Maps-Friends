@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-70:/values-hdpi-v4/values-hdpi-v4.xml",
+            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-89:/values-hdpi-v4/values-hdpi-v4.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\listk\\.gradle\\caches\\8.11.1\\transforms\\e4268d0a55edfb7fa8a3e08451d30d1c\\transformed\\appcompat-1.7.0\\res\\values-hdpi-v4\\values-hdpi-v4.xml",
+                    "source": "C:\\Users\\shnapinut\\.gradle\\caches\\8.10.2\\transforms\\4a793f6f568a0c74dc6fc81e69746b63\\transformed\\appcompat-1.7.0\\res\\values-hdpi-v4\\values-hdpi-v4.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

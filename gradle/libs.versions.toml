@@ -14,8 +14,28 @@ roomKtx = "2.6.1"
 firebaseCommonKtx = "21.0.0"
 playServicesLocation = "21.3.0"
 
+gmsVersion = "4.4.2"
+
+bomVersion = "33.10.0"
+vkidVersion = "2.2.0"
+
+serializationVersion = "2.0.0"
+serializationKotlin = "1.8.0"
+ktlint = "12.2.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationKotlin" }
+
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "bomVersion" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+
+vkid = { group = "com.vk.id", name = "vkid", version.ref = "vkidVersion" }
+vkid-support = { group = "com.vk.id", name = "vk-sdk-support", version.ref = "vkidVersion" }
+vkid-onetap = { group = "com.vk.id", name = "onetap-compose", version.ref = "vkidVersion" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -39,4 +59,8 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+
+gms = { id = "com.google.gms.google-services", version.ref = "gmsVersion" }
+plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationVersion" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 

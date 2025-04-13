@@ -33,27 +33,30 @@ fun ProfileScreen(navController: NavHostController, id: Int) {
         mockUsers.firstOrNull { it.id == id } ?: mockUsers.first()
     }
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        colorResource(R.color.bg_blue),
-                        colorResource(R.color.bg_pink)
-                    )
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    brush =
+                        Brush.horizontalGradient(
+                            colors =
+                                listOf(
+                                    colorResource(R.color.bg_blue),
+                                    colorResource(R.color.bg_pink),
+                                ),
+                        ),
                 )
-            )
-            .padding(vertical = 30.dp, horizontal = 10.dp)
+                .padding(vertical = 30.dp, horizontal = 10.dp),
     ) {
         IconButton(
             onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .border(
-                    4.dp,
-                    Color.White,
-                    RoundedCornerShape(16.dp)
-                )
-
+            modifier =
+                Modifier
+                    .border(
+                        4.dp,
+                        Color.White,
+                        RoundedCornerShape(16.dp),
+                    ),
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -65,17 +68,18 @@ fun ProfileScreen(navController: NavHostController, id: Int) {
             imageVector = Icons.Default.AccountCircle,
             contentDescription = "Profile Icon",
             tint = Color.Cyan,
-            modifier = Modifier
-                .height(240.dp)
-                .width(240.dp)
-                .align(Alignment.CenterHorizontally)
+            modifier =
+                Modifier
+                    .height(240.dp)
+                    .width(240.dp)
+                    .align(Alignment.CenterHorizontally),
         )
         Text(
             text = user.name,
             fontSize = 28.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         )
     }
 }
