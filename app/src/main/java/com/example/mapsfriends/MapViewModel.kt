@@ -8,12 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MapViewModel() : ViewModel() {
+@HiltViewModel
+class MapViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
     val markers = mutableStateListOf<MarkerData>()
     val selectedMarkerId = mutableStateOf<String?>(null)
-    val userRepository = FirebaseUserRepository()
 
     fun loadMarkersIntoMap(context: Context, userId: String) {
         viewModelScope.launch {
