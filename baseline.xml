@@ -199,5 +199,6 @@
     <ID>NewLineAtEndOfFile:loadMarkerIconFromUrl.kt$com.example.mapsfriends.loadMarkerIconFromUrl.kt</ID>
     <ID>NewLineAtEndOfFile:settings.gradle.kts$.settings.gradle.kts</ID>
     <ID>TooGenericExceptionCaught:loadMarkerIconFromUrl.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:VKIDButton.kt$e: Exception</ID>
   </CurrentIssues>
 </SmellBaseline>

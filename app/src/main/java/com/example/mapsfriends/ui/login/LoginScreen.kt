@@ -24,41 +24,26 @@ import com.example.mapsfriends.ui.theme.MainGradient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.example.mapsfriends.ui.theme.*
 
 @Composable
 fun LoginScreen(
     onNavigateToProfileScreen: (ProfileScreenDataObject) -> Unit
 ) {
-    val auth = remember {
-        Firebase.auth
-    }
-
-    val errorState = remember {
-        mutableStateOf("")
-    }
-
-    val emailState = remember {
-        mutableStateOf("")
-    }
-    val passwordState = remember {
-        mutableStateOf("")
-    }
-
+    val auth = remember { Firebase.auth }
+    val errorState = remember { mutableStateOf("") }
+    val emailState = remember { mutableStateOf("") }
+    val passwordState = remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MainGradient)
-            .padding(
-                start = 40.dp, end = 40.dp
-            ),
+            .padding(start = 40.dp, end = 40.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.mapsfriends),
-            contentDescription = "Logo"
-        )
+            contentDescription = "Logo")
         RoundedCornerTextField(
             text = emailState.value,
             label = "Email",
@@ -77,35 +62,28 @@ fun LoginScreen(
             Text(
                 text = errorState.value,
                 color = Color.Red,
-                textAlign = TextAlign.Center
-            )
+                textAlign = TextAlign.Center)
         }
         VKIDButton()
         LoginButton("Sign In") {
             signIn(
-                auth,
-                emailState.value,
-                passwordState.value,
+                auth, emailState.value, passwordState.value,
                 onSignInSuccess = { navData ->
                     onNavigateToProfileScreen(navData)
                 },
                 onSignInFailure = { error ->
                     errorState.value = error
-                },
-            )
+                },)
         }
         LoginButton("Sign Up") {
             signUp(
-                auth,
-                emailState.value,
-                passwordState.value,
+                auth, emailState.value, passwordState.value,
                 onSignUpSuccess = { navData ->
                     onNavigateToProfileScreen(navData)
                 },
                 onSignUpFailure = { error ->
                     errorState.value = error
-                },
-            )
+                },)
         }
     }
 }
