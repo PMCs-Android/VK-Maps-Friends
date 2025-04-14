@@ -10,41 +10,62 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MapViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
     val markers = mutableStateListOf<MarkerData>()
     val selectedMarkerId = mutableStateOf<String?>(null)
+    private val _selectedUser = MutableStateFlow<User?>(null)
+    val selectedUser: StateFlow<User?> = _selectedUser
+
+    fun getUser(userId: String) {
+        viewModelScope.launch {
+            _selectedUser.value = userRepository.getUserById(userId)
+        }
+    }
 
     fun setupMarkersAndObserveLocations(context: Context, userId: String, zoom: Float) {
         viewModelScope.launch {
             loadMarkersIntoMap(context, userId, zoom)
-            markers.forEach { marker ->
-                userRepository.observeLocation(marker.id) { newLocation ->
-                    updateMarkerPosition(marker.id, newLocation)
-                }
-            }
         }
     }
 
     private suspend fun loadMarkersIntoMap(context: Context, userId: String, zoom: Float) {
-        val friends = userRepository.getFriendsList(userId)
-        friends?.forEach { user ->
-            val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
-            originalBitmap?.let {
-                val initialSize = calculateMarkerSize(zoom) // start zoom
-                markers.add(
-                    MarkerData(
-                        id = user.userId,
-                        position = convertToLatLng(user.location),
-                        title = user.username,
-                        originalBitmap = it,
-                        icon = BitmapDescriptorFactory.fromBitmap(
-                            createMarkerWithBorderAndTail(context, it, initialSize)
+        userRepository.observeFriendsList(userId) { friends ->
+            viewModelScope.launch {
+                val friendIds = friends?.map { it.userId } ?: emptyList()
+
+                markers.removeAll { marker -> marker.id !in friendIds }
+
+                friends?.forEach { user ->
+                    val existingIndex = markers.indexOfFirst { it.id == user.userId }
+                    userRepository.observeLocation(user.userId) { newLocation ->
+                        updateMarkerPosition(user.userId, newLocation)
+                    }
+
+                    val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
+                    originalBitmap?.let {
+                        val initialSize = calculateMarkerSize(zoom)
+                        val newMarker = MarkerData(
+                            id = user.userId,
+                            position = convertToLatLng(user.location),
+                            title = user.username,
+                            originalBitmap = it,
+                            icon = BitmapDescriptorFactory.fromBitmap(
+                                createMarkerWithBorderAndTail(context, it, initialSize)
+                            )
                         )
-                    )
-                )
+
+                        if (existingIndex != -1) {
+                            markers[existingIndex] = newMarker
+                        } else {
+                            markers.add(newMarker)
+                        }
+                    }
+                }
             }
         }
     }

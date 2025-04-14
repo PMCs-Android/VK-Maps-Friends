@@ -53,4 +53,5 @@ interface UserRepository {
 
     suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit)
     suspend fun addFriend(userId: String, friendId: String)
+    suspend fun observeFriendsList(userId: String, callback: (List<User>) -> Unit)
 }

@@ -121,6 +121,7 @@ private fun handleMarkerClick(
     cameraPositionState: CameraPositionState
 ): Boolean {
     return if (viewModel.selectedMarkerId.value == markerData.id) {
+        viewModel.getUser(markerData.id)
         navController.navigate("profile/${markerData.id}")
         viewModel.selectedMarkerId.value = null
         true
