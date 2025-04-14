@@ -120,16 +120,15 @@ private fun handleMarkerClick(
     coroutineScope: CoroutineScope,
     cameraPositionState: CameraPositionState
 ): Boolean {
-    return if (viewModel.selectedMarkerId.value == markerData.id) {
+    if (viewModel.selectedMarkerId.value == markerData.id) {
         viewModel.getUser(markerData.id)
         navController.navigate("profile/${markerData.id}")
         viewModel.selectedMarkerId.value = null
-        true
     } else {
         coroutineScope.launch {
             cameraPositionState.animate(CameraUpdateFactory.newLatLng(markerData.position), 150)
         }
         viewModel.selectedMarkerId.value = markerData.id
-        true
     }
+    return true
 }

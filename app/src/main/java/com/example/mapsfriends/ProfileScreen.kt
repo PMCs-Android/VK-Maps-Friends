@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -21,12 +19,15 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+
 
 @Composable
 fun ProfileScreen(
@@ -62,7 +63,6 @@ fun ProfileScreen(
                     Color.White,
                     RoundedCornerShape(16.dp)
                 )
-
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -70,15 +70,19 @@ fun ProfileScreen(
                 tint = Color.White,
             )
         }
-        Icon(
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "Profile Icon",
-            tint = Color.Cyan,
+
+        AsyncImage(
+            model = user.avatarUrl,
+            contentDescription = "Profile Picture",
             modifier = Modifier
-                .height(240.dp)
-                .width(240.dp)
-                .align(Alignment.CenterHorizontally)
+                .height(400.dp)
+                .width(400.dp)
+                .align(Alignment.CenterHorizontally),
+            placeholder = painterResource(R.drawable.default_avatar),
+            error = painterResource(R.drawable.default_avatar),
+            fallback = painterResource(R.drawable.default_avatar)
         )
+
         Text(
             text = user.username,
             fontSize = 28.sp,
