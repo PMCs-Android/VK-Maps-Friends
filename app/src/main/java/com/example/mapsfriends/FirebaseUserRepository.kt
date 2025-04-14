@@ -5,6 +5,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okio.IOException
 
@@ -149,5 +152,27 @@ class FirebaseUserRepository : UserRepository {
                 currentFriends + friendId
             )
         }
+    }
+    override suspend fun observeFriendsList(
+        userId: String,
+        callback: (List<User>) -> Unit
+    ) {
+        db.document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("FriendObserver", "Ошибка: ${error.message}")
+                    return@addSnapshotListener
+                }
+
+                val friendIds = snapshot?.get("friends")
+                    as? List<String> ?: return@addSnapshotListener
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val friends = friendIds.mapNotNull { friendId ->
+                        getUserById(friendId)
+                    }
+                    callback(friends)
+                }
+            }
     }
 }

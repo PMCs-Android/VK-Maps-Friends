@@ -14,7 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -25,13 +25,22 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 
 @Composable
-fun ProfileScreen(navController: NavHostController, id: String) {
-    val user = remember(id) {
-        mockUsers.firstOrNull { it.id == id } ?: mockUsers.first()
+fun ProfileScreen(
+    navController: NavHostController,
+    id: String,
+    viewModel: MapViewModel = hiltViewModel()
+) {
+    val user = viewModel.selectedUser.collectAsState().value
+    if (user == null) {
+        LoadingView()
+        viewModel.getUser(id)
+        return
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,11 +80,23 @@ fun ProfileScreen(navController: NavHostController, id: String) {
                 .align(Alignment.CenterHorizontally)
         )
         Text(
-            text = user.name,
+            text = user.username,
             fontSize = 28.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+    }
+}
+@Composable
+fun LoadingView() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+    ) {
+        Text(text = "Загрузка профиля...", color = Color.White)
     }
 }
