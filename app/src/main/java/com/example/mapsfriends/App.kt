@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mapsfriends.ui.login.LoginScreen
 
 @Composable
 fun App() {
@@ -13,8 +14,13 @@ fun App() {
 
     NavHost(
         navController,
-        startDestination = "main"
+        startDestination = "login"
     ) {
+        composable("login") {
+            LoginScreen {
+                navController.navigate("profile/${it}")
+            }
+        }
         composable("main") { MainScreen(navController) }
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }
@@ -27,11 +33,11 @@ fun App() {
         }
         composable(
             "profile/{userId}",
-            arguments = listOf(navArgument("userId") { type = NavType.IntType })
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
         ) { backStackEntry ->
             ProfileScreen(
                 navController = navController,
-                id = (backStackEntry.arguments?.getInt("userId") ?: 0).toString()
+                id = backStackEntry.arguments?.getString("userId") ?: ""
             )
         }
     }

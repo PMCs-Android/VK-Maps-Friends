@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.gms.google-services")
+    alias(libs.plugins.gms)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -20,6 +20,19 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        addManifestPlaceholders(
+            mapOf(
+                // ID вашего приложения (app_id).
+                "VKIDClientID" to "53221768",
+                // Ваш защищенный ключ (client_secret).
+                "VKIDClientSecret" to "MdXayYI8ryeHVJ6uaAKJ",
+                // Обычно используется vk.com.
+                "VKIDRedirectHost" to "vk.com",
+                // Обычно используется vk{ID приложения}.
+                "VKIDRedirectScheme" to "vk53221768",
+            ),
+        )
     }
 
     buildTypes {
@@ -34,6 +47,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
     kotlinOptions {
         jvmTarget = "17"
@@ -73,4 +87,11 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation(libs.vkid)
+    implementation(libs.vkid.support)
+    implementation(libs.vkid.onetap)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
 }

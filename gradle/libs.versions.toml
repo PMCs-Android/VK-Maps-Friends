@@ -13,6 +13,9 @@ navigationCompose = "2.8.7"
 roomKtx = "2.6.1"
 firebaseCommonKtx = "21.0.0"
 playServicesLocation = "21.3.0"
+gmsVersion = "4.4.2"
+bomVersion = "33.10.0"
+vkidVersion = "2.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,8 +38,17 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
+vkid = { group = "com.vk.id", name = "vkid", version.ref = "vkidVersion" }
+vkid-support = { group = "com.vk.id", name = "vk-sdk-support", version.ref = "vkidVersion" }
+vkid-onetap = { group = "com.vk.id", name = "onetap-compose", version.ref = "vkidVersion" }
+
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "bomVersion" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+gms = { id = "com.google.gms.google-services", version.ref = "gmsVersion" }
 
