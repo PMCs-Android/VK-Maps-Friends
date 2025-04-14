@@ -31,7 +31,7 @@ fun App() {
         ) { backStackEntry ->
             ProfileScreen(
                 navController = navController,
-                id = backStackEntry.arguments?.getInt("userId") ?: 0
+                id = (backStackEntry.arguments?.getInt("userId") ?: 0).toString()
             )
         }
     }

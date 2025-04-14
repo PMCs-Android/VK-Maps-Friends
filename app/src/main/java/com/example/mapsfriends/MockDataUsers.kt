@@ -3,7 +3,7 @@ package com.example.mapsfriends
 import com.google.android.gms.maps.model.LatLng
 
 data class MockDataUsers(
-    val id: Int,
+    val id: String,
     val name: String,
     val avatarUrl: String,
     val location: LatLng
@@ -11,7 +11,7 @@ data class MockDataUsers(
 
 val mockUsers = listOf(
     MockDataUsers(
-        id = 1,
+        id = "1",
         name = "Алиса",
         avatarUrl = (
             "https://steamuserimages-a.akamaihd.net/ugc/2100422066956953334/" +
@@ -21,7 +21,7 @@ val mockUsers = listOf(
         location = LatLng(55.751244, 37.618423)
     ),
     MockDataUsers(
-        id = 2,
+        id = "2",
         name = "Боб",
         avatarUrl = (
             "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818.jpeg/orig"
@@ -29,7 +29,7 @@ val mockUsers = listOf(
         location = LatLng(55.740000, 37.600000)
     ),
     MockDataUsers(
-        id = 3,
+        id = "3",
         name = "Каролина",
         avatarUrl = (
             "https://avatars.mds.yandex.net/i?id=3ec440083d4334d" +

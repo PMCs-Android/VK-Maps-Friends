@@ -12,9 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.mapsfriends.utils.MapViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -31,16 +30,22 @@ import kotlinx.coroutines.launch
 @Composable
 fun MapScreen(
     navController: NavHostController,
-    viewModel: MapViewModel = viewModel()
+    viewModel: MapViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val currentUser = remember { mockUsers.firstOrNull { it.id == 1 } ?: mockUsers.first() }
+    val currentUser = remember { mockUsers.firstOrNull { it.id == "3" } ?: mockUsers.first() }
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(currentUser.location, 18f)
     }
 
-    LaunchedEffect(Unit) { viewModel.loadMarkersIntoMap(context) }
+    LaunchedEffect(Unit) {
+        viewModel.setupMarkersAndObserveLocations(
+            context,
+            currentUser.id,
+            cameraPositionState.position.zoom
+        )
+    }
     LaunchedEffect(cameraPositionState.position.zoom) {
         viewModel.updateMarkerIcons(cameraPositionState.position.zoom, context)
     }

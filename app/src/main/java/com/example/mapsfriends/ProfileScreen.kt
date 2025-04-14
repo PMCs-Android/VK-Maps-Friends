@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 
 @Composable
-fun ProfileScreen(navController: NavHostController, id: Int) {
+fun ProfileScreen(navController: NavHostController, id: String) {
     val user = remember(id) {
         mockUsers.firstOrNull { it.id == id } ?: mockUsers.first()
     }
