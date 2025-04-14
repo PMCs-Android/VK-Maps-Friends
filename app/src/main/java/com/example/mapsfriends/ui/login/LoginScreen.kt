@@ -67,7 +67,8 @@ fun LoginScreen(
             Text(
                 text = errorState.value,
                 color = Color.Red,
-                textAlign = TextAlign.Center)
+                textAlign = TextAlign.Center
+            )
         }
         VKIDButton(onNavigateToProfileScreen = onNavigateToProfileScreen)
         LoginButton("Sign In") {
@@ -76,18 +77,25 @@ fun LoginScreen(
                 emailState.value,
                 passwordState.value,
                 onSignInSuccess = { navData ->
-                    onNavigateToProfileScreen(navData) },
+                    onNavigateToProfileScreen(navData)
+                },
                 onSignInFailure = { error ->
-                    errorState.value = error },)
+                    errorState.value = error
+                },
+            )
         }
         LoginButton("Sign Up") {
             signUp(
-                auth, emailState.value,
+                auth,
+                emailState.value,
                 passwordState.value,
                 onSignUpSuccess = { navData ->
-                    onNavigateToProfileScreen(navData) },
+                    onNavigateToProfileScreen(navData)
+                },
                 onSignUpFailure = { error ->
-                    errorState.value = error },)
+                    errorState.value = error
+                },
+            )
         }
     }
 }
@@ -174,7 +182,7 @@ private fun signIn(
 // }
 //
 //
-//private fun deleteAccount(auth: FirebaseAuth, email: String, password: String) {
+// private fun deleteAccount(auth: FirebaseAuth, email: String, password: String) {
 //    val credential = EmailAuthProvider.getCredential(email, password)
 //    auth.currentUser?.reauthenticate(credential)?.addOnCompleteListener {
 //        if (it.isSuccessful) {

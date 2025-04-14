@@ -24,15 +24,15 @@ fun RoundedCornerTextField(
         },
         shape = RoundedCornerShape(25.dp),
         colors =
-        TextFieldDefaults.colors(
-            unfocusedContainerColor = Color.White,
-            focusedContainerColor = Color.White,
-            unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-        ),
+            TextFieldDefaults.colors(
+                unfocusedContainerColor = Color.White,
+                focusedContainerColor = Color.White,
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+            ),
         modifier =
-        Modifier.fillMaxWidth()
-            .border(1.dp, Color.Black, RoundedCornerShape(25.dp)),
+            Modifier.fillMaxWidth()
+                .border(1.dp, Color.Black, RoundedCornerShape(25.dp)),
         label = {
             Text(text = label, color = Color.Gray)
         },

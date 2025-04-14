@@ -15,6 +15,7 @@
     <ID>LongMethod:MessengerScreen.kt$@Composable fun MessengerScreen(navController: NavHostController)</ID>
     <ID>LongMethod:RequestDetailsScreen.kt$@Composable fun RequestDetailsScreen(navController: NavHostController)</ID>
     <ID>LongMethod:RequestsScreen.kt$@Composable fun RequestsScreen(navController: NavHostController)</ID>
+    <ID>LongMethod:LoginScreen.kt$@Composable fun LoginScreen( onNavigateToProfileScreen: (String) -> Unit )</ID>
     <ID>MagicNumber:Color.kt$0xFF625b71</ID>
     <ID>MagicNumber:Color.kt$0xFF6650a4</ID>
     <ID>MagicNumber:Color.kt$0xFF7D5260</ID>

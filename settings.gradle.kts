@@ -16,7 +16,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven (
+        maven(
             "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/"
         )
     }

@@ -19,9 +19,9 @@ fun LoginButton(
         },
         modifier = Modifier.fillMaxWidth(0.5f),
         colors =
-        ButtonDefaults.buttonColors(
-            containerColor = VKbutton,
-        ),
+            ButtonDefaults.buttonColors(
+                containerColor = VKbutton,
+            ),
     ) {
         Text(text = text)
     }

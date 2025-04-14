@@ -5,8 +5,6 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -72,16 +70,16 @@ fun VKIDButton(
         scenario = OneTapTitleScenario.SignIn,
         signInAnotherAccountButtonEnabled = true,
         style =
-        OneTapStyle
-            .Light(
-                cornersStyle = OneTapButtonCornersStyle.Custom(2f),
-                sizeStyle = OneTapButtonSizeStyle.SMALL_32,
-                elevationStyle = OneTapButtonElevationStyle.Custom(4f),
-            ),
+            OneTapStyle
+                .Light(
+                    cornersStyle = OneTapButtonCornersStyle.Custom(2f),
+                    sizeStyle = OneTapButtonSizeStyle.SMALL_32,
+                    elevationStyle = OneTapButtonElevationStyle.Custom(4f),
+                ),
         authParams =
-        VKIDAuthUiParams {
-            scopes = setOf("email", "friends")
-        },
+            VKIDAuthUiParams {
+                scopes = setOf("email", "friends")
+            },
         modifier = Modifier.padding(16.dp),
     )
 }
@@ -92,7 +90,7 @@ fun signUpWithVKID(
 ) {
     CoroutineScope(Dispatchers.Main).launch {
         VKID.instance.getUserData(
-            callback = object :VKIDGetUserCallback {
+            callback = object : VKIDGetUserCallback {
                 override fun onSuccess(user: VKIDUser) {
                     val userId = token
                     val username = user.email ?: "Unknown"
@@ -114,7 +112,6 @@ fun signUpWithVKID(
                             onNavigateToProfileScreen(userId)
                         }
                     }
-
                 }
 
                 override fun onFail(fail: VKIDGetUserFail) {
@@ -153,4 +150,3 @@ suspend fun fetchVkFriendsIds(accessToken: String): List<String> {
         emptyList()
     }
 }
-
