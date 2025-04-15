@@ -2,6 +2,7 @@ package com.example.mapsfriends
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
@@ -9,6 +10,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
@@ -70,8 +72,12 @@ class EventViewModel @Inject constructor(
                     }
                 loadParticipants(event.eventId)
                 userRepository.addEventToUser(event.creatorId, event.eventId)
-            } catch (e: Error) {
-                println("Error add event vm: ${e.message}")
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error saving event: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error saving event: ${e.message}")
+            } catch (e: IllegalStateException) {
+                println("Data error saving event: ${e.message}")
             }
         }
     }
@@ -83,8 +89,10 @@ class EventViewModel @Inject constructor(
                     ?: throw IllegalStateException("Сначала создайте событие")
                 eventRepository.addParticipant(eventId, userId)
                 loadParticipants(eventId)
-            } catch (e: Error) {
-                println("Error add participant vm: ${e.message}")
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error adding participant: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error adding participant: ${e.message}")
             }
         }
     }
@@ -97,8 +105,11 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _events.value = eventRepository.getEventsByUserId(userId)
-            } catch (e: Error) {
-                println("Error loading events ${e.message}")
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error loading events: ${e.message}")
+                _events.value = emptyList()
+            } catch (e: IOException) {
+                println("Network error loading events: ${e.message}")
                 _events.value = emptyList()
             }
         }
@@ -109,8 +120,10 @@ class EventViewModel @Inject constructor(
             try {
                 println("Success delete event a${eventId}a")
                 eventRepository.deleteEvent(eventId)
-            } catch (e: Error) {
-                println("Error deleting events ${e.message}")
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error deleting event: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error deleting event: ${e.message}")
             }
         }
     }

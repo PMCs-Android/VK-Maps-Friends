@@ -2,12 +2,14 @@ package com.example.mapsfriends
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
@@ -23,25 +25,15 @@ class UserViewModel @Inject constructor(
             try {
                 val friendsList = userRepository.getFriendsList(userId) ?: emptyList()
                 _friends.value = friendsList
-            } catch (e: Error) {
-                println("Error creating event: ${e.message}")
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error loading friends: ${e.message}")
                 _friends.value = emptyList()
-            }
-        }
-    }
-
-    fun setUser(user: User) {
-        viewModelScope.launch {
-            try {
-                userRepository.setUser(
-                    user.userId,
-                    user.username,
-                    user.avatarUrl,
-                    user.friends,
-                    user.location
-                )
-            } catch (e: Error) {
-                println("Error set user: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error loading friends: ${e.message}")
+                _friends.value = emptyList()
+            } catch (e: IllegalStateException) {
+                println("Data error loading friends: ${e.message}")
+                _friends.value = emptyList()
             }
         }
     }
@@ -51,27 +43,13 @@ class UserViewModel @Inject constructor(
             try {
                 val result = userRepository.getUserAvatars(userIds)
                 _avatars.value = result.filterValues { it != null } as Map<String, String>
-            } catch (e: Error) {
-                println("Error load avatars ${e.message}")
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error loading avatars: ${e.message}")
+                _avatars.value = emptyMap()
+            } catch (e: IOException) {
+                println("Network error loading avatars: ${e.message}")
+                _avatars.value = emptyMap()
             }
         }
     }
 }
-/* {
-    private val _currentUser = MutableStateFlow<User?>(null)
-    fun getUser(userId: String = "3") {
-        viewModelScope.launch {
-            _currentUser.value = userRepository.getUserById(userId)
-        }
-    }
-}
-
-@Composable
-fun Screen(
-    userViewModel: UserViewModel = hiltViewModel()
-) {
-    Box(modifier = Modifier.fillMaxSize()){
-    Button(modifier = Modifier.align(Alignment.Center),
-        onClick = {userViewModel.getUser()}) { }
-    }
-}*/

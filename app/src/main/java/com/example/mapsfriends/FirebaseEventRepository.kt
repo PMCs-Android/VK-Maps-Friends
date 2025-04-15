@@ -27,8 +27,14 @@ class FirebaseEventRepository : EventRepository {
                 .document(event.eventId)
                 .set(event)
                 .await()
-        } catch (e: Error) {
-            println("Ошибка создания create: ${e.message}")
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error: ${e.message}")
+        } catch (e: IllegalStateException) {
+            println("Data error: ${e.message}")
+        } catch (e: IOException) {
+            println("Network error: ${e.message}")
+        } catch (e: Exception) {
+            println("Unexpected error: ${e.message}")
         }
     }
 

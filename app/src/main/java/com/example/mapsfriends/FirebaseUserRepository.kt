@@ -106,8 +106,12 @@ class FirebaseUserRepository : UserRepository {
                 .await()
 
             println("User saved with ID: $userId")
-        } catch (e: Error) {
-            println("Error saving user ${e.message}")
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error saving user: ${e.message}")
+        } catch (e: IOException) {
+            println("Network error saving user: ${e.message}")
+        } catch (e: IllegalStateException) {
+            println("Data error saving user: ${e.message}")
         }
     }
 
@@ -162,8 +166,10 @@ class FirebaseUserRepository : UserRepository {
             val userRef = db.document(creatorID)
             val currentEvents = userRef.get().await().get("events") as? List<String> ?: emptyList()
             userRef.update("events", currentEvents + eventId).await()
-        } catch (e: Error) {
-            println("Error add event to user ${e.message}")
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error adding event to user: ${e.message}")
+        } catch (e: IOException) {
+            println("Network error adding event to user: ${e.message}")
         }
     }
 
@@ -177,8 +183,11 @@ class FirebaseUserRepository : UserRepository {
             documents.associate { doc ->
                 doc.id to doc.getString("avatar_url")?.takeIf { it.isNotEmpty() }
             }
-        } catch (e: Error) {
-            println("Error getting multiple avatars ${e.message}")
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error getting avatars: ${e.message}")
+            emptyMap()
+        } catch (e: IOException) {
+            println("Network error getting avatars: ${e.message}")
             emptyMap()
         }
     }
