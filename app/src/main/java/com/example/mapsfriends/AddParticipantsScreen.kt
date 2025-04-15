@@ -57,7 +57,10 @@ fun AddParticipantsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = UiDimensions.LARGE_ELEMENT_3.dp, max = UiDimensions.LARGE_ELEMENT_4.dp)
+                .heightIn(
+                    min = UiDimensions.LARGE_ELEMENT_3.dp,
+                    max = UiDimensions.LARGE_ELEMENT_4.dp
+                )
                 .padding(UiDimensions.SMALL_PADDING_3.dp)
         ) {
             items(friends) { friend ->
@@ -66,7 +69,10 @@ fun AddParticipantsScreen(
                         .fillMaxWidth()
                         .height(UiDimensions.LARGE_ELEMENT_1.dp)
                         .padding(top = UiDimensions.SMALL_PADDING_1.dp)
-                        .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM_SPACING_1.dp)),
+                        .background(
+                            Color.White,
+                            RoundedCornerShape(UiDimensions.MEDIUM_SPACING_1.dp)
+                        ),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

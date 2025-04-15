@@ -48,7 +48,7 @@ import java.time.Instant
 import java.time.ZoneId
 
 object PickersConstants {
-    const val SMALL_PADDING  = 6
+    const val SMALL_PADDING = 6
     const val DEFAULT_PADDING = 24
     const val MEDIUM_FIELD = 40
     const val LARGE_DIALOG = 100
