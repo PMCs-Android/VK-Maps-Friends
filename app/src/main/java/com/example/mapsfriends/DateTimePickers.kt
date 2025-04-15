@@ -48,10 +48,10 @@ import java.time.Instant
 import java.time.ZoneId
 
 object PickersConstants {
-    const val SMALL1_SIZE = 6
-    const val SMALL2_SIZE = 24
-    const val MEDIUM_SIZE = 40
-    const val LARGE_SIZE = 100
+    const val SMALL_PADDING  = 6
+    const val DEFAULT_PADDING = 24
+    const val MEDIUM_FIELD = 40
+    const val LARGE_DIALOG = 100
 }
 
 @Composable
@@ -61,9 +61,9 @@ fun CreateEventDateInput(
 ) {
     Row(
         modifier = Modifier
-            .width(PickersConstants.LARGE_SIZE.dp)
-            .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM1_SIZE.dp))
-            .padding(start = UiDimensions.SMALL1_SIZE.dp),
+            .width(PickersConstants.LARGE_DIALOG.dp)
+            .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM_SPACING_1.dp))
+            .padding(start = UiDimensions.SMALL_PADDING_1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -91,9 +91,9 @@ fun CreateEventTimeInput(
 ) {
     Row(
         modifier = Modifier
-            .width(PickersConstants.LARGE_SIZE.dp)
-            .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM1_SIZE.dp))
-            .padding(start = UiDimensions.SMALL1_SIZE.dp),
+            .width(PickersConstants.LARGE_DIALOG.dp)
+            .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM_SPACING_1.dp))
+            .padding(start = UiDimensions.SMALL_PADDING_1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -118,7 +118,7 @@ fun CreateEventTimeInput(
 fun EventDateText(date: String = "Дата") {
     Text(
         text = date,
-        fontSize = UiDimensions.SMALL3_SIZE.sp,
+        fontSize = UiDimensions.SMALL_PADDING_3.sp,
     )
 }
 
@@ -126,7 +126,7 @@ fun EventDateText(date: String = "Дата") {
 fun EventTimeText(time: String = "Время") {
     Text(
         text = time,
-        fontSize = UiDimensions.SMALL3_SIZE.sp,
+        fontSize = UiDimensions.SMALL_PADDING_3.sp,
     )
 }
 
@@ -201,7 +201,7 @@ fun TimeInput(
             ) {
                 Surface(
                     shape = MaterialTheme.shapes.extraLarge,
-                    tonalElevation = PickersConstants.SMALL1_SIZE.dp,
+                    tonalElevation = PickersConstants.SMALL_PADDING.dp,
                     modifier = Modifier
                         .width(IntrinsicSize.Min)
                         .height(IntrinsicSize.Min)
@@ -211,7 +211,7 @@ fun TimeInput(
                         ),
                 ) {
                     Column(
-                        modifier = Modifier.padding(PickersConstants.SMALL2_SIZE.dp),
+                        modifier = Modifier.padding(PickersConstants.DEFAULT_PADDING.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         TimePicker(
@@ -230,7 +230,7 @@ fun TimeInput(
                         )
                         Row(
                             modifier = Modifier
-                                .height(PickersConstants.MEDIUM_SIZE.dp)
+                                .height(PickersConstants.MEDIUM_FIELD.dp)
                                 .fillMaxWidth()
                         ) {
                             Spacer(modifier = Modifier.weight(1f))

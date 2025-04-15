@@ -57,16 +57,16 @@ fun AddParticipantsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = UiDimensions.LARGE3_SIZE.dp, max = UiDimensions.LARGE4_SIZE.dp)
-                .padding(UiDimensions.SMALL3_SIZE.dp)
+                .heightIn(min = UiDimensions.LARGE_ELEMENT_3.dp, max = UiDimensions.LARGE_ELEMENT_4.dp)
+                .padding(UiDimensions.SMALL_PADDING_3.dp)
         ) {
             items(friends) { friend ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(UiDimensions.LARGE1_SIZE.dp)
-                        .padding(top = UiDimensions.SMALL1_SIZE.dp)
-                        .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM1_SIZE.dp)),
+                        .height(UiDimensions.LARGE_ELEMENT_1.dp)
+                        .padding(top = UiDimensions.SMALL_PADDING_1.dp)
+                        .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM_SPACING_1.dp)),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -74,16 +74,16 @@ fun AddParticipantsScreen(
                         model = friend.avatarUrl,
                         contentDescription = "Friend Avatar",
                         modifier = Modifier
-                            .size(UiDimensions.MEDIUM4_SIZE.dp)
+                            .size(UiDimensions.MEDIUM_SPACING_4.dp)
                             .clip(CircleShape)
                     )
                     Text(
                         text = friend.username,
-                        fontSize = UiDimensions.SMALL3_SIZE.sp,
+                        fontSize = UiDimensions.SMALL_PADDING_3.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .padding(UiDimensions.SMALL1_SIZE.dp)
+                            .padding(UiDimensions.SMALL_PADDING_1.dp)
                     )
                     AddParticipantButton(eventViewModel, friend)
                 }
