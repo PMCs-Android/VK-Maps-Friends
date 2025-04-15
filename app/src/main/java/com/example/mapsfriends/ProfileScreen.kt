@@ -35,6 +35,11 @@ fun ProfileScreen(
     viewModel: MapViewModel = hiltViewModel()
 ) {
     val user = viewModel.selectedUser.collectAsState().value
+
+    androidx.compose.runtime.LaunchedEffect(id) {
+        viewModel.getUser(id)
+    }
+
     if (user == null) {
         LoadingView()
         viewModel.getUser(id)

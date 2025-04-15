@@ -24,6 +24,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyB4SoTT_aBfOjPsoej8T-B6R7XOX-pQLhE" />
 
+        <meta-data
+            android:name="com.vk.sdk.VKApplicationId"
+            android:value="53221768" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

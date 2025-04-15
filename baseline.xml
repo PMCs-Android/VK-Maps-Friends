@@ -15,6 +15,7 @@
     <ID>LongMethod:MessengerScreen.kt$@Composable fun MessengerScreen(navController: NavHostController)</ID>
     <ID>LongMethod:RequestDetailsScreen.kt$@Composable fun RequestDetailsScreen(navController: NavHostController)</ID>
     <ID>LongMethod:RequestsScreen.kt$@Composable fun RequestsScreen(navController: NavHostController)</ID>
+    <ID>LongMethod:LoginScreen.kt$@Composable fun LoginScreen( onNavigateToProfileScreen: (String) -> Unit )</ID>
     <ID>MagicNumber:Color.kt$0xFF625b71</ID>
     <ID>MagicNumber:Color.kt$0xFF6650a4</ID>
     <ID>MagicNumber:Color.kt$0xFF7D5260</ID>
@@ -161,6 +162,15 @@
     <ID>MagicNumber:loadMarkerIconFromUrl.kt$18</ID>
     <ID>MagicNumber:loadMarkerIconFromUrl.kt$200</ID>
     <ID>MagicNumber:loadMarkerIconFromUrl.kt$30</ID>
+    <ID>MagicNumber:LoginButton.kt$0.5f</ID>
+    <ID>MagicNumber:LoginScreen.kt$40</ID>
+    <ID>MagicNumber:LoginScreen.kt$10</ID>
+    <ID>MagicNumber:RoundedCornerTextField.kt$25</ID>
+    <ID>MagicNumber:VKIDButton.kt$4f</ID>
+    <ID>MagicNumber:VKIDButton.kt$16</ID>
+    <ID>MagicNumber:Color.kt$0xFF6A11CB</ID>
+    <ID>MagicNumber:Color.kt$0xFF2575FC</ID>
+    <ID>MagicNumber:Color.kt$0xFF0077FF</ID>
     <ID>MatchingDeclarationName:MainScreen.kt$MarkerData</ID>
     <ID>MaxLineLength:MockDataUsers.kt$MockDataUsers(1, "Алиса", "https://steamuserimages-a.akamaihd.net/ugc/2100422066956953334/BCFFD0DB0C56F71CD288304540E39FC2FADFD155/?imw=512&amp;imh=341&amp;ima=fit&amp;impolicy=Letterbox&amp;imcolor=%23000000&amp;letterbox=true", LatLng(55.751244, 37.618423))</ID>
     <ID>MaxLineLength:MockDataUsers.kt$MockDataUsers(2, "Боб", "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818.jpeg/orig", LatLng(55.740000, 37.600000))</ID>
@@ -186,5 +196,6 @@
     <ID>NewLineAtEndOfFile:loadMarkerIconFromUrl.kt$com.example.mapsfriends.loadMarkerIconFromUrl.kt</ID>
     <ID>NewLineAtEndOfFile:settings.gradle.kts$.settings.gradle.kts</ID>
     <ID>TooGenericExceptionCaught:loadMarkerIconFromUrl.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:VKIDButton.kt$e: Exception</ID>
   </CurrentIssues>
 </SmellBaseline>
