@@ -33,8 +33,6 @@ class FirebaseEventRepository : EventRepository {
             println("Data error: ${e.message}")
         } catch (e: IOException) {
             println("Network error: ${e.message}")
-        } catch (e: Exception) {
-            println("Unexpected error: ${e.message}")
         }
     }
 

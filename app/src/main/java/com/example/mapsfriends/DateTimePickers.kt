@@ -48,10 +48,10 @@ import java.time.Instant
 import java.time.ZoneId
 
 object PickersConstants {
-    const val SMALL1 = 6
-    const val SMALL2 = 24
-    const val MEDIUM = 40
-    const val LARGE = 100
+    const val SMALL1_SIZE = 6
+    const val SMALL2_SIZE = 24
+    const val MEDIUM_SIZE = 40
+    const val LARGE_SIZE = 100
 }
 
 @Composable
@@ -61,9 +61,9 @@ fun CreateEventDateInput(
 ) {
     Row(
         modifier = Modifier
-            .width(PickersConstants.LARGE.dp)
-            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp))
-            .padding(start = Dimensions.SMALL1.dp),
+            .width(PickersConstants.LARGE_SIZE.dp)
+            .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM1_SIZE.dp))
+            .padding(start = UiDimensions.SMALL1_SIZE.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -91,9 +91,9 @@ fun CreateEventTimeInput(
 ) {
     Row(
         modifier = Modifier
-            .width(PickersConstants.LARGE.dp)
-            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp))
-            .padding(start = Dimensions.SMALL1.dp),
+            .width(PickersConstants.LARGE_SIZE.dp)
+            .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM1_SIZE.dp))
+            .padding(start = UiDimensions.SMALL1_SIZE.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -118,7 +118,7 @@ fun CreateEventTimeInput(
 fun EventDateText(date: String = "Дата") {
     Text(
         text = date,
-        fontSize = Dimensions.SMALL3.sp,
+        fontSize = UiDimensions.SMALL3_SIZE.sp,
     )
 }
 
@@ -126,7 +126,7 @@ fun EventDateText(date: String = "Дата") {
 fun EventTimeText(time: String = "Время") {
     Text(
         text = time,
-        fontSize = Dimensions.SMALL3.sp,
+        fontSize = UiDimensions.SMALL3_SIZE.sp,
     )
 }
 
@@ -201,7 +201,7 @@ fun TimeInput(
             ) {
                 Surface(
                     shape = MaterialTheme.shapes.extraLarge,
-                    tonalElevation = PickersConstants.SMALL1.dp,
+                    tonalElevation = PickersConstants.SMALL1_SIZE.dp,
                     modifier = Modifier
                         .width(IntrinsicSize.Min)
                         .height(IntrinsicSize.Min)
@@ -211,7 +211,7 @@ fun TimeInput(
                         ),
                 ) {
                     Column(
-                        modifier = Modifier.padding(PickersConstants.SMALL2.dp),
+                        modifier = Modifier.padding(PickersConstants.SMALL2_SIZE.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         TimePicker(
@@ -230,25 +230,35 @@ fun TimeInput(
                         )
                         Row(
                             modifier = Modifier
-                                .height(PickersConstants.MEDIUM.dp)
+                                .height(PickersConstants.MEDIUM_SIZE.dp)
                                 .fillMaxWidth()
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
-                            TextButton(
-                                onClick = {
-                                    showTimePicker.value = false
-                                }
-                            ) { Text("Cancel") }
-                            TextButton(
-                                onClick = {
-                                    showTimePicker.value = false
-                                    selectedTime.value = "${state.hour}:${state.minute}"
-                                }
-                            ) { Text("OK") }
+                            TimePickerButtons(showTimePicker,  state, selectedTime)
                         }
                     }
                 }
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun  TimePickerButtons(
+    showTimePicker : MutableState<Boolean>,
+    state : TimePickerState,
+    selectedTime : MutableState<String>
+) {
+    TextButton(
+        onClick = {
+            showTimePicker.value = false
+        }
+    ) { Text("Cancel") }
+    TextButton(
+        onClick = {
+            showTimePicker.value = false
+            selectedTime.value = "${state.hour}:${state.minute}"
+        }
+    ) { Text("OK") }
 }

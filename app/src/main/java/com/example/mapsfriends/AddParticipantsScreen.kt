@@ -57,16 +57,16 @@ fun AddParticipantsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = Dimensions.LARGE3.dp, max = Dimensions.LARGE4.dp)
-                .padding(Dimensions.SMALL3.dp)
+                .heightIn(min = UiDimensions.LARGE3_SIZE.dp, max = UiDimensions.LARGE4_SIZE.dp)
+                .padding(UiDimensions.SMALL3_SIZE.dp)
         ) {
             items(friends) { friend ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(Dimensions.LARGE1.dp)
-                        .padding(top = Dimensions.SMALL1.dp)
-                        .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp)),
+                        .height(UiDimensions.LARGE1_SIZE.dp)
+                        .padding(top = UiDimensions.SMALL1_SIZE.dp)
+                        .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM1_SIZE.dp)),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -74,30 +74,35 @@ fun AddParticipantsScreen(
                         model = friend.avatarUrl,
                         contentDescription = "Friend Avatar",
                         modifier = Modifier
-                            .size(Dimensions.MEDIUM4.dp)
+                            .size(UiDimensions.MEDIUM4_SIZE.dp)
                             .clip(CircleShape)
                     )
                     Text(
                         text = friend.username,
-                        fontSize = Dimensions.SMALL3.sp,
+                        fontSize = UiDimensions.SMALL3_SIZE.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .padding(Dimensions.SMALL1.dp)
+                            .padding(UiDimensions.SMALL1_SIZE.dp)
                     )
-                    IconButton(
-                        onClick = {
-                            eventViewModel.addParticipant(friend.userId)
-                        },
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(R.drawable.add_plus),
-                            contentDescription = "Add friend",
-                            tint = colorResource(R.color.main_purple)
-                        )
-                    }
+                    AddParticipantButton(eventViewModel, friend)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AddParticipantButton(eventViewModel : EventViewModel, friend : User) {
+    IconButton(
+        onClick = {
+            eventViewModel.addParticipant(friend.userId)
+        },
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.add_plus),
+            contentDescription = "Add friend",
+            tint = colorResource(R.color.main_purple)
+        )
     }
 }
