@@ -89,12 +89,7 @@ fun AddParticipantsScreen(
                     )
                     IconButton(
                         onClick = {
-                            if (eventViewModel.currentEvent.value == null) {
-                               println(friend.userId)
-                            } else {
-                                println("USER ID : ${friend.userId}")
-                                eventViewModel.addParticipant(friend.userId)
-                            }
+                            eventViewModel.addParticipant(friend.userId)
                         },
                         modifier = Modifier
                     ) {

@@ -45,7 +45,7 @@ val currentUser = User(
     userId = "111",
     username = "test user",
     avatarUrl = "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818." +
-            "jpeg/orig",
+        "jpeg/orig",
     friends = listOf("112", "113"),
     location = GeoPoint(55.751244, 37.618423)
 )

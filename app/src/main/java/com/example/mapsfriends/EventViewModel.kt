@@ -76,7 +76,6 @@ class EventViewModel @Inject constructor(
         }
     }
 
-
     fun addParticipant(userId: String) {
         viewModelScope.launch {
             try {
@@ -105,7 +104,7 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    fun deleteEvent(eventId : String) {
+    fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             try {
                 println("Success delete event a${eventId}a")
