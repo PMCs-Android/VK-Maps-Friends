@@ -50,8 +50,8 @@ fun CreateEventDateInput(
     Row(
         modifier = Modifier
             .width(100.dp)
-            .background(Color.White, RoundedCornerShape(Constants.MEDIUM2.dp))
-            .padding(start = Constants.SMALL1.dp),
+            .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
+            .padding(start = CONSTANTS.SMALL1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -80,8 +80,8 @@ fun CreateEventTimeInput(
     Row(
         modifier = Modifier
             .width(100.dp)
-            .background(Color.White, RoundedCornerShape(Constants.MEDIUM2.dp))
-            .padding(start = Constants.SMALL1.dp),
+            .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
+            .padding(start = CONSTANTS.SMALL1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -106,7 +106,7 @@ fun CreateEventTimeInput(
 fun EventDateText(date: String = "Дата") {
     Text(
         text = date,
-        fontSize = Constants.MEDIUM1.sp,
+        fontSize = CONSTANTS.MEDIUM1.sp,
     )
 }
 
@@ -114,7 +114,7 @@ fun EventDateText(date: String = "Дата") {
 fun EventTimeText(time: String = "Время") {
     Text(
         text = time,
-        fontSize = Constants.MEDIUM1.sp,
+        fontSize = CONSTANTS.MEDIUM1.sp,
     )
 }
 
