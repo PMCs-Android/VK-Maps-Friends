@@ -234,9 +234,11 @@ fun TimeInput(
                                 .fillMaxWidth()
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
-                            TextButton(onClick = {
-                                showTimePicker.value = false
-                            }) { Text("Cancel") }
+                            TextButton(
+                                onClick = {
+                                    showTimePicker.value = false
+                                }
+                            ) { Text("Cancel") }
                             TextButton(
                                 onClick = {
                                     showTimePicker.value = false

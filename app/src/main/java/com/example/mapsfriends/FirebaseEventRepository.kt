@@ -1,6 +1,5 @@
 package com.example.mapsfriends
 
-import coil.compose.AsyncImagePainter
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
