@@ -93,7 +93,7 @@ fun AddParticipantsScreen(
 }
 
 @Composable
-fun AddParticipantButton(eventViewModel : EventViewModel, friend : User) {
+fun AddParticipantButton(eventViewModel: EventViewModel, friend: User) {
     IconButton(
         onClick = {
             eventViewModel.addParticipant(friend.userId)

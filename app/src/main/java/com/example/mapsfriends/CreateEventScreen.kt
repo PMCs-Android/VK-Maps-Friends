@@ -105,7 +105,10 @@ fun CreateEventScreen(navController: NavHostController) {
                     )
                 )
             )
-            .padding(vertical = UiDimensions.MEDIUM2_SIZE.dp, horizontal = UiDimensions.SMALL1_SIZE.dp)
+            .padding(
+                vertical = UiDimensions.MEDIUM2_SIZE.dp,
+                horizontal = UiDimensions.SMALL1_SIZE.dp
+            )
     ) {
         ExitButton(navController)
         CreateEventTitleInput(viewModel, currentEvent)
@@ -138,7 +141,11 @@ fun ExitButton(navController: NavHostController) {
     IconButton(
         onClick = { navController.popBackStack() },
         modifier = Modifier
-            .border(UiDimensions.BORDER_SIZE.dp, Color.White, RoundedCornerShape(UiDimensions.SMALL2_SIZE.dp))
+            .border(
+                UiDimensions.BORDER_SIZE.dp,
+                Color.White,
+                RoundedCornerShape(UiDimensions.SMALL2_SIZE.dp)
+            )
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -279,7 +286,11 @@ fun CreateEventAddLocation() {
             text = mockEvents[0].location,
             fontSize = UiDimensions.SMALL3_SIZE.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = UiDimensions.SMALL1_SIZE.dp, top = UiDimensions.SMALL1_SIZE.dp)
+            modifier = Modifier
+                .padding(
+                    start = UiDimensions.SMALL1_SIZE.dp,
+                    top = UiDimensions.SMALL1_SIZE.dp
+                )
         )
         Box(
             modifier = Modifier.padding(UiDimensions.SMALL1_SIZE.dp)

@@ -234,7 +234,7 @@ fun TimeInput(
                                 .fillMaxWidth()
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
-                            TimePickerButtons(showTimePicker,  state, selectedTime)
+                            TimePickerButtons(showTimePicker, state, selectedTime)
                         }
                     }
                 }
@@ -246,9 +246,9 @@ fun TimeInput(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun  TimePickerButtons(
-    showTimePicker : MutableState<Boolean>,
-    state : TimePickerState,
-    selectedTime : MutableState<String>
+    showTimePicker: MutableState<Boolean>,
+    state: TimePickerState,
+    selectedTime: MutableState<String>
 ) {
     TextButton(
         onClick = {
