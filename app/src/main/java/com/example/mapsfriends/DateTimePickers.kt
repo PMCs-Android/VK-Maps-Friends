@@ -47,7 +47,7 @@ import androidx.compose.ui.window.DialogProperties
 import java.time.Instant
 import java.time.ZoneId
 
-object PickersConstants {
+object DateTimePickers {
     const val SMALL_PADDING = 6
     const val DEFAULT_PADDING = 24
     const val MEDIUM_FIELD = 40
@@ -61,9 +61,9 @@ fun CreateEventDateInput(
 ) {
     Row(
         modifier = Modifier
-            .width(PickersConstants.LARGE_DIALOG.dp)
-            .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM_SPACING_1.dp))
-            .padding(start = UiDimensions.SMALL_PADDING_1.dp),
+            .width(DateTimePickers.LARGE_DIALOG.dp)
+            .background(Color.White, RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp))
+            .padding(start = CreateEventScreen.SMALL_PADDING_1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -91,9 +91,9 @@ fun CreateEventTimeInput(
 ) {
     Row(
         modifier = Modifier
-            .width(PickersConstants.LARGE_DIALOG.dp)
-            .background(Color.White, RoundedCornerShape(UiDimensions.MEDIUM_SPACING_1.dp))
-            .padding(start = UiDimensions.SMALL_PADDING_1.dp),
+            .width(DateTimePickers.LARGE_DIALOG.dp)
+            .background(Color.White, RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp))
+            .padding(start = CreateEventScreen.SMALL_PADDING_1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -118,7 +118,7 @@ fun CreateEventTimeInput(
 fun EventDateText(date: String = "Дата") {
     Text(
         text = date,
-        fontSize = UiDimensions.SMALL_PADDING_3.sp,
+        fontSize = CreateEventScreen.SMALL_PADDING_3.sp,
     )
 }
 
@@ -126,7 +126,7 @@ fun EventDateText(date: String = "Дата") {
 fun EventTimeText(time: String = "Время") {
     Text(
         text = time,
-        fontSize = UiDimensions.SMALL_PADDING_3.sp,
+        fontSize = CreateEventScreen.SMALL_PADDING_3.sp,
     )
 }
 
@@ -201,7 +201,7 @@ fun TimeInput(
             ) {
                 Surface(
                     shape = MaterialTheme.shapes.extraLarge,
-                    tonalElevation = PickersConstants.SMALL_PADDING.dp,
+                    tonalElevation = DateTimePickers.SMALL_PADDING.dp,
                     modifier = Modifier
                         .width(IntrinsicSize.Min)
                         .height(IntrinsicSize.Min)
@@ -211,7 +211,7 @@ fun TimeInput(
                         ),
                 ) {
                     Column(
-                        modifier = Modifier.padding(PickersConstants.DEFAULT_PADDING.dp),
+                        modifier = Modifier.padding(DateTimePickers.DEFAULT_PADDING.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         TimePicker(
@@ -230,7 +230,7 @@ fun TimeInput(
                         )
                         Row(
                             modifier = Modifier
-                                .height(PickersConstants.MEDIUM_FIELD.dp)
+                                .height(DateTimePickers.MEDIUM_FIELD.dp)
                                 .fillMaxWidth()
                         ) {
                             Spacer(modifier = Modifier.weight(1f))
