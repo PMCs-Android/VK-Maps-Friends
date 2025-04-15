@@ -1,6 +1,5 @@
 package com.example.mapsfriends
 
-import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -106,10 +105,9 @@ class FirebaseUserRepository : UserRepository {
                 .set(userData)
                 .await()
 
-            Log.d("FirebaseRepo", "User saved with ID: $userId")
-        } catch (e: Exception) {
-            Log.e("FirebaseRepo", "Error saving user", e)
-            throw e
+            println("User saved with ID: $userId")
+        } catch (setUserException: Exception) {
+            println("Error saving user ${setUserException.message}")
         }
     }
 
@@ -118,7 +116,7 @@ class FirebaseUserRepository : UserRepository {
             .document(userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e("LocationObserver", "Ошибка подписки: ${error.message}")
+                    println("Ошибка подписки: ${error.message}")
                     return@addSnapshotListener
                 }
 
@@ -164,8 +162,8 @@ class FirebaseUserRepository : UserRepository {
             val userRef = db.document(creatorID)
             val currentEvents = userRef.get().await().get("events") as? List<String> ?: emptyList()
             userRef.update("events", currentEvents + eventId).await()
-        } catch (e: Exception) {
-            println("add event to user ${e.message}")
+        } catch (addEventToUserException: Exception) {
+            println("add event to user ${addEventToUserException.message}")
         }
     }
 
@@ -179,8 +177,8 @@ class FirebaseUserRepository : UserRepository {
             documents.associate { doc ->
                 doc.id to doc.getString("avatar_url")?.takeIf { it.isNotEmpty() }
             }
-        } catch (e: Exception) {
-            println("Error getting multiple avatars ${e.message}")
+        } catch (getUserAvatarsException: Exception) {
+            println("Error getting multiple avatars ${getUserAvatarsException.message}")
             emptyMap()
         }
     }

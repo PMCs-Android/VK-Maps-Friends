@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -59,7 +61,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import java.time.LocalDateTime
 
-object Constants {
+object CONSTANTS {
     const val BORDER = 4
     const val SMALL1 = 10
     const val SMALL2 = 12
@@ -103,58 +105,30 @@ fun CreateEventScreen(navController: NavHostController) {
                     )
                 )
             )
-            .padding(vertical = Constants.LARGE.dp, horizontal = Constants.SMALL1.dp)
+            .padding(vertical = CONSTANTS.LARGE.dp, horizontal = CONSTANTS.SMALL1.dp)
     ) {
         ExitButton(navController)
         CreateEventTitleInput(viewModel, currentEvent)
-        Row(modifier = Modifier.padding(top = Constants.SMALL1.dp)) {
-            CreateEventDateInput(showDatePicker, date)
-            Spacer(modifier = Modifier.width(Constants.SMALL1.dp))
-            CreateEventTimeInput(showTimePicker, time)
-        }
-        AnimatedVisibility(
-            visible = showDatePicker.value,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            DateInput(showDatePicker, state, date)
-        }
-        AnimatedVisibility(
-            visible = showTimePicker.value,
-            enter = fadeIn() + expandVertically(),
-            exit = fadeOut() + shrinkVertically()
-        ) {
-            TimeInput(showTimePicker, timePickerState, time)
-        }
-        viewModel.setEventTime(date.value + " " + time.value)
+        CreateEventDateTimeInput(
+            showDatePicker,
+            date,
+            showTimePicker,
+            time,
+            state,
+            timePickerState,
+            viewModel
+        )
         CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel)
         CreateEventAddLocation()
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(Constants.MEDIUM2.dp))
-                .padding(Constants.SMALL1.dp),
+                .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
+                .padding(CONSTANTS.SMALL1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            TextButton(
-                onClick = {
-                    viewModel.saveCurrentEvent()
-                    navController.navigate("events")
-                },
-                modifier = Modifier.border(
-                    4.dp,
-                    colorResource(R.color.main_blue),
-                    RoundedCornerShape(Constants.MEDIUM2.dp)
-                )
-            ) {
-                Text(
-                    text = "Готово! ${viewModel.events.collectAsState().value.size}",
-                    fontSize = Constants.MEDIUM2.sp,
-                    color = colorResource(R.color.main_blue),
-                    fontWeight = FontWeight.Bold,
-                )
-            }
+            CreateEventDoneButton(viewModel, navController)
         }
     }
 }
@@ -165,7 +139,7 @@ fun ExitButton(navController: NavHostController) {
         onClick = { navController.popBackStack() },
         modifier = Modifier
             .padding(0.dp)
-            .border(Constants.BORDER.dp, Color.White, RoundedCornerShape(Constants.SMALL2.dp))
+            .border(CONSTANTS.BORDER.dp, Color.White, RoundedCornerShape(CONSTANTS.SMALL2.dp))
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -180,12 +154,12 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
     TextField(
         value = event?.title ?: "",
         onValueChange = { viewModel.setEventTitle(it) },
-        textStyle = TextStyle(fontSize = Constants.MEDIUM2.sp),
-        shape = RoundedCornerShape(Constants.MEDIUM2.dp),
+        textStyle = TextStyle(fontSize = CONSTANTS.MEDIUM2.sp),
+        shape = RoundedCornerShape(CONSTANTS.MEDIUM2.dp),
         modifier = Modifier
             .fillMaxWidth()
             .height(68.dp)
-            .padding(top = Constants.SMALL1.dp),
+            .padding(top = CONSTANTS.SMALL1.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
@@ -195,7 +169,7 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
         placeholder = {
             Text(
                 text = "Название",
-                fontSize = Constants.MEDIUM1.sp,
+                fontSize = CONSTANTS.MEDIUM1.sp,
                 color = Color.Gray
             )
         },
@@ -206,80 +180,38 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateEventDateInput(
+fun CreateEventDateTimeInput(
     showDatePicker: MutableState<Boolean>,
-    selectedDate: MutableState<String>,
-) {
-    Row(
-        modifier = Modifier
-            .width(100.dp)
-            .background(Color.White, RoundedCornerShape(Constants.MEDIUM2.dp))
-            .padding(start = Constants.SMALL1.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (selectedDate.value == "") {
-            EventDateText()
-        } else {
-            EventDateText(selectedDate.value)
-        }
-        IconButton(
-            onClick = { showDatePicker.value = true }
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.calendar),
-                contentDescription = "Date Picker",
-                tint = colorResource(R.color.main_blue),
-            )
-        }
-    }
-}
-
-@Composable
-fun CreateEventTimeInput(
+    date: MutableState<String>,
     showTimePicker: MutableState<Boolean>,
-    selectedTime: MutableState<String>
+    time: MutableState<String>,
+    state: DatePickerState,
+    timePickerState: TimePickerState,
+    viewModel: EventViewModel
 ) {
-    Row(
-        modifier = Modifier
-            .width(100.dp)
-            .background(Color.White, RoundedCornerShape(Constants.MEDIUM2.dp))
-            .padding(start = Constants.SMALL1.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (selectedTime.value == "") {
-            EventTimeText()
-        } else {
-            EventTimeText(selectedTime.value)
-        }
-        IconButton(
-            onClick = { showTimePicker.value = true }
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.clock),
-                contentDescription = "Time Picker",
-                tint = colorResource(R.color.main_blue)
-            )
-        }
+    Row(modifier = Modifier.padding(top = CONSTANTS.SMALL1.dp)) {
+        CreateEventDateInput(showDatePicker, date)
+        Spacer(modifier = Modifier.width(CONSTANTS.SMALL1.dp))
+        CreateEventTimeInput(showTimePicker, time)
     }
-}
-
-@Composable
-fun EventDateText(date: String = "Дата") {
-    Text(
-        text = date,
-        fontSize = Constants.MEDIUM1.sp,
-    )
-}
-
-@Composable
-fun EventTimeText(time: String = "Время") {
-    Text(
-        text = time,
-        fontSize = Constants.MEDIUM1.sp,
-    )
+    AnimatedVisibility(
+        visible = showDatePicker.value,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
+        DateInput(showDatePicker, state, date)
+    }
+    AnimatedVisibility(
+        visible = showTimePicker.value,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
+        TimeInput(showTimePicker, timePickerState, time)
+    }
+    viewModel.setEventTime(date.value + " " + time.value)
 }
 
 @Composable
@@ -287,11 +219,11 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
     TextField(
         value = event?.description ?: "",
         onValueChange = { viewModel.setEventDescription(it) },
-        textStyle = TextStyle(fontSize = Constants.MEDIUM2.sp),
-        shape = RoundedCornerShape(Constants.MEDIUM2.dp),
+        textStyle = TextStyle(fontSize = CONSTANTS.MEDIUM2.sp),
+        shape = RoundedCornerShape(CONSTANTS.MEDIUM2.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = Constants.SMALL1.dp)
+            .padding(vertical = CONSTANTS.SMALL1.dp)
             .height(80.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
@@ -302,7 +234,7 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
         placeholder = {
             Text(
                 text = "Описание",
-                fontSize = Constants.MEDIUM1.sp,
+                fontSize = CONSTANTS.MEDIUM1.sp,
                 color = Color.Gray
             )
         },
@@ -332,8 +264,8 @@ fun CreateEventAddParticipants(
         Row(
             modifier = Modifier
                 .height(48.dp)
-                .background(Color.White, RoundedCornerShape(Constants.MEDIUM2.dp))
-                .padding(start = Constants.SMALL1.dp),
+                .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
+                .padding(start = CONSTANTS.SMALL1.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
 
@@ -374,21 +306,43 @@ fun CreateEventAddParticipants(
 fun CreateEventAddLocation() {
     Column(
         modifier = Modifier
-            .padding(vertical = Constants.SMALL1.dp)
+            .padding(vertical = CONSTANTS.SMALL1.dp)
             .height(300.dp)
-            .background(Color.White, RoundedCornerShape(Constants.MEDIUM2.dp))
+            .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
 
     ) {
         Text(
             text = mockEvents[0].location,
-            fontSize = Constants.MEDIUM1.sp,
+            fontSize = CONSTANTS.MEDIUM1.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = Constants.SMALL1.dp, top = Constants.SMALL1.dp)
+            modifier = Modifier.padding(start = CONSTANTS.SMALL1.dp, top = CONSTANTS.SMALL1.dp)
         )
         Box(
-            modifier = Modifier.padding(Constants.SMALL1.dp)
+            modifier = Modifier.padding(CONSTANTS.SMALL1.dp)
         ) {
             MapScreen()
         }
+    }
+}
+
+@Composable
+fun CreateEventDoneButton(viewModel: EventViewModel, navController: NavHostController) {
+    TextButton(
+        onClick = {
+            viewModel.saveCurrentEvent()
+            navController.navigate("events")
+        },
+        modifier = Modifier.border(
+            4.dp,
+            colorResource(R.color.main_blue),
+            RoundedCornerShape(CONSTANTS.MEDIUM2.dp)
+        )
+    ) {
+        Text(
+            text = "Готово!",
+            fontSize = CONSTANTS.MEDIUM2.sp,
+            color = colorResource(R.color.main_blue),
+            fontWeight = FontWeight.Bold,
+        )
     }
 }

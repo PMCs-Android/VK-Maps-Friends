@@ -70,8 +70,8 @@ class EventViewModel @Inject constructor(
                     }
                 loadParticipants(event.eventId)
                 userRepository.addEventToUser(event.creatorId, event.eventId)
-            } catch (e: Exception) {
-                println("Ошибка добавления vm create: ${e.message}")
+            } catch (addCurrentEventException: Exception) {
+                println("Error add event vm: ${addCurrentEventException.message}")
             }
         }
     }
@@ -83,8 +83,8 @@ class EventViewModel @Inject constructor(
                     ?: throw IllegalStateException("Сначала создайте событие")
                 eventRepository.addParticipant(eventId, userId)
                 loadParticipants(eventId)
-            } catch (e: Exception) {
-                println("Ошибка добавления vm add: ${e.message}")
+            } catch (addParticipantException: Exception) {
+                println("Error add participant vm: ${addParticipantException.message}")
             }
         }
     }
@@ -97,8 +97,8 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _events.value = eventRepository.getEventsByUserId(userId)
-            } catch (e: Exception) {
-                println("Error loading events ${e.message}")
+            } catch (loadEventsForUserException: Exception) {
+                println("Error loading events ${loadEventsForUserException.message}")
                 _events.value = emptyList()
             }
         }
@@ -109,8 +109,8 @@ class EventViewModel @Inject constructor(
             try {
                 println("Success delete event a${eventId}a")
                 eventRepository.deleteEvent(eventId)
-            } catch (e: Exception) {
-                println("Error deleting events ${e.message}")
+            } catch (deleteEventException: Exception) {
+                println("Error deleting events ${deleteEventException.message}")
             }
         }
     }

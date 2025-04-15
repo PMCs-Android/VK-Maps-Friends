@@ -23,8 +23,8 @@ class UserViewModel @Inject constructor(
             try {
                 val friendsList = userRepository.getFriendsList(userId) ?: emptyList()
                 _friends.value = friendsList
-            } catch (e: Exception) {
-                println("Error creating event: ${e.message}")
+            } catch (cresteNewEventException: Exception) {
+                println("Error creating event: ${cresteNewEventException.message}")
                 _friends.value = emptyList()
             }
         }
@@ -40,8 +40,8 @@ class UserViewModel @Inject constructor(
                     user.friends,
                     user.location
                 )
-            } catch (e: Exception) {
-                println("Error set user: ${e.message}")
+            } catch (setUserException: Exception) {
+                println("Error set user: ${setUserException.message}")
             }
         }
     }
@@ -51,8 +51,8 @@ class UserViewModel @Inject constructor(
             try {
                 val result = userRepository.getUserAvatars(userIds)
                 _avatars.value = result.filterValues { it != null } as Map<String, String>
-            } catch (e: Exception) {
-                println("Error load avatars ${e.message}")
+            } catch (loadAvatarsException: Exception) {
+                println("Error load avatars ${loadAvatarsException.message}")
             }
         }
     }

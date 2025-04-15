@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -94,14 +95,63 @@ fun MyEventsHeader(navController: NavHostController) {
 }
 
 @Composable
+fun NotEmptyEvents(navController: NavHostController) {
+    val viewModel = hiltViewModel<EventViewModel>()
+    val events = viewModel.events.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        viewModel.loadEventsForUser(currentUser.userId)
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        horizontalArrangement = Arrangement.Start,
+    ) {
+        events.forEach { event ->
+            Column {
+                TextButton(
+                    onClick = { /* Переход на день */ },
+                    modifier = Modifier
+                        .width(44.dp)
+                        .height(60.dp)
+                        .background(Color.White, RoundedCornerShape(8.dp))
+                ) {
+                    Text(
+                        text = event.time,
+                        fontSize = 16.sp,
+                        color = Color.Black
+                    )
+                }
+                Text(
+                    text = "вт",
+                    fontSize = 16.sp,
+                    color = Color.White,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(vertical = 4.dp)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+        }
+    }
+    LazyColumn {
+        items(events) { event ->
+            OneEvent(event, viewModel, navController)
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+}
+
+@Composable
 fun OneEvent(event: Event, viewModel: EventViewModel, navController: NavHostController) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val avatars = userViewModel.avatars.collectAsState().value
-
     LaunchedEffect(event) {
         userViewModel.loadAvatars(event.participants)
     }
-
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = event.time,
@@ -156,24 +206,29 @@ fun OneEvent(event: Event, viewModel: EventViewModel, navController: NavHostCont
 //                    fontSize = 12.sp
 //                )
             }
-            IconButton(
-                onClick = { /* Удаление ивента */
-                    viewModel.deleteEvent(event.eventId)
-                },
-                modifier = Modifier
-                    .border(
-                        2.dp,
-                        colorResource(R.color.main_pink),
-                        RoundedCornerShape(16.dp)
-                    )
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.cross),
-                    contentDescription = "Delete",
-                    tint = colorResource(R.color.main_pink)
-                )
-            }
+            DeleteButton(event, viewModel)
         }
+    }
+}
+
+@Composable
+fun DeleteButton(event: Event, viewModel: EventViewModel) {
+    IconButton(
+        onClick = { /* Удаление ивента */
+            viewModel.deleteEvent(event.eventId)
+        },
+        modifier = Modifier
+            .border(
+                2.dp,
+                colorResource(R.color.main_pink),
+                RoundedCornerShape(16.dp)
+            )
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.cross),
+            contentDescription = "Delete",
+            tint = colorResource(R.color.main_pink)
+        )
     }
 }
 
@@ -226,55 +281,6 @@ fun BottomBar(navController: NavHostController) {
                 color = colorResource(R.color.main_pink),
                 fontWeight = FontWeight.Bold
             )
-        }
-    }
-}
-
-@Composable
-fun NotEmptyEvents(navController: NavHostController) {
-    val viewModel = hiltViewModel<EventViewModel>()
-    val events = viewModel.events.collectAsState().value
-
-    LaunchedEffect(Unit) {
-        viewModel.loadEventsForUser(currentUser.userId)
-    }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        events.forEach { event ->
-            Column {
-                TextButton(
-                    onClick = { /* Переход на день */ },
-                    modifier = Modifier
-                        .width(44.dp)
-                        .height(60.dp)
-                        .background(Color.White, RoundedCornerShape(8.dp))
-                ) {
-                    Text(
-                        text = event.time,
-                        fontSize = 16.sp,
-                        color = Color.Black
-                    )
-                }
-                Text(
-                    text = "вт",
-                    fontSize = 16.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(vertical = 4.dp)
-                )
-            }
-        }
-    }
-    LazyColumn {
-        items(events) { event ->
-            OneEvent(event, viewModel, navController)
         }
     }
 }

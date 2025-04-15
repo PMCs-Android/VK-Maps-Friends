@@ -27,9 +27,8 @@ class FirebaseEventRepository : EventRepository {
                 .document(event.eventId)
                 .set(event)
                 .await()
-        } catch (e: Exception) {
-            println("Ошибка создания create: ${e.message}")
-            throw e
+        } catch (createEventException: Exception) {
+            println("Ошибка создания create: ${createEventException.message}")
         }
     }
 
