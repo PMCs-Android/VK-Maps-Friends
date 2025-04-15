@@ -1,8 +1,6 @@
 package com.example.mapsfriends
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,73 +15,104 @@ class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val currentUserId = MutableStateFlow<String?>(null)
-
-    private val _eventId = MutableStateFlow(UUID.randomUUID().toString())
-    val eventId: StateFlow<String> = _eventId
-
+    private val _currentEvent = MutableStateFlow<Event?>(null)
     private val _participants = MutableStateFlow<List<User>>(emptyList())
+    private val _events = MutableStateFlow<List<Event>>(emptyList())
+
+    val events: StateFlow<List<Event>> = _events
+    val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
 
-    fun createEvent(
-        eventId: String,
-        title: String,
-        description: String,
-        location: GeoPoint,
-        time: String,
-        participants: List<String>
-    ) {
+    fun createNewEvent() {
+        _currentEvent.value = Event(
+            eventId = UUID.randomUUID().toString(),
+            creatorId = currentUser.userId,
+            title = "",
+            description = "",
+            location = GeoPoint(0.0, 0.0),
+            time = "",
+            participants = listOf(currentUser.userId)
+        )
+        viewModelScope.launch {
+            userRepository.getUserById(currentUser.userId)?.let { creator ->
+                _participants.value = listOf(creator)
+            }
+            println("create new event ${_participants.value.size}")
+        }
+    }
+
+    fun setEventTitle(title: String) {
+        _currentEvent.value = _currentEvent.value?.copy(title = title)
+    }
+
+    fun setEventDescription(description: String) {
+        _currentEvent.value = _currentEvent.value?.copy(description = description)
+    }
+
+    fun setEventLocation(location: GeoPoint) {
+        _currentEvent.value = _currentEvent.value?.copy(location = location)
+    }
+
+    fun setEventTime(time: String) {
+        _currentEvent.value = _currentEvent.value?.copy(time = time)
+    }
+
+    fun saveCurrentEvent() {
         viewModelScope.launch {
             try {
-                // CHANGE TO REAL CURRENT USER ID !!
-                val creatorId = currentUser.userId
-
-                val event = Event(
-                    eventId = eventId,
-                    creatorId = creatorId,
-                    title = title,
-                    description = description,
-                    location = location,
-                    time = time,
-                    participants = participants
-                )
-
+                val event = _currentEvent.value ?: throw IllegalStateException("Event not created")
+                println("event id:${event.eventId}:")
                 eventRepository.createEvent(event)
-                userRepository.addEventToUser(creatorId, eventId)
-                loadParticipants()
+                _participants.value
+                    .filter { it.userId != event.creatorId }
+                    .forEach { user ->
+                        eventRepository.addParticipant(event.eventId, user.userId)
+                    }
+                loadParticipants(event.eventId)
+                userRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: Exception) {
-                println("Error creating event: ${e.message}")
+                println("Ошибка добавления vm create: ${e.message}")
             }
         }
     }
+
 
     fun addParticipant(userId: String) {
         viewModelScope.launch {
             try {
-                eventRepository.addParticipant(_eventId.value, userId)
-                // Обновляем локальный список
-                val user = FirebaseUserRepository().getUserById(userId)
-                user?.let {
-                    _participants.value = _participants.value + it
-                }
+                val eventId = _currentEvent.value?.eventId
+                    ?: throw IllegalStateException("Сначала создайте событие")
+                eventRepository.addParticipant(eventId, userId)
+                loadParticipants(eventId)
             } catch (e: Exception) {
-                println("Ошибка добавления: ${e.message}")
+                println("Ошибка добавления vm add: ${e.message}")
             }
         }
     }
 
-    suspend fun loadParticipants() {
-        _participants.value = eventRepository.getParticipants(_eventId.value)
+    suspend fun loadParticipants(eventId: String) {
+        _participants.value = eventRepository.getParticipants(eventId)
     }
 
-    fun getEventsByUserId(userId: String): List<Event> {
+    fun loadEventsForUser(userId: String) {
         viewModelScope.launch {
-            return@launch try {
-                val events = eventRepository.getEventsByUserId(userId)
+            try {
+                _events.value = eventRepository.getEventsByUserId(userId)
             } catch (e: Exception) {
-                println("Error getting events of user: ${e.message}")
+                println("Error loading events ${e.message}")
+                _events.value = emptyList()
             }
         }
-        return emptyList()
+    }
+
+    fun deleteEvent(eventId : String) {
+        viewModelScope.launch {
+            try {
+                println("Success delete event a${eventId}a")
+                eventRepository.deleteEvent(eventId)
+            } catch (e: Exception) {
+                println("Error deleting events ${e.message}")
+            }
+        }
     }
 }

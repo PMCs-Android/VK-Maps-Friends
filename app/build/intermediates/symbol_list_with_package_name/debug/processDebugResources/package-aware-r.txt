@@ -707,7 +707,9 @@ drawable btn_radio_off_to_on_mtrl_animation
 drawable btn_radio_on_mtrl
 drawable btn_radio_on_to_off_mtrl_animation
 drawable button_round_background
+drawable calendar
 drawable chat_main_page
+drawable clock
 drawable common_full_open_on_phone
 drawable common_google_signin_btn_icon_dark
 drawable common_google_signin_btn_icon_dark_focused
@@ -1031,6 +1033,7 @@ layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
 mipmap ic_launcher
 mipmap ic_launcher_round
+raw firebase_common_keep
 raw map_style
 string abc_action_bar_home_description
 string abc_action_bar_up_description
@@ -1092,6 +1095,11 @@ string dalete
 string default_error_message
 string default_popup_window_title
 string dropdown_menu
+string gcm_defaultSenderId
+string google_api_key
+string google_app_id
+string google_crash_reporting_api_key
+string google_storage_bucket
 string in_progress
 string indeterminate
 string m3c_bottom_sheet_collapse_description
@@ -1155,6 +1163,7 @@ string my_events
 string navigation_menu
 string new_event
 string not_selected
+string project_id
 string range_end
 string range_start
 string requests

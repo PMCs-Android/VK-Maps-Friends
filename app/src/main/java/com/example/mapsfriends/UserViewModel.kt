@@ -13,9 +13,10 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
-    // StateFlow для хранения списка друзей
     private val _friends = MutableStateFlow<List<User>>(emptyList())
     val friends: StateFlow<List<User>> = _friends.asStateFlow()
+    private val _avatars = MutableStateFlow<Map<String, String>>(emptyMap())
+    val avatars: StateFlow<Map<String, String>> = _avatars
 
     fun loadFriends(userId: String) {
         viewModelScope.launch {
@@ -29,12 +30,29 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun setUser(user : User) {
+    fun setUser(user: User) {
         viewModelScope.launch {
             try {
-                userRepository.setUser(user.userId, user.username, user.avatarUrl, user.friends, user.location)
+                userRepository.setUser(
+                    user.userId,
+                    user.username,
+                    user.avatarUrl,
+                    user.friends,
+                    user.location
+                )
             } catch (e: Exception) {
                 println("Error set user: ${e.message}")
+            }
+        }
+    }
+
+    fun loadAvatars(userIds: List<String>) {
+        viewModelScope.launch {
+            try {
+                val result = userRepository.getUserAvatars(userIds)
+                _avatars.value = result.filterValues { it != null } as Map<String, String>
+            } catch (e: Exception) {
+                println("Error load avatars ${e.message}")
             }
         }
     }

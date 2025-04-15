@@ -2,6 +2,7 @@ package com.example.mapsfriends
 
 import android.util.Log
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
@@ -92,17 +93,24 @@ class FirebaseUserRepository : UserRepository {
         friends: List<String>,
         location: GeoPoint
     ) {
-        val user = User(
-            userId = userId,
-            username = username,
-            avatarUrl = avatarUrl,
-            friends = friends,
-            location = location
-        )
+        try {
+            val userData = hashMapOf(
+                "user_id" to userId,
+                "username" to username,
+                "avatar_url" to avatarUrl,
+                "friends" to friends,
+                "location" to location
+            )
 
-        db.document(userId)
-            .set(user)
-            .await()
+            db.document(userId)
+                .set(userData)
+                .await()
+
+            Log.d("FirebaseRepo", "User saved with ID: $userId")
+        } catch (e: Exception) {
+            Log.e("FirebaseRepo", "Error saving user", e)
+            throw e
+        }
     }
 
     override suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit) {
@@ -152,8 +160,28 @@ class FirebaseUserRepository : UserRepository {
     }
 
     override suspend fun addEventToUser(creatorID: String, eventId: String) {
-        val userRef = db.document(creatorID)
-        val currentEvents = userRef.get().await().get("events") as? List<String> ?: emptyList()
-        userRef.update("events", currentEvents + eventId).await()
+        try {
+            val userRef = db.document(creatorID)
+            val currentEvents = userRef.get().await().get("events") as? List<String> ?: emptyList()
+            userRef.update("events", currentEvents + eventId).await()
+        } catch (e: Exception) {
+            println("add event to user ${e.message}")
+        }
+    }
+
+    override suspend fun getUserAvatars(userIds: List<String>): Map<String, String?> {
+        return try {
+            val documents = db
+                .whereIn(FieldPath.documentId(), userIds)
+                .get()
+                .await()
+
+            documents.associate { doc ->
+                doc.id to doc.getString("avatar_url")?.takeIf { it.isNotEmpty() }
+            }
+        } catch (e: Exception) {
+            println("Error getting multiple avatars ${e.message}")
+            emptyMap()
+        }
     }
 }

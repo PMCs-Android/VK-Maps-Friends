@@ -11,19 +11,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -36,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 
 @Composable
 fun EventCalendarScreen(navController: NavHostController) {
@@ -69,7 +73,7 @@ fun MyEventsHeader(navController: NavHostController) {
         modifier = Modifier.fillMaxWidth()
     ) {
         IconButton(
-            onClick = { navController.popBackStack() },
+            onClick = { navController.navigate("main") },
             modifier = Modifier
                 .border(4.dp, Color.White, RoundedCornerShape(12.dp))
         ) {
@@ -90,7 +94,14 @@ fun MyEventsHeader(navController: NavHostController) {
 }
 
 @Composable
-fun OneEvent(event : Event, navController: NavHostController) {
+fun OneEvent(event: Event, viewModel: EventViewModel, navController: NavHostController) {
+    val userViewModel = hiltViewModel<UserViewModel>()
+    val avatars = userViewModel.avatars.collectAsState().value
+
+    LaunchedEffect(event) {
+        userViewModel.loadAvatars(event.participants)
+    }
+
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = event.time,
@@ -118,11 +129,13 @@ fun OneEvent(event : Event, navController: NavHostController) {
                     fontWeight = FontWeight.Bold
                 )
                 Row {
-                    event.participants.forEach { member ->
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "MemberIcon",
-                            tint = colorResource(R.color.main_purple)
+                    avatars.forEach { participantAvatar ->
+                        AsyncImage(
+                            model = participantAvatar.value,
+                            contentDescription = "Friend Avatar",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
                         )
                     }
 //                    Text(
@@ -143,27 +156,24 @@ fun OneEvent(event : Event, navController: NavHostController) {
 //                    fontSize = 12.sp
 //                )
             }
-            DeleteEvent(modifier = Modifier)
+            IconButton(
+                onClick = { /* Удаление ивента */
+                    viewModel.deleteEvent(event.eventId)
+                },
+                modifier = Modifier
+                    .border(
+                        2.dp,
+                        colorResource(R.color.main_pink),
+                        RoundedCornerShape(16.dp)
+                    )
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.cross),
+                    contentDescription = "Delete",
+                    tint = colorResource(R.color.main_pink)
+                )
+            }
         }
-    }
-}
-
-@Composable
-fun DeleteEvent(modifier: Modifier) {
-    IconButton(
-        onClick = { /* Удаление ивента */ },
-        modifier = modifier
-            .border(
-                2.dp,
-                colorResource(R.color.main_pink),
-                RoundedCornerShape(16.dp)
-            )
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.cross),
-            contentDescription = "Delete",
-            tint = colorResource(R.color.main_pink)
-        )
     }
 }
 
@@ -223,16 +233,18 @@ fun BottomBar(navController: NavHostController) {
 @Composable
 fun NotEmptyEvents(navController: NavHostController) {
     val viewModel = hiltViewModel<EventViewModel>()
-    val events = viewModel.getEventsByUserId(currentUser.userId)
+    val events = viewModel.events.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        viewModel.loadEventsForUser(currentUser.userId)
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        Text(
-            text = events.size.toString()
-        )
         events.forEach { event ->
             Column {
                 TextButton(
@@ -262,7 +274,7 @@ fun NotEmptyEvents(navController: NavHostController) {
     }
     LazyColumn {
         items(events) { event ->
-            OneEvent(event, navController)
+            OneEvent(event, viewModel, navController)
         }
     }
 }

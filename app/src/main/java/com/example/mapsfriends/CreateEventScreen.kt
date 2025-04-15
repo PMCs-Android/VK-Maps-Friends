@@ -20,10 +20,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,10 +38,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -56,14 +55,9 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import com.google.firebase.firestore.GeoPoint
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.util.UUID
 
 object Constants {
     const val BORDER = 4
@@ -74,50 +68,12 @@ object Constants {
     const val LARGE = 30
 }
 
-val currentUser = User(
-    userId = "111",
-    username = "test user",
-    avatarUrl = "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818.jpeg/orig",
-    friends = listOf("112", "113"),
-    location = GeoPoint(55.751244, 37.618423)
-)
-
-val friend1 = User(
-    userId = "112",
-    username = "test user2",
-    avatarUrl = "https://avatars.mds.yandex.net/get-entity_search/1969011/918366713/orig",
-    friends = listOf(),
-    location = GeoPoint(55.740000, 37.600000)
-)
-
-val friend2 = User(
-    userId = "113",
-    username = "test user3",
-    avatarUrl = "https://i.pinimg.com/736x/be/46/46/be4646a42ab267d93f035f93752eb796.jpg",
-    friends = listOf(),
-    location = GeoPoint(55.760000, 37.620000)
-)
-
-val event1 = Event(
-    "1",
-    "111",
-    "gegege",
-    "aaaaaaaaaaaa",
-    GeoPoint(50.004, 23.004),
-    "13.4.25 12:10",
-    listOf("111", "112", "113")
-)
-
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateEventScreen(navController: NavHostController) {
-    val title = remember { mutableStateOf("") }
-    val descrip = remember { mutableStateOf("") }
     val date = remember { mutableStateOf("") }
     val time = remember { mutableStateOf("") }
-//    val location = remember { mutableStateOf(GeoPoint(0.0, 0.0)) }
-
     val showDatePicker = remember { mutableStateOf(false) }
     val showTimePicker = remember { mutableStateOf(false) }
     val state = rememberDatePickerState()
@@ -126,26 +82,15 @@ fun CreateEventScreen(navController: NavHostController) {
         initialMinute = LocalDateTime.now().minute,
         is24Hour = true,
     )
-
     val viewModel = hiltViewModel<EventViewModel>()
-
-//    LaunchedEffect(Unit) {
-//        if (viewModel.eventId.value == null) {
-//            viewModel.generateNewEventId()
-//        }
-//    }
-    val createdEventId = viewModel.eventId
-
+    val currentEvent by viewModel.currentEvent.collectAsState()
     val showAddFriend = remember { mutableStateOf(false) }
 
-    viewModel.createEvent(
-        "1",
-        "gegege",
-        "aaaaaaaaaaaa",
-        GeoPoint(50.004, 23.004),
-        "13.4.25 12:10",
-        listOf("111", "112", "113")
-    )
+    LaunchedEffect(Unit) {
+        if (currentEvent == null) {
+            viewModel.createNewEvent()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -161,7 +106,7 @@ fun CreateEventScreen(navController: NavHostController) {
             .padding(vertical = Constants.LARGE.dp, horizontal = Constants.SMALL1.dp)
     ) {
         ExitButton(navController)
-        CreateEventTitleInput(title)
+        CreateEventTitleInput(viewModel, currentEvent)
         Row(modifier = Modifier.padding(top = Constants.SMALL1.dp)) {
             CreateEventDateInput(showDatePicker, date)
             Spacer(modifier = Modifier.width(Constants.SMALL1.dp))
@@ -181,10 +126,9 @@ fun CreateEventScreen(navController: NavHostController) {
         ) {
             TimeInput(showTimePicker, timePickerState, time)
         }
-        CreateEventDescriptionInput(descrip)
-
+        viewModel.setEventTime(date.value + " " + time.value)
+        CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel)
-
         CreateEventAddLocation()
         Row(
             modifier = Modifier
@@ -194,17 +138,9 @@ fun CreateEventScreen(navController: NavHostController) {
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             TextButton(
-                onClick = { /* Добавление ивента */
-                    viewModel.createEvent(
-                        createdEventId.toString(),
-                        title.value,
-                        descrip.value,
-                        GeoPoint(54.0, 20.0),
-                        date.value + " " + time.value,
-                        viewModel.participants.value.map { it.userId }
-                    )
+                onClick = {
+                    viewModel.saveCurrentEvent()
                     navController.navigate("events")
-//                    viewModel.resetEventId()
                 },
                 modifier = Modifier.border(
                     4.dp,
@@ -213,7 +149,7 @@ fun CreateEventScreen(navController: NavHostController) {
                 )
             ) {
                 Text(
-                    text = "Готово!",
+                    text = "Готово! ${viewModel.events.collectAsState().value.size}",
                     fontSize = Constants.MEDIUM2.sp,
                     color = colorResource(R.color.main_blue),
                     fontWeight = FontWeight.Bold,
@@ -240,10 +176,10 @@ fun ExitButton(navController: NavHostController) {
 }
 
 @Composable
-fun CreateEventTitleInput(title: MutableState<String>) {
+fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
     TextField(
-        value = title.value,
-        onValueChange = { title.value = it },
+        value = event?.title ?: "",
+        onValueChange = { viewModel.setEventTitle(it) },
         textStyle = TextStyle(fontSize = Constants.MEDIUM2.sp),
         shape = RoundedCornerShape(Constants.MEDIUM2.dp),
         modifier = Modifier
@@ -347,10 +283,10 @@ fun EventTimeText(time: String = "Время") {
 }
 
 @Composable
-fun CreateEventDescriptionInput(descrip: MutableState<String>) {
+fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
     TextField(
-        value = descrip.value,
-        onValueChange = { descrip.value = it },
+        value = event?.description ?: "",
+        onValueChange = { viewModel.setEventDescription(it) },
         textStyle = TextStyle(fontSize = Constants.MEDIUM2.sp),
         shape = RoundedCornerShape(Constants.MEDIUM2.dp),
         modifier = Modifier
@@ -382,17 +318,14 @@ fun CreateEventAddParticipants(
     showAddFriend: MutableState<Boolean>,
     viewModel: EventViewModel
 ) {
-//    val viewModel = hiltViewModel<EventViewModel>()
     val participants by viewModel.participants.collectAsState()
-    val createdEventId = viewModel.eventId
+    val createdEventId = viewModel.currentEvent.collectAsState().value?.eventId
 
-    // Автоматическое обновление при изменении состояния showAddFriend
     LaunchedEffect(showAddFriend.value) {
         if (!showAddFriend.value) {
-            viewModel.loadParticipants()
+            viewModel.loadParticipants(createdEventId.toString())
         }
     }
-
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -405,23 +338,20 @@ fun CreateEventAddParticipants(
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-//            Text(
-//                text = createdEventId
-//            )
             participants.forEach { participant ->
-//                AsyncImage(
-//                    model = participant.avatarUrl,
-//                    contentDescription = "Friend Avatar",
-//                    modifier = Modifier
-//                        .size(36.dp)
-//                )
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = ""
+                AsyncImage(
+                    model = participant.avatarUrl,
+                    contentDescription = "Friend Avatar",
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clip(CircleShape)
                 )
             }
             IconButton(
-                onClick = { showAddFriend.value = true },
+                onClick = {
+                    showAddFriend.value = true
+                    viewModel.saveCurrentEvent()
+                },
                 modifier = Modifier
             ) {
                 Icon(
@@ -434,7 +364,8 @@ fun CreateEventAddParticipants(
     }
     if (showAddFriend.value) {
         AddParticipantsScreen(
-            viewModel, showAddFriend
+            viewModel,
+            showAddFriend
         )
     }
 }

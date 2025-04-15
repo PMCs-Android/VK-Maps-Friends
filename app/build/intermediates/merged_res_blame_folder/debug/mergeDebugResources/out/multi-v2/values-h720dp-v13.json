@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-66:/values-h720dp-v13/values-h720dp-v13.xml",
+            "outputFile": "com.example.mapsfriends.app-mergeDebugResources-70:/values-h720dp-v13/values-h720dp-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\listk\\.gradle\\caches\\8.11.1\\transforms\\b62bad41f451ed41996fc4ca017d1ec3\\transformed\\appcompat-1.7.0\\res\\values-h720dp-v13\\values-h720dp-v13.xml",
+                    "source": "C:\\Users\\User\\.gradle\\caches\\8.11.1\\transforms\\8b1e983d6b7d0585c88cce220958a8e2\\transformed\\appcompat-1.7.0\\res\\values-h720dp-v13\\values-h720dp-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

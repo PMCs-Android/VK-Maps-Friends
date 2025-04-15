@@ -54,7 +54,7 @@ fun DateInput(
                         state.selectedDateMillis?.let {
                             val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
                                 .toLocalDate()
-                            selectedDate.value = "${date.dayOfMonth + 1}.${date.month.ordinal + 1}"
+                            selectedDate.value = "${date.dayOfMonth}.${date.month.value}"
                         }
                         showDatePicker.value = false
                     }
