@@ -57,16 +57,16 @@ fun AddParticipantsScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 400.dp, max = 800.dp)
-                .padding(16.dp)
+                .heightIn(min = Dimensions.LARGE3.dp, max = Dimensions.LARGE4.dp)
+                .padding(Dimensions.SMALL3.dp)
         ) {
             items(friends) { friend ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(80.dp)
-                        .padding(top = 10.dp)
-                        .background(Color.White, RoundedCornerShape(20.dp)),
+                        .height(Dimensions.LARGE1.dp)
+                        .padding(top = Dimensions.SMALL1.dp)
+                        .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp)),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -74,22 +74,21 @@ fun AddParticipantsScreen(
                         model = friend.avatarUrl,
                         contentDescription = "Friend Avatar",
                         modifier = Modifier
-                            .size(48.dp)
+                            .size(Dimensions.MEDIUM4.dp)
                             .clip(CircleShape)
                     )
                     Text(
                         text = friend.username,
-                        fontSize = 16.sp,
+                        fontSize = Dimensions.SMALL3.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .padding(10.dp)
+                            .padding(Dimensions.SMALL1.dp)
                     )
                     IconButton(
                         onClick = {
                             eventViewModel.addParticipant(friend.userId)
                         },
-                        modifier = Modifier
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(R.drawable.add_plus),

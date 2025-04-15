@@ -106,8 +106,8 @@ class FirebaseUserRepository : UserRepository {
                 .await()
 
             println("User saved with ID: $userId")
-        } catch (setUserException: Exception) {
-            println("Error saving user ${setUserException.message}")
+        } catch (e: Error) {
+            println("Error saving user ${e.message}")
         }
     }
 
@@ -162,8 +162,8 @@ class FirebaseUserRepository : UserRepository {
             val userRef = db.document(creatorID)
             val currentEvents = userRef.get().await().get("events") as? List<String> ?: emptyList()
             userRef.update("events", currentEvents + eventId).await()
-        } catch (addEventToUserException: Exception) {
-            println("add event to user ${addEventToUserException.message}")
+        } catch (e: Error) {
+            println("Error add event to user ${e.message}")
         }
     }
 
@@ -177,8 +177,8 @@ class FirebaseUserRepository : UserRepository {
             documents.associate { doc ->
                 doc.id to doc.getString("avatar_url")?.takeIf { it.isNotEmpty() }
             }
-        } catch (getUserAvatarsException: Exception) {
-            println("Error getting multiple avatars ${getUserAvatarsException.message}")
+        } catch (e: Error) {
+            println("Error getting multiple avatars ${e.message}")
             emptyMap()
         }
     }

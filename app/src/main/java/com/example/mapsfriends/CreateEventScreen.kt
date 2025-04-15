@@ -2,11 +2,6 @@ package com.example.mapsfriends
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -61,13 +54,20 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import java.time.LocalDateTime
 
-object CONSTANTS {
+object Dimensions {
     const val BORDER = 4
     const val SMALL1 = 10
     const val SMALL2 = 12
-    const val MEDIUM1 = 16
-    const val MEDIUM2 = 20
-    const val LARGE = 30
+    const val SMALL3 = 16
+    const val MEDIUM1 = 20
+    const val MEDIUM2 = 30
+    const val MEDIUM3 = 36
+    const val MEDIUM4 = 48
+    const val MEDIUM5 = 68
+    const val LARGE1 = 80
+    const val LARGE2 = 300
+    const val LARGE3 = 400
+    const val LARGE4 = 800
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -105,27 +105,27 @@ fun CreateEventScreen(navController: NavHostController) {
                     )
                 )
             )
-            .padding(vertical = CONSTANTS.LARGE.dp, horizontal = CONSTANTS.SMALL1.dp)
+            .padding(vertical = Dimensions.MEDIUM2.dp, horizontal = Dimensions.SMALL1.dp)
     ) {
         ExitButton(navController)
         CreateEventTitleInput(viewModel, currentEvent)
-        CreateEventDateTimeInput(
-            showDatePicker,
-            date,
-            showTimePicker,
-            time,
-            state,
-            timePickerState,
-            viewModel
-        )
+        Row(modifier = Modifier.padding(top = Dimensions.SMALL1.dp)) {
+            CreateEventDateInput(showDatePicker, date)
+            Spacer(modifier = Modifier.width(Dimensions.SMALL1.dp))
+            CreateEventTimeInput(showTimePicker, time)
+        }
+        DateInput(showDatePicker, state, date)
+        TimeInput(showTimePicker, timePickerState, time)
+        viewModel.setEventTime(date.value + " " + time.value)
+
         CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel)
         CreateEventAddLocation()
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
-                .padding(CONSTANTS.SMALL1.dp),
+                .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp))
+                .padding(Dimensions.SMALL1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             CreateEventDoneButton(viewModel, navController)
@@ -138,8 +138,7 @@ fun ExitButton(navController: NavHostController) {
     IconButton(
         onClick = { navController.popBackStack() },
         modifier = Modifier
-            .padding(0.dp)
-            .border(CONSTANTS.BORDER.dp, Color.White, RoundedCornerShape(CONSTANTS.SMALL2.dp))
+            .border(Dimensions.BORDER.dp, Color.White, RoundedCornerShape(Dimensions.SMALL2.dp))
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -154,12 +153,12 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
     TextField(
         value = event?.title ?: "",
         onValueChange = { viewModel.setEventTitle(it) },
-        textStyle = TextStyle(fontSize = CONSTANTS.MEDIUM2.sp),
-        shape = RoundedCornerShape(CONSTANTS.MEDIUM2.dp),
+        textStyle = TextStyle(fontSize = Dimensions.MEDIUM1.sp),
+        shape = RoundedCornerShape(Dimensions.MEDIUM1.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(68.dp)
-            .padding(top = CONSTANTS.SMALL1.dp),
+            .height(Dimensions.MEDIUM5.dp)
+            .padding(top = Dimensions.SMALL1.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
@@ -169,7 +168,7 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
         placeholder = {
             Text(
                 text = "Название",
-                fontSize = CONSTANTS.MEDIUM1.sp,
+                fontSize = Dimensions.SMALL3.sp,
                 color = Color.Gray
             )
         },
@@ -180,51 +179,17 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CreateEventDateTimeInput(
-    showDatePicker: MutableState<Boolean>,
-    date: MutableState<String>,
-    showTimePicker: MutableState<Boolean>,
-    time: MutableState<String>,
-    state: DatePickerState,
-    timePickerState: TimePickerState,
-    viewModel: EventViewModel
-) {
-    Row(modifier = Modifier.padding(top = CONSTANTS.SMALL1.dp)) {
-        CreateEventDateInput(showDatePicker, date)
-        Spacer(modifier = Modifier.width(CONSTANTS.SMALL1.dp))
-        CreateEventTimeInput(showTimePicker, time)
-    }
-    AnimatedVisibility(
-        visible = showDatePicker.value,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
-    ) {
-        DateInput(showDatePicker, state, date)
-    }
-    AnimatedVisibility(
-        visible = showTimePicker.value,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
-    ) {
-        TimeInput(showTimePicker, timePickerState, time)
-    }
-    viewModel.setEventTime(date.value + " " + time.value)
-}
-
 @Composable
 fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
     TextField(
         value = event?.description ?: "",
         onValueChange = { viewModel.setEventDescription(it) },
-        textStyle = TextStyle(fontSize = CONSTANTS.MEDIUM2.sp),
-        shape = RoundedCornerShape(CONSTANTS.MEDIUM2.dp),
+        textStyle = TextStyle(fontSize = Dimensions.MEDIUM1.sp),
+        shape = RoundedCornerShape(Dimensions.MEDIUM1.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = CONSTANTS.SMALL1.dp)
-            .height(80.dp),
+            .padding(vertical = Dimensions.SMALL1.dp)
+            .height(Dimensions.LARGE1.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
@@ -234,7 +199,7 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
         placeholder = {
             Text(
                 text = "Описание",
-                fontSize = CONSTANTS.MEDIUM1.sp,
+                fontSize = Dimensions.SMALL3.sp,
                 color = Color.Gray
             )
         },
@@ -263,9 +228,9 @@ fun CreateEventAddParticipants(
     ) {
         Row(
             modifier = Modifier
-                .height(48.dp)
-                .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
-                .padding(start = CONSTANTS.SMALL1.dp),
+                .height(Dimensions.MEDIUM4.dp)
+                .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp))
+                .padding(start = Dimensions.SMALL1.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
 
@@ -275,7 +240,7 @@ fun CreateEventAddParticipants(
                     model = participant.avatarUrl,
                     contentDescription = "Friend Avatar",
                     modifier = Modifier
-                        .size(36.dp)
+                        .size(Dimensions.MEDIUM3.dp)
                         .clip(CircleShape)
                 )
             }
@@ -284,7 +249,6 @@ fun CreateEventAddParticipants(
                     showAddFriend.value = true
                     viewModel.saveCurrentEvent()
                 },
-                modifier = Modifier
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.add_plus),
@@ -306,19 +270,19 @@ fun CreateEventAddParticipants(
 fun CreateEventAddLocation() {
     Column(
         modifier = Modifier
-            .padding(vertical = CONSTANTS.SMALL1.dp)
-            .height(300.dp)
-            .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
+            .padding(vertical = Dimensions.SMALL1.dp)
+            .height(Dimensions.LARGE2.dp)
+            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp))
 
     ) {
         Text(
             text = mockEvents[0].location,
-            fontSize = CONSTANTS.MEDIUM1.sp,
+            fontSize = Dimensions.SMALL3.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = CONSTANTS.SMALL1.dp, top = CONSTANTS.SMALL1.dp)
+            modifier = Modifier.padding(start = Dimensions.SMALL1.dp, top = Dimensions.SMALL1.dp)
         )
         Box(
-            modifier = Modifier.padding(CONSTANTS.SMALL1.dp)
+            modifier = Modifier.padding(Dimensions.SMALL1.dp)
         ) {
             MapScreen()
         }
@@ -333,14 +297,14 @@ fun CreateEventDoneButton(viewModel: EventViewModel, navController: NavHostContr
             navController.navigate("events")
         },
         modifier = Modifier.border(
-            4.dp,
+            Dimensions.BORDER.dp,
             colorResource(R.color.main_blue),
-            RoundedCornerShape(CONSTANTS.MEDIUM2.dp)
+            RoundedCornerShape(Dimensions.MEDIUM1.dp)
         )
     ) {
         Text(
             text = "Готово!",
-            fontSize = CONSTANTS.MEDIUM2.sp,
+            fontSize = Dimensions.MEDIUM1.sp,
             color = colorResource(R.color.main_blue),
             fontWeight = FontWeight.Bold,
         )

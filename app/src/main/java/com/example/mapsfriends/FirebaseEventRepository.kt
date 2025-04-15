@@ -1,5 +1,6 @@
 package com.example.mapsfriends
 
+import coil.compose.AsyncImagePainter
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
@@ -27,8 +28,8 @@ class FirebaseEventRepository : EventRepository {
                 .document(event.eventId)
                 .set(event)
                 .await()
-        } catch (createEventException: Exception) {
-            println("Ошибка создания create: ${createEventException.message}")
+        } catch (e: Error) {
+            println("Ошибка создания create: ${e.message}")
         }
     }
 

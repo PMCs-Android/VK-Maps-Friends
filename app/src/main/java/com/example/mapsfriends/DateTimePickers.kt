@@ -2,6 +2,11 @@ package com.example.mapsfriends
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,6 +47,13 @@ import androidx.compose.ui.window.DialogProperties
 import java.time.Instant
 import java.time.ZoneId
 
+object PickersConstants {
+    const val SMALL1 = 6
+    const val SMALL2 = 24
+    const val MEDIUM = 40
+    const val LARGE = 100
+}
+
 @Composable
 fun CreateEventDateInput(
     showDatePicker: MutableState<Boolean>,
@@ -49,9 +61,9 @@ fun CreateEventDateInput(
 ) {
     Row(
         modifier = Modifier
-            .width(100.dp)
-            .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
-            .padding(start = CONSTANTS.SMALL1.dp),
+            .width(PickersConstants.LARGE.dp)
+            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp))
+            .padding(start = Dimensions.SMALL1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -79,9 +91,9 @@ fun CreateEventTimeInput(
 ) {
     Row(
         modifier = Modifier
-            .width(100.dp)
-            .background(Color.White, RoundedCornerShape(CONSTANTS.MEDIUM2.dp))
-            .padding(start = CONSTANTS.SMALL1.dp),
+            .width(PickersConstants.LARGE.dp)
+            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM1.dp))
+            .padding(start = Dimensions.SMALL1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -106,7 +118,7 @@ fun CreateEventTimeInput(
 fun EventDateText(date: String = "Дата") {
     Text(
         text = date,
-        fontSize = CONSTANTS.MEDIUM1.sp,
+        fontSize = Dimensions.SMALL3.sp,
     )
 }
 
@@ -114,7 +126,7 @@ fun EventDateText(date: String = "Дата") {
 fun EventTimeText(time: String = "Время") {
     Text(
         text = time,
-        fontSize = CONSTANTS.MEDIUM1.sp,
+        fontSize = Dimensions.SMALL3.sp,
     )
 }
 
@@ -126,40 +138,46 @@ fun DateInput(
     state: DatePickerState,
     selectedDate: MutableState<String>
 ) {
-    if (showDatePicker.value) {
-        DatePickerDialog(
-            onDismissRequest = {
-                showDatePicker.value = false
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        state.selectedDateMillis?.let {
-                            val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
-                                .toLocalDate()
-                            selectedDate.value = "${date.dayOfMonth}.${date.month.value}"
+    AnimatedVisibility(
+        visible = showDatePicker.value,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
+        if (showDatePicker.value) {
+            DatePickerDialog(
+                onDismissRequest = {
+                    showDatePicker.value = false
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            state.selectedDateMillis?.let {
+                                val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                                selectedDate.value = "${date.dayOfMonth}.${date.month.value}"
+                            }
+                            showDatePicker.value = false
                         }
-                        showDatePicker.value = false
+                    ) {
+                        Text("OK")
                     }
-                ) {
-                    Text("OK")
-                }
-                TextButton(
-                    onClick = { showDatePicker.value = false }
-                ) {
-                    Text(text = "Cancel")
-                }
-            },
-            colors = DatePickerDefaults.colors(
-                containerColor = Color.White,
-                headlineContentColor = colorResource(R.color.main_purple),
-                selectedDayContainerColor = colorResource(R.color.main_purple),
-                selectedDayContentColor = Color.White,
-                todayContentColor = colorResource(R.color.main_purple),
-                todayDateBorderColor = colorResource(R.color.main_blue)
-            )
-        ) {
-            DatePicker(state = state)
+                    TextButton(
+                        onClick = { showDatePicker.value = false }
+                    ) {
+                        Text(text = "Cancel")
+                    }
+                },
+                colors = DatePickerDefaults.colors(
+                    containerColor = Color.White,
+                    headlineContentColor = colorResource(R.color.main_purple),
+                    selectedDayContainerColor = colorResource(R.color.main_purple),
+                    selectedDayContentColor = Color.White,
+                    todayContentColor = colorResource(R.color.main_purple),
+                    todayDateBorderColor = colorResource(R.color.main_blue)
+                )
+            ) {
+                DatePicker(state = state)
+            }
         }
     }
 }
@@ -171,53 +189,61 @@ fun TimeInput(
     state: TimePickerState,
     selectedTime: MutableState<String>
 ) {
-    if (showTimePicker.value) {
-        Dialog(
-            onDismissRequest = { showTimePicker.value = false },
-            properties = DialogProperties(usePlatformDefaultWidth = false),
-        ) {
-            Surface(
-                shape = MaterialTheme.shapes.extraLarge,
-                tonalElevation = 6.dp,
-                modifier = Modifier
-                    .width(IntrinsicSize.Min)
-                    .height(IntrinsicSize.Min)
-                    .background(
-                        shape = MaterialTheme.shapes.extraLarge,
-                        color = MaterialTheme.colorScheme.surface
-                    ),
+    AnimatedVisibility(
+        visible = showTimePicker.value,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically()
+    ) {
+        if (showTimePicker.value) {
+            Dialog(
+                onDismissRequest = { showTimePicker.value = false },
+                properties = DialogProperties(usePlatformDefaultWidth = false),
             ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Surface(
+                    shape = MaterialTheme.shapes.extraLarge,
+                    tonalElevation = PickersConstants.SMALL1.dp,
+                    modifier = Modifier
+                        .width(IntrinsicSize.Min)
+                        .height(IntrinsicSize.Min)
+                        .background(
+                            shape = MaterialTheme.shapes.extraLarge,
+                            color = MaterialTheme.colorScheme.surface
+                        ),
                 ) {
-                    TimePicker(
-                        state = state,
-                        colors = TimePickerDefaults.colors(
-                            containerColor = Color.White,
-                            clockDialColor = Color.White,
-                            selectorColor = colorResource(R.color.main_blue),
-                            clockDialSelectedContentColor = Color.White,
-                            clockDialUnselectedContentColor = Color.Black,
-                            timeSelectorSelectedContainerColor = Color.Transparent,
-                            timeSelectorUnselectedContainerColor = Color.Transparent,
-                            timeSelectorSelectedContentColor = colorResource(R.color.main_blue),
-                            timeSelectorUnselectedContentColor = Color.Black
-                        )
-                    )
-                    Row(
-                        modifier = Modifier
-                            .height(40.dp)
-                            .fillMaxWidth()
+                    Column(
+                        modifier = Modifier.padding(PickersConstants.SMALL2.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Spacer(modifier = Modifier.weight(1f))
-                        TextButton(onClick = { showTimePicker.value = false }) { Text("Cancel") }
-                        TextButton(
-                            onClick = {
+                        TimePicker(
+                            state = state,
+                            colors = TimePickerDefaults.colors(
+                                containerColor = Color.White,
+                                clockDialColor = Color.White,
+                                selectorColor = colorResource(R.color.main_blue),
+                                clockDialSelectedContentColor = Color.White,
+                                clockDialUnselectedContentColor = Color.Black,
+                                timeSelectorSelectedContainerColor = Color.Transparent,
+                                timeSelectorUnselectedContainerColor = Color.Transparent,
+                                timeSelectorSelectedContentColor = colorResource(R.color.main_blue),
+                                timeSelectorUnselectedContentColor = Color.Black
+                            )
+                        )
+                        Row(
+                            modifier = Modifier
+                                .height(PickersConstants.MEDIUM.dp)
+                                .fillMaxWidth()
+                        ) {
+                            Spacer(modifier = Modifier.weight(1f))
+                            TextButton(onClick = {
                                 showTimePicker.value = false
-                                selectedTime.value = "${state.hour}:${state.minute}"
-                            }
-                        ) { Text("OK") }
+                            }) { Text("Cancel") }
+                            TextButton(
+                                onClick = {
+                                    showTimePicker.value = false
+                                    selectedTime.value = "${state.hour}:${state.minute}"
+                                }
+                            ) { Text("OK") }
+                        }
                     }
                 }
             }
