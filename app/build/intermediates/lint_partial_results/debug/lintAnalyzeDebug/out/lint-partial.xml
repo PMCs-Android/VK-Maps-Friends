@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.7.1" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.example.mapsfriends.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.color.purple_200"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="3"
+            column="12"
+            startOffset="64"
+            endLine="3"
+            endColumn="29"
+            endOffset="81"/>
+        <location id="R.color.purple_500"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="4"
+            column="12"
+            startOffset="112"
+            endLine="4"
+            endColumn="29"
+            endOffset="129"/>
+        <location id="R.color.teal_200"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="6"
+            column="12"
+            startOffset="208"
+            endLine="6"
+            endColumn="27"
+            endOffset="223"/>
+        <location id="R.color.teal_700"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="7"
+            column="12"
+            startOffset="254"
+            endLine="7"
+            endColumn="27"
+            endOffset="269"/>
+        <location id="R.drawable.button_round_background"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/button_round_background.xml"
+            line="2"
+            column="1"
+            startOffset="40"
+            endLine="11"
+            endColumn="9"
+            endOffset="346"/>
+        <location id="R.drawable.gps_icon_back"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/gps_icon_back.xml"
+            line="1"
+            column="1"
+            startOffset="0"
+            endLine="11"
+            endColumn="10"
+            endOffset="1084"/>
+        <location id="R.drawable.group_24px"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/group_24px.xml"
+            line="1"
+            column="1"
+            startOffset="0"
+            endLine="10"
+            endColumn="10"
+            endOffset="1591"/>
+        <location id="R.drawable.ic_my_location"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/ic_my_location.xml"
+            line="2"
+            column="1"
+            startOffset="40"
+            endLine="4"
+            endColumn="12"
+            endOffset="124"/>
+        <location id="R.drawable.location_on_24px"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/location_on_24px.xml"
+            line="1"
+            column="1"
+            startOffset="0"
+            endLine="10"
+            endColumn="10"
+            endOffset="914"/>
+        <location id="R.drawable.settings_24px"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/drawable/settings_24px.xml"
+            line="1"
+            column="1"
+            startOffset="0"
+            endLine="10"
+            endColumn="10"
+            endOffset="1717"/>
+        <location id="R.layout.activity_main"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_main.xml"
+            line="2"
+            column="1"
+            startOffset="40"
+            endLine="52"
+            endColumn="18"
+            endOffset="1930"/>
+        <entry
+            name="model"
+            string="attr[colorControlNormal(E)],color[purple_200(D),purple_500(D),purple_700(U),teal_200(D),teal_700(D),black(U),white(U),main_purple(U),main_pink(U),main_blue(U),bg_blue(U),bg_pink(U)],drawable[acception(U),add_plus(U),back_arrow(U),button_round_background(D),chat_main_page(U),cross(U),event_calendar(U),event_chat(U),footstep_boot(U),friends(U),gps_focus(U),gps_icon_back(D),group_24px(D),ic_launcher_background(U),ic_launcher_foreground(U),ic_launcher_foreground_1(R),ic_my_location(D),location_on_24px(D),profile(U),send_message(U),settings_24px(D)],id[map(U),btnLocation(D),btnFriends(D),btnSettings(D)],layout[activity_main(D)],mipmap[ic_launcher(U),ic_launcher_round(U)],raw[map_style(U)],string[app_name(U),my_events(U),requests(U),new_event(U),dalete(U),message_placefolder(U)],style[Theme_MapsFriends(U),AppTheme(U),Theme_AppCompat_Light_NoActionBar(R)],xml[data_extraction_rules(U),backup_rules(U)];19^0,1b^1c,1e^0,21^0,26^10^1e^19^21,27^1a^1b,28^1a^1b,31^32^7^6^3;;;"/>
+    </map>
+
+</incidents>
