@@ -26,16 +26,18 @@ import com.vk.id.refreshuser.VKIDGetUserFail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun VKIDButton(
-    authTokenManager: AuthTokenManager
+    tokenManager: AuthTokenManager, // Принимаем менеджер как параметр
+    onLoginSuccess: () -> Unit
 ) {
     val context = LocalContext.current
 
     OneTap(
         onAuth = { _, accessToken ->
-            authTokenManager.saveAuthData(
+            tokenManager.saveAuthData(
                 token = accessToken.token,
                 userId = accessToken.userID.toString()
             )
@@ -43,7 +45,8 @@ fun VKIDButton(
             signUpWithVKID(
                 userId = accessToken.userID.toString(),
                 token = accessToken.token,
-                authTokenManager = authTokenManager
+                tokenManager = tokenManager, // Передаем дальше
+                onSuccess = onLoginSuccess
             )
         },
         onFail = { _, fail ->
@@ -92,48 +95,42 @@ fun VKIDButton(
 fun signUpWithVKID(
     userId: String,
     token: String,
-    authTokenManager: AuthTokenManager
+    tokenManager: AuthTokenManager, // Добавляем параметр
+    onSuccess: () -> Unit
 ) {
-
     CoroutineScope(Dispatchers.Main).launch {
         VKID.instance.getUserData(
             callback = object : VKIDGetUserCallback {
                 override fun onSuccess(user: VKIDUser) {
-                    if (authTokenManager.getAccessToken() == null){
-                        Log.e("AUTH", "Токен не был сохранен")
+                    // Проверяем, что токен сохранен
+                    if (tokenManager.getAccessToken() == null) {
+                        Log.e("AUTH", "Токен не сохранен!")
                         return
                     }
 
-                    val username = user.firstName ?: "Unknown"
-                    val avatarUrl = user.photo200 ?: user.photo100 ?: user.photo50 ?: ""
-
-                    val repository = FirebaseUserRepository()
-
+                    // Сохраняем пользователя в Firebase
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val friends = fetchVkFriendsIds(token)
-                            repository.setUser(
+                            FirebaseUserRepository().setUser(
                                 userId = userId,
-                                username = username,
-                                avatarUrl = avatarUrl,
+                                username = user.firstName ?: "User",
+                                avatarUrl = user.photo50 ?: "",
                                 friends = friends,
-                                location = GeoPoint(0.0, 0.0)
+                                location = GeoPoint(0.0, 0.0)  // Теперь работает
                             )
 
-                            Log.d("AUTH", "Данные пользователя и токен сохранены")
+                            withContext(Dispatchers.Main) {  // Теперь распознается
+                                onSuccess()
+                            }
                         } catch (e: Exception) {
-                            authTokenManager.clear()
-                            Log.e("AUTH", "Ошибка сохранения: ${e.message}")
+                            tokenManager.clear()
                         }
                     }
                 }
 
                 override fun onFail(fail: VKIDGetUserFail) {
-                    when (fail) {
-                        is VKIDGetUserFail.FailedApiCall -> fail.description
-                        is VKIDGetUserFail.IdTokenTokenExpired -> fail.description
-                        is VKIDGetUserFail.NotAuthenticated -> fail.description
-                    }
+                    tokenManager.clear() // Чистим токен при ошибке
                 }
             }
         )

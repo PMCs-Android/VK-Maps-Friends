@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mapsfriends.AuthScreen
+import com.example.mapsfriends.AuthTokenManager
 import com.example.mapsfriends.FirebaseUserRepository
 import com.example.mapsfriends.R
 import com.example.mapsfriends.ui.theme.MainGradient
@@ -33,7 +34,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    navController: NavHostController
+    tokenManager: AuthTokenManager,
+    onLoginSuccess: () -> Unit
 ) {
     val auth = remember { Firebase.auth }
     val errorState = remember { mutableStateOf("") }
@@ -72,14 +74,17 @@ fun LoginScreen(
                 textAlign = TextAlign.Center
             )
         }
-        VKIDButton(authTokenManager = )
+        VKIDButton(
+            tokenManager = tokenManager, // Передаем менеджер в кнопку
+            onLoginSuccess = onLoginSuccess
+        )
         LoginButton("Sign In") {
             signIn(
                 auth,
                 emailState.value,
                 passwordState.value,
                 onSignInSuccess = {
-                    navController.navigate("main")
+                    //navController.navigate("main")
                 },
                 onSignInFailure = { error ->
                     errorState.value = error
@@ -92,7 +97,7 @@ fun LoginScreen(
                 emailState.value,
                 passwordState.value,
                 onSignUpSuccess = {
-                    navController.navigate("main")
+                    //navController.navigate("main")
                 },
                 onSignUpFailure = { error ->
                     errorState.value = error
