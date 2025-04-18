@@ -72,7 +72,7 @@ fun LoginScreen(
                 textAlign = TextAlign.Center
             )
         }
-        AuthScreen { navController.navigate("main") }
+        VKIDButton(authTokenManager = )
         LoginButton("Sign In") {
             signIn(
                 auth,

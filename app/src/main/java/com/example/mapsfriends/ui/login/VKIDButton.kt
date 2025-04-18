@@ -7,8 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.mapsfriends.AuthTokenManager
 import com.example.mapsfriends.FirebaseUserRepository
 import com.google.firebase.firestore.GeoPoint
+import com.vk.id.AccessToken
 import com.vk.id.VKID
 import com.vk.id.VKIDAuthFail
 import com.vk.id.VKIDUser
@@ -26,14 +28,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun VKIDButton() {
+fun VKIDButton(
+    authTokenManager: AuthTokenManager
+) {
     val context = LocalContext.current
 
     OneTap(
         onAuth = { _, accessToken ->
+            authTokenManager.saveAuthData(
+                token = accessToken.token,
+                userId = accessToken.userID.toString()
+            )
+
             signUpWithVKID(
                 userId = accessToken.userID.toString(),
-                token = accessToken.token
+                token = accessToken.token,
+                authTokenManager = authTokenManager
             )
         },
         onFail = { _, fail ->
@@ -81,26 +91,40 @@ fun VKIDButton() {
 
 fun signUpWithVKID(
     userId: String,
-    token: String
+    token: String,
+    authTokenManager: AuthTokenManager
 ) {
+
     CoroutineScope(Dispatchers.Main).launch {
         VKID.instance.getUserData(
             callback = object : VKIDGetUserCallback {
                 override fun onSuccess(user: VKIDUser) {
+                    if (authTokenManager.getAccessToken() == null){
+                        Log.e("AUTH", "Токен не был сохранен")
+                        return
+                    }
+
                     val username = user.firstName ?: "Unknown"
                     val avatarUrl = user.photo200 ?: user.photo100 ?: user.photo50 ?: ""
 
                     val repository = FirebaseUserRepository()
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        val friends = fetchVkFriendsIds(token)
-                        repository.setUser(
-                            userId = userId,
-                            username = username,
-                            avatarUrl = avatarUrl,
-                            friends = friends,
-                            location = GeoPoint(0.0, 0.0)
-                        )
+                        try {
+                            val friends = fetchVkFriendsIds(token)
+                            repository.setUser(
+                                userId = userId,
+                                username = username,
+                                avatarUrl = avatarUrl,
+                                friends = friends,
+                                location = GeoPoint(0.0, 0.0)
+                            )
+
+                            Log.d("AUTH", "Данные пользователя и токен сохранены")
+                        } catch (e: Exception) {
+                            authTokenManager.clear()
+                            Log.e("AUTH", "Ошибка сохранения: ${e.message}")
+                        }
                     }
                 }
 

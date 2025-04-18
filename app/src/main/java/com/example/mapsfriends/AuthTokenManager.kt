@@ -14,10 +14,10 @@ class AuthTokenManager(context: Context) {
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    fun saveAuthData(token: String, userId: Long) {
+    fun saveAuthData(token: String, userId: String) {
         sharedPreferences.edit()
             .putString("access_token", token)
-            .putLong("user_id", userId)
+            .putString("user_id", userId)
             .apply()
     }
 

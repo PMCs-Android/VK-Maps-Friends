@@ -66,7 +66,7 @@ class AuthViewModel(private val tokenManager: AuthTokenManager) : ViewModel() {
         // Сохраняем токен
         tokenManager.saveAuthData(
             token = accessToken.token,
-            userId = accessToken.userID
+            userId = accessToken.userID.toString()
         )
 
         // Получаем данные пользователя из токена

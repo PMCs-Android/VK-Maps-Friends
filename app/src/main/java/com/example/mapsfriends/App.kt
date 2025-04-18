@@ -15,14 +15,6 @@ import com.example.mapsfriends.ui.login.LoginScreen
 @Composable
 fun App(startDestination: String) {
     val navController = rememberNavController()
-    val tokenManager = AuthTokenManager(LocalContext.current)
-    val viewModel: AuthViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return AuthViewModel(tokenManager) as T
-            }
-        }
-    )
     NavHost(
         navController,
         startDestination = startDestination
