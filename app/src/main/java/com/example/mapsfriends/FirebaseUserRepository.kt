@@ -1,5 +1,6 @@
 package com.example.mapsfriends
 
+import android.location.Location
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -70,14 +71,16 @@ class FirebaseUserRepository : UserRepository {
         }
     }
 
-    override suspend fun updateUserLocation(userId: String, location: GeoPoint) {
+    override suspend fun updateUserLocation(userId: String, location: Location) {
+        val locationData = GeoPoint(location.latitude, location.longitude)
         db
             .document(userId)
-            .update("location", location)
+            .update("location", locationData)
     }
 
     override suspend fun updateUserAvatar(userId: String, avatarUrl: String) {
-        db.document(userId)
+        db
+            .document(userId)
             .update("avatar_url", avatarUrl)
     }
 

@@ -12,10 +12,9 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
+import javax.inject.Inject
 
-class LocationManager(private val context: Context) {
+class LocationManager @Inject constructor(private val context: Context) {
 
     interface OnLocationUpdateListener {
         fun onLocationUpdated(location: Location)
@@ -24,7 +23,6 @@ class LocationManager(private val context: Context) {
     }
 
     var listener: OnLocationUpdateListener? = null
-    private var userId: String? = null
     private var lastLocation: Location? = null
     private var lastUpdateTime: Long = 0
     private var isHighFrequencyMode = true
@@ -113,9 +111,6 @@ class LocationManager(private val context: Context) {
             lastLocation = location
             lastUpdateTime = currentTime
             listener?.onLocationUpdated(location)
-            userId?.let { id ->
-                sendLocationToFirestore(id, location.latitude, location.longitude)
-            }
         } else {
             if (currentTime - lastUpdateTime > LOW_FREQUENCY_INTERVAL_MILLIS &&
                 isHighFrequencyMode
@@ -124,17 +119,5 @@ class LocationManager(private val context: Context) {
                 requestLocationUpdates(LOW_FREQUENCY_INTERVAL_MILLIS)
             }
         }
-    }
-
-    private fun sendLocationToFirestore(
-        userId: String,
-        latitude: Double,
-        longitude: Double
-    ) {
-        val firestore = FirebaseFirestore.getInstance()
-        val locationData = GeoPoint(latitude, longitude)
-        firestore.collection("users")
-            .document(userId)
-            .update("location", locationData)
     }
 }

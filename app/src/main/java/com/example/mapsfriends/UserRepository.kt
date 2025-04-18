@@ -1,5 +1,6 @@
 package com.example.mapsfriends
 
+import android.location.Location
 import com.google.firebase.firestore.GeoPoint
 
 data class User(
@@ -37,7 +38,7 @@ interface UserRepository {
 
     suspend fun getFriendsList(userId: String): List<User>?
 
-    suspend fun updateUserLocation(userId: String, location: GeoPoint)
+    suspend fun updateUserLocation(userId: String, location: Location)
 
     suspend fun updateUserAvatar(userId: String, avatarUrl: String)
 

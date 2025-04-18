@@ -1,6 +1,8 @@
 package com.example.mapsfriends
 
 import android.content.Context
+import android.location.Location
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -15,7 +17,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MapViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class MapViewModel @Inject constructor(
+    private val userRepository: UserRepository,
+    private val locationManager: LocationManager
+) : ViewModel() {
+
     val markers = mutableStateListOf<MarkerData>()
     val selectedMarkerId = mutableStateOf<String?>(null)
     private val _selectedUser = MutableStateFlow<User?>(null)
@@ -30,17 +36,35 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
     fun setupMarkersAndObserveLocations(context: Context, userId: String, zoom: Float) {
         viewModelScope.launch {
             loadMarkersIntoMap(context, userId, zoom)
+
+            locationManager.listener = object : LocationManager.OnLocationUpdateListener {
+                override fun onLocationUpdated(location: Location) {
+                    viewModelScope.launch {
+                        userRepository.updateUserLocation(userId, location)
+                    }
+                }
+
+                override fun onPermissionDenied() {
+                    Log.e("MapViewModel", "Разрешения на доступ к геолокации отклонены")
+                }
+
+                override fun onLocationError(error: String) {
+                    Log.e("MapViewModel", "Ошибка локации: $error")
+                }
+
+            }
+            locationManager.startLocationUpdates()
         }
     }
 
     private suspend fun loadMarkersIntoMap(context: Context, userId: String, zoom: Float) {
         userRepository.observeFriendsList(userId) { friends ->
             viewModelScope.launch {
-                val friendIds = friends?.map { it.userId } ?: emptyList()
+                val friendIds = friends.map { it.userId }
 
                 markers.removeAll { marker -> marker.id !in friendIds }
 
-                friends?.forEach { user ->
+                friends.forEach { user ->
                     val existingIndex = markers.indexOfFirst { it.id == user.userId }
                     userRepository.observeLocation(user.userId) { newLocation ->
                         updateMarkerPosition(user.userId, newLocation)
