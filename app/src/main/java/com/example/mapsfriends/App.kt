@@ -16,11 +16,7 @@ fun App() {
         navController,
         startDestination = "login"
     ) {
-        composable("login") {
-            LoginScreen {
-                navController.navigate("profile/$it")
-            }
-        }
+        composable("login") { LoginScreen(navController) }
         composable("main") { MainScreen(navController) }
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }

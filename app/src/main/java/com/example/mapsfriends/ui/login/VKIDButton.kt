@@ -4,8 +4,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -29,19 +27,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun VKIDButton(
-    onNavigateToProfileScreen: (String) -> Unit
-) {
+fun VKIDButton() {
     val context = LocalContext.current
 
     OneTap(
-        onAuth = { oAuth, accessToken ->
+        onAuth = { _, accessToken ->
             signUpWithVKID(
-                token = accessToken.token,
-                onNavigateToProfileScreen = onNavigateToProfileScreen
+                userId = accessToken.userID.toString(),
+                token = accessToken.token
             )
         },
-        onFail = { oAuth, fail ->
+        onFail = { _, fail ->
             when (fail) {
                 is VKIDAuthFail.Canceled -> {
                     Toast.makeText(context, fail.description, Toast.LENGTH_LONG).show()
@@ -85,16 +81,15 @@ fun VKIDButton(
 }
 
 fun signUpWithVKID(
-    token: String,
-    onNavigateToProfileScreen: (String) -> Unit
+    userId: String,
+    token: String
 ) {
     CoroutineScope(Dispatchers.Main).launch {
         VKID.instance.getUserData(
             callback = object : VKIDGetUserCallback {
                 override fun onSuccess(user: VKIDUser) {
-                    val userId = token
-                    val username = user.email ?: "Unknown"
-                    val avatarUrl = user.photo50 ?: ""
+                    val username = user.firstName ?: "Unknown"
+                    val avatarUrl = user.photo200 ?: user.photo100 ?: user.photo50 ?: ""
 
                     val repository = FirebaseUserRepository()
 
@@ -107,10 +102,6 @@ fun signUpWithVKID(
                             friends = friends,
                             location = GeoPoint(0.0, 0.0)
                         )
-
-                        withContext(Dispatchers.Main) {
-                            onNavigateToProfileScreen(userId)
-                        }
                     }
                 }
 
