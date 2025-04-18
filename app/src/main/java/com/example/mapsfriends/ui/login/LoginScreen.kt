@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.mapsfriends.AuthScreen
 import com.example.mapsfriends.FirebaseUserRepository
 import com.example.mapsfriends.R
 import com.example.mapsfriends.ui.theme.MainGradient
@@ -71,7 +72,7 @@ fun LoginScreen(
                 textAlign = TextAlign.Center
             )
         }
-        VKIDButton()
+        AuthScreen { navController.navigate("main") }
         LoginButton("Sign In") {
             signIn(
                 auth,

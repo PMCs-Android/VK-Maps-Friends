@@ -16,6 +16,7 @@ playServicesLocation = "21.3.0"
 gmsVersion = "4.4.2"
 bomVersion = "33.10.0"
 vkidVersion = "2.2.0"
+securityCryptoKtx = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,7 @@ vkid-onetap = { group = "com.vk.id", name = "onetap-compose", version.ref = "vki
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "bomVersion" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version = "1.1.0-alpha07" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

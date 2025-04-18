@@ -13,8 +13,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         VKID.init(this)
+
+        val tokenManager = AuthTokenManager(this)
+        val startDestination = if (tokenManager.getAccessToken() != null) "main" else "login"
+
         setContent {
-            App()
+            App(startDestination)
         }
     }
 }

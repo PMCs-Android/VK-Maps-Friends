@@ -3,44 +3,84 @@ package com.example.mapsfriends
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.vk.id.VKID
+import com.google.firebase.firestore.GeoPoint
+import com.vk.id.AccessToken
 import com.vk.id.VKIDUser
-import com.vk.id.refreshuser.VKIDGetUserCallback
-import com.vk.id.refreshuser.VKIDGetUserFail
-import kotlinx.coroutines.CoroutineScope
+import java.net.URL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
-class AuthViewModel : ViewModel() {
-    fun getUserData(token: String, onSuccess: (VKIDUser) -> Unit) {
+class AuthViewModel(private val tokenManager: AuthTokenManager) : ViewModel() {
+    private val repository = FirebaseUserRepository()
+
+    private fun saveUserToFirebase(
+        user: VKIDUser,
+        userId: String
+    ) {
         viewModelScope.launch {
-            VKID.instance.getUserData(
-                callback = object : VKIDGetUserCallback {
-                    override fun onSuccess(user: VKIDUser) {
-                        onSuccess(user)
-                    }
-                    override fun onFail(fail: VKIDGetUserFail) {
-                        Log.e("VK_USER", "Error: ${fail.description}")
-                    }
-                }
-            )
+            try {
+                val friends = fetchVkFriendsIds(tokenManager.getAccessToken() ?: "")
+
+                repository.setUser(
+                    userId = userId,
+                    username = user.firstName ?: "User_${userId.take(4)}",
+                    avatarUrl = user.photo50 ?: "",
+                    friends = friends,
+                    location = GeoPoint(0.0, 0.0)
+                )
+            } catch (e: Exception) {
+                Log.e("FIREBASE", "Error saving user: ${e.stackTraceToString()}")
+                // Откатываем сохранение токена при ошибке
+                tokenManager.clear()
+            }
         }
     }
 
-    fun saveUserToFirebase(user: VKIDUser){
-        viewModelScope.launch {
-            try {
-                //FirebaseUserRepository().setUser(
-                    //userId = user.id.toString(),
-                    //username = TODO(),
-                    //avatarUrl = TODO(),
-                    //friends = TODO(),
-                    //location = TODO(),
-                //)
-                Log.d("FIREBASE", "User saved!")
-            } catch (e: Exception) {
-                Log.e("FIREBASE", "Save error: ${e.message}")
+    private suspend fun fetchVkFriendsIds(token: String): List<String> {
+        return try {
+            val response = withContext(Dispatchers.IO) {
+                URL("https://api.vk.com/method/friends.get?access_token=$token&v=5.131")
+                    .openStream().bufferedReader().use { it.readText() }
             }
+
+            JSONObject(response)
+                .getJSONObject("response")
+                .getJSONArray("items")
+                .let { array ->
+                    List(array.length()) { index ->
+                        array.getInt(index).toString()
+                    }
+                }
+        } catch (e: Exception) {
+            Log.e("VK_API", "Friends fetch error: ${e.message}")
+            emptyList()
         }
+    }
+
+    fun checkAuthState(): Boolean {
+        return tokenManager.getAccessToken() != null
+    }
+    fun login(accessToken: AccessToken) {
+        // Сохраняем токен
+        tokenManager.saveAuthData(
+            token = accessToken.token,
+            userId = accessToken.userID
+        )
+
+        // Получаем данные пользователя из токена
+        val user = accessToken.userData
+        val userId = accessToken.userID.toString()
+
+        if (user != null) {
+            saveUserToFirebase(user, userId)
+        } else {
+            Log.e("AUTH", "User data is null in access token")
+            // Можно добавить повторный запрос через VKID.instance.getUserData()
+        }
+    }
+    fun logout() {
+        tokenManager.clear()
     }
 }
