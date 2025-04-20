@@ -14,6 +14,10 @@ import okio.IOException
 class FirebaseUserRepository : UserRepository {
     private val db = Firebase.firestore.collection("users")
 
+    companion object {
+        private const val MAX_WHERE_IN_LIMIT = 10
+    }
+
     override suspend fun getFriendsList(userId: String): List<User>? {
         return try {
             val document = db
@@ -51,11 +55,9 @@ class FirebaseUserRepository : UserRepository {
                 .await()
 
             if (document.exists()) {
-                val user = User.fromFirestore(document.data!!)
-                println("User from Firestore: $user")
+                val user = document.toObject(User::class.java)
                 user
             } else {
-                println("User not found: ")
                 null
             }
         } catch (e: IOException) {
@@ -95,17 +97,43 @@ class FirebaseUserRepository : UserRepository {
         friends: List<String>,
         location: GeoPoint
     ) {
+
+        val existingUser = db.document(userId).get().await()
+        if (existingUser.exists()) {
+            return
+        }
+
+        val registeredFriends = friends.chunked(MAX_WHERE_IN_LIMIT).flatMap { chunk ->
+            val snapshots = db.whereIn("user_id", chunk).get().await()
+            snapshots.documents.mapNotNull { it.getString("user_id") }
+        }
+
         val user = User(
             userId = userId,
             username = username,
             avatarUrl = avatarUrl,
-            friends = friends,
+            friends = registeredFriends,
+            allFriends = friends,
             location = location
         )
-
         db.document(userId)
             .set(user)
             .await()
+        val userFriendsInFirestore = db
+            .whereArrayContains("allFriends", userId)
+            .get()
+            .await()
+        for (doc in userFriendsInFirestore) {
+            val friendId = doc.get("userId") as? String ?: continue
+            val currentFriends = doc.get("friends") as? List<String> ?: emptyList()
+
+            if (!currentFriends.contains(userId)) {
+                val updatedFriends = currentFriends + userId
+                db.document(friendId)
+                    .update("friends", updatedFriends)
+                    .await()
+            }
+        }
     }
 
     override suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit) {
