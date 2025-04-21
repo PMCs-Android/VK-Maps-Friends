@@ -5,14 +5,19 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okio.IOException
 
-class FirebaseUserRepository : UserRepository {
+class FirebaseUserRepository @Inject constructor(
+    private val eventRepositoryProvider: javax.inject.Provider<EventRepository>
+) : UserRepository {
     private val db = Firebase.firestore.collection("users")
+    private val eventRepository: EventRepository
+        get() = eventRepositoryProvider.get()
 
     companion object {
         private const val MAX_WHERE_IN_LIMIT = 10
@@ -78,17 +83,17 @@ class FirebaseUserRepository : UserRepository {
             .update("location", location)
     }
 
-    override suspend fun updateUserAvatar(userId: String, avatarUrl: String) {
-        db.document(userId)
-            .update("avatar_url", avatarUrl)
-    }
+//    override suspend fun updateUserAvatar(userId: String, avatarUrl: String) {
+//        db.document(userId)
+//            .update("avatar_url", avatarUrl)
+//    }
 
-    override suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>) {
-        db
-            .document(userId)
-            .update("friends", listFriendsFromVk)
-            .await()
-    }
+//    override suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>) {
+//        db
+//            .document(userId)
+//            .update("friends", listFriendsFromVk)
+//            .await()
+//    }
 
     override suspend fun setUser(
         userId: String,
@@ -181,6 +186,7 @@ class FirebaseUserRepository : UserRepository {
             )
         }
     }
+
     override suspend fun observeFriendsList(
         userId: String,
         callback: (List<User>) -> Unit
@@ -202,5 +208,31 @@ class FirebaseUserRepository : UserRepository {
                     callback(friends)
                 }
             }
+    }
+
+    override suspend fun observeInvites(userId: String, callback: (List<Event>) -> Unit) {
+        db.document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+                val eventsId = snapshot?.get("invites")
+                    as? List<String> ?: return@addSnapshotListener
+                CoroutineScope(Dispatchers.IO).launch {
+                    val events = eventsId.mapNotNull { eventId ->
+                        eventRepository.getEventById(eventId)
+                    }
+                    callback(events)
+                }
+            }
+    }
+
+    override suspend fun acceptInvite(userId: String, eventId: String) {
+        eventRepository.removeInvite(eventId, userId)
+        eventRepository.addParticipant(eventId, userId)
+    }
+
+    override suspend fun declineInvite(userId: String, eventId: String) {
+        eventRepository.removeInvite(eventId, userId)
     }
 }

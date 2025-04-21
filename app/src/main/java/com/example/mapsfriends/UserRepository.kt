@@ -8,7 +8,8 @@ data class User(
     val avatarUrl: String = "",
     val friends: List<String> = emptyList(),
     val allFriends: List<String> = emptyList(),
-    val location: GeoPoint = GeoPoint(0.0, 0.0)
+    val location: GeoPoint = GeoPoint(0.0, 0.0),
+    val invites: List<String> = emptyList()
 )
 
 interface UserRepository {
@@ -19,9 +20,9 @@ interface UserRepository {
 
     suspend fun updateUserLocation(userId: String, location: GeoPoint)
 
-    suspend fun updateUserAvatar(userId: String, avatarUrl: String)
+    // suspend fun updateUserAvatar(userId: String, avatarUrl: String)
 
-    suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>)
+    // suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>)
 
     suspend fun setUser(
         userId: String,
@@ -34,4 +35,7 @@ interface UserRepository {
     suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit)
     suspend fun addFriend(userId: String, friendId: String)
     suspend fun observeFriendsList(userId: String, callback: (List<User>) -> Unit)
+    suspend fun acceptInvite(userId: String, eventId: String)
+    suspend fun declineInvite(userId: String, eventId: String)
+    suspend fun observeInvites(userId: String, callback: (List<Event>) -> Unit)
 }

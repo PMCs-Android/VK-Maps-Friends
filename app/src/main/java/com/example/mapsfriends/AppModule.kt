@@ -16,13 +16,15 @@ class MyApp : Application()
 object AppModule {
     @Provides
     @Singleton
-    fun provideUserRepository(): UserRepository {
-        return FirebaseUserRepository()
+    fun provideUserRepository(
+        eventRepositoryProvider: javax.inject.Provider<EventRepository>
+    ): UserRepository {
+        return FirebaseUserRepository(eventRepositoryProvider)
     }
 
     @Provides
     @Singleton
-    fun provideEventRepository(): EventRepository {
-        return FirebaseEventRepository()
+    fun provideEventRepository(userRepository: UserRepository): EventRepository {
+        return FirebaseEventRepository(userRepository)
     }
 }

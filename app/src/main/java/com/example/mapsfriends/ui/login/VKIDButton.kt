@@ -4,12 +4,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.example.mapsfriends.FirebaseUserRepository
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mapsfriends.LoginViewModel
 import com.google.firebase.firestore.GeoPoint
 import com.vk.id.VKID
 import com.vk.id.VKIDAuthFail
@@ -30,6 +29,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun VKIDButton(
+    viewModel: LoginViewModel = hiltViewModel(),
     onNavigateToProfileScreen: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -38,7 +38,8 @@ fun VKIDButton(
         onAuth = { oAuth, accessToken ->
             signUpWithVKID(
                 token = accessToken.token,
-                onNavigateToProfileScreen = onNavigateToProfileScreen
+                onNavigateToProfileScreen = onNavigateToProfileScreen,
+                viewModel
             )
         },
         onFail = { oAuth, fail ->
@@ -86,7 +87,8 @@ fun VKIDButton(
 
 fun signUpWithVKID(
     token: String,
-    onNavigateToProfileScreen: (String) -> Unit
+    onNavigateToProfileScreen: (String) -> Unit,
+    viewModel: LoginViewModel
 ) {
     CoroutineScope(Dispatchers.Main).launch {
         VKID.instance.getUserData(
@@ -96,11 +98,9 @@ fun signUpWithVKID(
                     val username = user.email ?: "Unknown"
                     val avatarUrl = user.photo50 ?: ""
 
-                    val repository = FirebaseUserRepository()
-
                     CoroutineScope(Dispatchers.IO).launch {
                         val friends = fetchVkFriendsIds(token)
-                        repository.setUser(
+                        viewModel.getRepository().setUser(
                             userId = userId,
                             username = username,
                             avatarUrl = avatarUrl,
@@ -126,7 +126,7 @@ fun signUpWithVKID(
     }
 }
 
-suspend fun fetchVkFriendsIds(accessToken: String): List<String> {
+ fun fetchVkFriendsIds(accessToken: String): List<String> {
     val url =
         "https://api.vk.com/method/friends.get?access_token=$accessToken&v=5.131"
 

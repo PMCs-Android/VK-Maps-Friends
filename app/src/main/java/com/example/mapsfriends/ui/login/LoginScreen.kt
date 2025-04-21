@@ -18,25 +18,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.mapsfriends.FirebaseUserRepository
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mapsfriends.LoginViewModel
 import com.example.mapsfriends.R
 import com.example.mapsfriends.ui.theme.MainGradient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.firestore.GeoPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
-    onNavigateToProfileScreen: (String) -> Unit
+    onNavigateToProfileScreen: (String) -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
     val auth = remember { Firebase.auth }
     val errorState = remember { mutableStateOf("") }
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,52 +48,46 @@ fun LoginScreen(
             painter = painterResource(id = R.drawable.mapsfriends),
             contentDescription = "Logo"
         )
-        RoundedCornerTextField(
-            text = emailState.value,
-            label = "Email",
-        ) {
+        RoundedCornerTextField(text = emailState.value, label = "Email") {
             emailState.value = it
         }
         Spacer(modifier = Modifier.height(10.dp))
-        RoundedCornerTextField(
-            text = passwordState.value,
-            label = "Password",
-        ) {
+        RoundedCornerTextField(text = passwordState.value, label = "Password") {
             passwordState.value = it
         }
         Spacer(modifier = Modifier.height(10.dp))
+
         if (errorState.value.isNotEmpty()) {
-            Text(
-                text = errorState.value,
-                color = Color.Red,
-                textAlign = TextAlign.Center
-            )
+            Text(text = errorState.value, color = Color.Red, textAlign = TextAlign.Center)
         }
+
         VKIDButton(onNavigateToProfileScreen = onNavigateToProfileScreen)
+
         LoginButton("Sign In") {
             signIn(
                 auth,
                 emailState.value,
                 passwordState.value,
-                onSignInSuccess = { navData ->
-                    onNavigateToProfileScreen(navData)
+                onSignInSuccess = { userId ->
+                    viewModel.signIn(userId, emailState.value) {
+                        onNavigateToProfileScreen(userId)
+                    }
                 },
-                onSignInFailure = { error ->
-                    errorState.value = error
-                },
+                onSignInFailure = { error -> errorState.value = error }
             )
         }
+
         LoginButton("Sign Up") {
             signUp(
                 auth,
                 emailState.value,
                 passwordState.value,
-                onSignUpSuccess = { navData ->
-                    onNavigateToProfileScreen(navData)
+                onSignUpSuccess = { userId ->
+                    viewModel.signUp(userId, emailState.value) {
+                        onNavigateToProfileScreen(userId)
+                    }
                 },
-                onSignUpFailure = { error ->
-                    errorState.value = error
-                },
+                onSignUpFailure = { error -> errorState.value = error }
             )
         }
     }
@@ -116,20 +109,7 @@ private fun signUp(
         .addOnCompleteListener {
             if (it.isSuccessful) {
                 val userId = it.result.user?.uid!!
-                val repository = FirebaseUserRepository()
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    repository.setUser(
-                        userId = userId,
-                        username = email,
-                        avatarUrl = "",
-                        friends = emptyList(),
-                        location = GeoPoint(0.0, 0.0)
-                    )
-                    kotlinx.coroutines.withContext(Dispatchers.Main) {
-                        onSignUpSuccess(userId)
-                    }
-                }
+                onSignUpSuccess(userId)
             }
         }
         .addOnFailureListener {
@@ -153,23 +133,7 @@ private fun signIn(
         .addOnCompleteListener {
             if (it.isSuccessful) {
                 val userId = it.result.user?.uid!!
-                val repository = FirebaseUserRepository()
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val user = repository.getUserById(userId)
-                    if (user == null) {
-                        repository.setUser(
-                            userId = userId,
-                            username = email,
-                            avatarUrl = "",
-                            friends = emptyList(),
-                            location = GeoPoint(0.0, 0.0)
-                        )
-                    }
-                    kotlinx.coroutines.withContext(Dispatchers.Main) {
-                        onSignInSuccess(userId)
-                    }
-                }
+                onSignInSuccess(userId)
             }
         }
         .addOnFailureListener {
