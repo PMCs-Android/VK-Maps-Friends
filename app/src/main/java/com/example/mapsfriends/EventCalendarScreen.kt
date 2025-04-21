@@ -24,7 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -98,8 +101,9 @@ fun MyEventsHeader(navController: NavHostController) {
 fun NotEmptyEvents(navController: NavHostController) {
     val viewModel = hiltViewModel<EventViewModel>()
     val events = viewModel.events.collectAsState().value
+    val refresh = remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(refresh) {
         viewModel.loadEventsForUser(currentUser.userId)
     }
 
@@ -119,7 +123,7 @@ fun NotEmptyEvents(navController: NavHostController) {
                         .background(Color.White, RoundedCornerShape(8.dp))
                 ) {
                     Text(
-                        text = event.time,
+                        text = event.time.slice(0..1),
                         fontSize = 16.sp,
                         color = Color.Black
                     )
@@ -139,14 +143,19 @@ fun NotEmptyEvents(navController: NavHostController) {
     }
     LazyColumn {
         items(events) { event ->
-            OneEvent(event, viewModel, navController)
+            OneEvent(event, viewModel, navController, refresh)
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }
 
 @Composable
-fun OneEvent(event: Event, viewModel: EventViewModel, navController: NavHostController) {
+fun OneEvent(
+    event: Event,
+    viewModel: EventViewModel,
+    navController: NavHostController,
+    refresh : MutableState<Boolean>
+) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val avatars = userViewModel.avatars.collectAsState().value
     LaunchedEffect(event) {
@@ -154,7 +163,7 @@ fun OneEvent(event: Event, viewModel: EventViewModel, navController: NavHostCont
     }
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = event.time,
+            text = event.time.slice(5..8),
             fontSize = 16.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
@@ -165,7 +174,7 @@ fun OneEvent(event: Event, viewModel: EventViewModel, navController: NavHostCont
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navController.navigate("eventDetails") }
+                .clickable { navController.navigate("eventDetails/${event.eventId}") }
                 .weight(1f)
                 .background(Color.White, RoundedCornerShape(20.dp))
                 .padding(16.dp),
@@ -188,16 +197,9 @@ fun OneEvent(event: Event, viewModel: EventViewModel, navController: NavHostCont
                                 .clip(CircleShape)
                         )
                     }
-//                    Text(
-//                        text = "${event.participants.size}/${mockUsers.size}",
-//                        fontSize = 16.sp,
-//                        modifier = Modifier
-//                            .padding(horizontal = 4.dp)
-//                            .align(Alignment.CenterVertically)
-//                    )
                 }
                 Text(
-                    text = event.time,
+                    text = event.description,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 10.dp)
                 )
@@ -206,16 +208,17 @@ fun OneEvent(event: Event, viewModel: EventViewModel, navController: NavHostCont
 //                    fontSize = 12.sp
 //                )
             }
-            DeleteButton(event, viewModel)
+            DeleteButton(event, viewModel, refresh)
         }
     }
 }
 
 @Composable
-fun DeleteButton(event: Event, viewModel: EventViewModel) {
+fun DeleteButton(event: Event, viewModel: EventViewModel, refresh: MutableState<Boolean>) {
     IconButton(
         onClick = { /* Удаление ивента */
             viewModel.deleteEvent(event.eventId)
+            refresh.value = !(refresh.value)
         },
         modifier = Modifier
             .border(

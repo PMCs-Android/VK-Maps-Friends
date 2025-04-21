@@ -154,17 +154,31 @@ fun DateInput(
                             state.selectedDateMillis?.let {
                                 val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
                                     .toLocalDate()
-                                selectedDate.value = "${date.dayOfMonth}.${date.month.value}"
+                                if (date.dayOfMonth.toString().length < 2 &&
+                                    date.month.value.toString().length < 2
+                                ) {
+                                    selectedDate.value = "0${date.dayOfMonth}.0${date.month.value}"
+                                } else if (date.dayOfMonth.toString().length < 2 &&
+                                    date.month.value.toString().length == 2
+                                ) {
+                                    selectedDate.value = "0${date.dayOfMonth}.${date.month.value}"
+                                } else if (date.dayOfMonth.toString().length == 2 &&
+                                    date.month.value.toString().length < 2
+                                ) {
+                                    selectedDate.value = "${date.dayOfMonth}.0${date.month.value}"
+                                } else {
+                                    selectedDate.value = "${date.dayOfMonth}.${date.month.value}"
+                                }
                             }
                             showDatePicker.value = false
                         }
                     ) {
-                        Text("OK")
+                        Text("Отмена")
                     }
                     TextButton(
                         onClick = { showDatePicker.value = false }
                     ) {
-                        Text(text = "Cancel")
+                        Text("OK")
                     }
                 },
                 colors = DatePickerDefaults.colors(
@@ -254,11 +268,26 @@ fun TimePickerButtons(
         onClick = {
             showTimePicker.value = false
         }
-    ) { Text("Cancel") }
+    ) { Text("Отмена") }
     TextButton(
         onClick = {
             showTimePicker.value = false
             selectedTime.value = "${state.hour}:${state.minute}"
+            if (state.hour.toString().length < 2 &&
+                state.minute.toString().length < 2
+            ) {
+                selectedTime.value = "0${state.hour}:0${state.minute}"
+            } else if (state.hour.toString().length < 2 &&
+                state.minute.toString().length == 2
+            ) {
+                selectedTime.value = "0${state.hour}:${state.minute}"
+            } else if (state.hour.toString().length == 2 &&
+                state.minute.toString().length < 2
+            ) {
+                selectedTime.value = "${state.hour}:0${state.minute}"
+            } else {
+                selectedTime.value = "${state.hour}:${state.minute}"
+            }
         }
     ) { Text("OK") }
 }

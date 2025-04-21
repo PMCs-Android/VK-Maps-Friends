@@ -191,4 +191,23 @@ class FirebaseUserRepository : UserRepository {
             emptyMap()
         }
     }
+
+//    override suspend fun getUserAvatar(userId: String): String? {
+//        return try {
+//            val document = db
+//                .document(userId)
+//                .get()
+//                .await()
+//
+//            if (document.exists()) {
+//                document.getString("avatar_url")?.takeIf { it.isNotEmpty() }
+//            } else {
+//                println("User $userId not found")
+//                null
+//            }
+//        } catch (e: IOException) {
+//            println("Network error while fetching avatar  ${e.message}")
+//            null
+//        }
+//    }
 }

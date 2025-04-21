@@ -20,10 +20,12 @@ class EventViewModel @Inject constructor(
     private val _currentEvent = MutableStateFlow<Event?>(null)
     private val _participants = MutableStateFlow<List<User>>(emptyList())
     private val _events = MutableStateFlow<List<Event>>(emptyList())
+    private val _avatars = MutableStateFlow<Map<String, String?>>(emptyMap())
 
     val events: StateFlow<List<Event>> = _events
     val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
+    val avatars: StateFlow<Map<String, String?>> = _avatars
 
     fun createNewEvent() {
         _currentEvent.value = Event(
@@ -118,12 +120,26 @@ class EventViewModel @Inject constructor(
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             try {
-                println("Success delete event a${eventId}a")
                 eventRepository.deleteEvent(eventId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error deleting event: ${e.message}")
             } catch (e: IOException) {
                 println("Network error deleting event: ${e.message}")
+            }
+        }
+    }
+
+    fun getEvent(eventId : String) {
+        viewModelScope.launch {
+            try {
+                _currentEvent.value = eventRepository.getEventById(eventId)
+//                _avatars.value = result.filterValues { it != null } as Map<String, String>
+                _avatars.value = userRepository.getUserAvatars(_currentEvent.value?.participants ?:
+                emptyList()).filterValues { it != null } as Map<String, String>
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error loading event: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error loading event: ${e.message}")
             }
         }
     }

@@ -37,9 +37,9 @@ fun RequestDetailsScreen(navController: NavHostController) {
             )
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
-        EventHeader(navController)
-        EventDescription()
-        EventMembers()
+//        EventHeader(navController)
+//        EventDescription()
+//        EventMembers()
         EventLocation()
         RequestAcceptRefuseButtons()
     }
