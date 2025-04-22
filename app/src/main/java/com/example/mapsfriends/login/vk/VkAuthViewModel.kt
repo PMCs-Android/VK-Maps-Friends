@@ -21,14 +21,15 @@ class VkAuthViewModel @Inject constructor(
     private val tokenManager: AuthTokenManager
 ) : ViewModel() {
     private val repository = FirebaseUserRepository()
-    private val token = tokenManager.getAccessToken()
 
     fun signUp(onSuccess: () -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             VKID.instance.getUserData(
                 callback = object : VKIDGetUserCallback {
                     override fun onSuccess(user: VKIDUser) {
-                        if (tokenManager.getAccessToken() == null) {
+                        val token = tokenManager.getAccessToken()
+
+                        if (token == null) {
                             Log.d("AUTH", "The token has not been saved")
                             return
                         }
@@ -40,7 +41,7 @@ class VkAuthViewModel @Inject constructor(
                                     userId = tokenManager.getUserId()!!,
                                     username = user.firstName + " " + user.lastName,
                                     avatarUrl = user.photo200 ?: "",
-                                    friends = fetchVkFriendsIds(),
+                                    friends = fetchVkFriendsIds(token),
                                     location = GeoPoint(0.0, 0.0)
                                 )
 
@@ -61,7 +62,7 @@ class VkAuthViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchVkFriendsIds(): List<String> {
+    private suspend fun fetchVkFriendsIds(token: String): List<String> {
         val url =
             "https://api.vk.com/method/friends.get?access_token=$token&v=5.131"
 
