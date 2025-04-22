@@ -1,6 +1,7 @@
 package com.example.mapsfriends
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -41,6 +42,14 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
                 markers.removeAll { marker -> marker.id !in friendIds }
 
                 friends?.forEach { user ->
+                    val userId = user.userId
+
+                    // Добавляем проверку, чтобы убедиться, что userId не пустой
+                    if (userId.isNullOrBlank()) {
+                        Log.e("MapViewModel", "Invalid userId: $userId for user ${user.username}")
+                        return@forEach // Пропускаем этого пользователя, если userId некорректен
+                    }
+
                     val existingIndex = markers.indexOfFirst { it.id == user.userId }
                     userRepository.observeLocation(user.userId) { newLocation ->
                         updateMarkerPosition(user.userId, newLocation)

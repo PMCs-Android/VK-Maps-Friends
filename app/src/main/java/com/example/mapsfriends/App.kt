@@ -1,8 +1,6 @@
 package com.example.mapsfriends
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,8 +11,6 @@ import com.example.mapsfriends.ui.login.LoginScreen
 @Composable
 fun App(startDestination: String) {
     val navController = rememberNavController()
-    val context = LocalContext.current
-    val tokenManager = remember { AuthTokenManager(context) }
 
     NavHost(
         navController,
@@ -22,7 +18,6 @@ fun App(startDestination: String) {
     ) {
         composable("login") {
             LoginScreen(
-                tokenManager = tokenManager,
                 onLoginSuccess = { navController.navigate("main") }
             ) }
         composable("main") { MainScreen(navController) }

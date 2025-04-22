@@ -1,11 +1,13 @@
-package com.example.mapsfriends
+package com.example.mapsfriends.login
 
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 @Suppress("DEPRECATION")
-class AuthTokenManager(context: Context) {
+class AuthTokenManager @Inject constructor(@ApplicationContext context: Context) {
     private val sharedPreferences = EncryptedSharedPreferences.create(
         context,
         "secure_prefs",
@@ -18,11 +20,11 @@ class AuthTokenManager(context: Context) {
         sharedPreferences.edit()
             .putString("access_token", token)
             .putString("user_id", userId)
-            .apply()
+            .commit()
     }
 
     fun getAccessToken(): String? = sharedPreferences.getString("access_token", null)
-    fun getUserId(): Long? = sharedPreferences.getLong("user_id", -1L).takeIf { it != -1L }
+    fun getUserId(): String? = sharedPreferences.getString("user_id", null)
 
     fun clear() {
         sharedPreferences.edit().clear().apply()

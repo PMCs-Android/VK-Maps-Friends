@@ -1,0 +1,121 @@
+package com.example.mapsfriends.login.firebase
+
+
+import androidx.lifecycle.ViewModel
+import com.example.mapsfriends.FirebaseUserRepository
+import com.example.mapsfriends.login.AuthTokenManager
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.GeoPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class FirebaseAuthViewModel @Inject constructor(
+    private val tokenManager: AuthTokenManager
+) : ViewModel() {
+    private val repository = FirebaseUserRepository()
+    private val auth = Firebase.auth
+
+    fun signUp(
+        email: String,
+        password: String,
+        onSignUpSuccess: () -> Unit,
+        onSignUpFailure: (String) -> Unit
+    ) {
+        if (email.isBlank() || password.isBlank()) {
+            onSignUpFailure("Email and password cannot be empty")
+            return
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val userId = it.result.user?.uid!!
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        saveUserInFirebase(
+                            token = "",
+                            userId = userId,
+                            username = email,
+                            avatarUrl = "",
+                            friends = emptyList(),
+                            location = GeoPoint(0.0, 0.0)
+                        )
+                        kotlinx.coroutines.withContext(Dispatchers.Main) {
+                            onSignUpSuccess()
+                        }
+                    }
+                }
+            }
+            .addOnFailureListener {
+                onSignUpFailure(it.message ?: "Sign Up failure")
+            }
+    }
+
+    fun signIn(
+        email: String,
+        password: String,
+        onSignInSuccess: () -> Unit,
+        onSignInFailure: (String) -> Unit
+    ) {
+        if (email.isBlank() || password.isBlank()) {
+            onSignInFailure("Email and password cannot be empty")
+            return
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    val userId = it.result.user?.uid!!
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val user = repository.getUserById(userId)
+                        if (user == null) {
+                            saveUserInFirebase(
+                                token = "",
+                                userId = userId,
+                                username = email,
+                                avatarUrl = "",
+                                friends = emptyList(),
+                                location = GeoPoint(0.0, 0.0)
+                            )
+                        }
+                        kotlinx.coroutines.withContext(Dispatchers.Main) {
+                            onSignInSuccess()
+                        }
+                    }
+                }
+            }
+            .addOnFailureListener {
+                onSignInFailure(it.message ?: "Sign In failure")
+            }
+    }
+
+    fun signOut() {
+        auth.signOut()
+    }
+
+    private suspend fun saveUserInFirebase(
+        token: String,
+        userId: String,
+        username: String,
+        avatarUrl: String,
+        friends: List<String>,
+        location: GeoPoint
+    ) {
+        tokenManager.saveAuthData(token = token, userId = userId)
+
+        repository.setUser(
+            userId = userId,
+            username = username,
+            avatarUrl = avatarUrl,
+            friends = friends,
+            location = location
+        )
+    }
+
+}
