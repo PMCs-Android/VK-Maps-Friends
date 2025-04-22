@@ -1,17 +1,17 @@
 package com.example.mapsfriends.login.firebase
 
-
 import androidx.lifecycle.ViewModel
 import com.example.mapsfriends.FirebaseUserRepository
+import com.example.mapsfriends.User
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class FirebaseAuthViewModel @Inject constructor(
@@ -39,11 +39,13 @@ class FirebaseAuthViewModel @Inject constructor(
                     CoroutineScope(Dispatchers.IO).launch {
                         saveUserInFirebase(
                             token = "",
-                            userId = userId,
-                            username = email,
-                            avatarUrl = "",
-                            friends = emptyList(),
-                            location = GeoPoint(0.0, 0.0)
+                            User(
+                                userId = userId,
+                                username = email,
+                                avatarUrl = "",
+                                friends = emptyList(),
+                                location = GeoPoint(0.0, 0.0)
+                            )
                         )
                         kotlinx.coroutines.withContext(Dispatchers.Main) {
                             onSignUpSuccess()
@@ -77,11 +79,13 @@ class FirebaseAuthViewModel @Inject constructor(
                         if (user == null) {
                             saveUserInFirebase(
                                 token = "",
-                                userId = userId,
-                                username = email,
-                                avatarUrl = "",
-                                friends = emptyList(),
-                                location = GeoPoint(0.0, 0.0)
+                                User(
+                                    userId = userId,
+                                    username = email,
+                                    avatarUrl = "",
+                                    friends = emptyList(),
+                                    location = GeoPoint(0.0, 0.0)
+                                )
                             )
                         }
                         kotlinx.coroutines.withContext(Dispatchers.Main) {
@@ -101,21 +105,16 @@ class FirebaseAuthViewModel @Inject constructor(
 
     private suspend fun saveUserInFirebase(
         token: String,
-        userId: String,
-        username: String,
-        avatarUrl: String,
-        friends: List<String>,
-        location: GeoPoint
+        user: User
     ) {
-        tokenManager.saveAuthData(token = token, userId = userId)
+        tokenManager.saveAuthData(token = token, userId = user.userId)
 
         repository.setUser(
-            userId = userId,
-            username = username,
-            avatarUrl = avatarUrl,
-            friends = friends,
-            location = location
+            userId = user.userId,
+            username = user.username,
+            avatarUrl = user.avatarUrl,
+            friends = user.friends,
+            location = user.location
         )
     }
-
 }

@@ -3,6 +3,7 @@ package com.example.mapsfriends.login.vk
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.mapsfriends.FirebaseUserRepository
+import com.example.mapsfriends.User
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.GeoPoint
 import com.vk.id.VKID
@@ -10,11 +11,11 @@ import com.vk.id.VKIDUser
 import com.vk.id.refreshuser.VKIDGetUserCallback
 import com.vk.id.refreshuser.VKIDGetUserFail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @HiltViewModel
 class VkAuthViewModel @Inject constructor(
@@ -38,11 +39,13 @@ class VkAuthViewModel @Inject constructor(
                             try {
                                 saveUserInFirebase(
                                     token = token!!,
-                                    userId = tokenManager.getUserId()!!,
-                                    username = user.firstName + " " + user.lastName,
-                                    avatarUrl = user.photo200 ?: "",
-                                    friends = fetchVkFriendsIds(token),
-                                    location = GeoPoint(0.0, 0.0)
+                                    User(
+                                        userId = tokenManager.getUserId()!!,
+                                        username = user.firstName + " " + user.lastName,
+                                        avatarUrl = user.photo200 ?: "",
+                                        friends = fetchVkFriendsIds(token),
+                                        location = GeoPoint(0.0, 0.0)
+                                    )
                                 )
 
                                 withContext(Dispatchers.Main) {
@@ -89,21 +92,16 @@ class VkAuthViewModel @Inject constructor(
 
     private suspend fun saveUserInFirebase(
         token: String,
-        userId: String,
-        username: String,
-        avatarUrl: String,
-        friends: List<String>,
-        location: GeoPoint
+        user: User
     ) {
-        tokenManager.saveAuthData(token = token, userId = userId)
+        tokenManager.saveAuthData(token = token, userId = user.userId)
 
         repository.setUser(
-            userId = userId,
-            username = username,
-            avatarUrl = avatarUrl,
-            friends = friends,
-            location = location
+            userId = user.userId,
+            username = user.username,
+            avatarUrl = user.avatarUrl,
+            friends = user.friends,
+            location = user.location
         )
     }
-
 }

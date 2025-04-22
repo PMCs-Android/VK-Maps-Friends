@@ -1,11 +1,9 @@
 package com.example.mapsfriends
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.mapsfriends.ui.login.LoginScreen
 
 @Composable
@@ -19,7 +17,8 @@ fun App(startDestination: String) {
         composable("login") {
             LoginScreen(
                 onLoginSuccess = { navController.navigate("main") }
-            ) }
+            )
+        }
         composable("main") { MainScreen(navController) }
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }

@@ -20,5 +20,4 @@ class AuthViewModel @Inject constructor(
     fun saveAuthData(token: String, userId: String) {
         tokenManager.saveAuthData(token, userId)
     }
-
 }

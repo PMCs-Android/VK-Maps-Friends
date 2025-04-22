@@ -1,6 +1,5 @@
 package com.example.mapsfriends.ui.login
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -8,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.mapsfriends.login.AuthTokenManager
 import com.example.mapsfriends.login.AuthViewModel
 import com.example.mapsfriends.login.vk.VkAuthViewModel
 import com.vk.id.VKIDAuthFail
@@ -79,4 +77,3 @@ fun VKIDButton(
         modifier = Modifier.padding(16.dp),
     )
 }
-
