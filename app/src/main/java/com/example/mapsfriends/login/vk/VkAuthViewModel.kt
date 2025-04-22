@@ -11,11 +11,16 @@ import com.vk.id.VKIDUser
 import com.vk.id.refreshuser.VKIDGetUserCallback
 import com.vk.id.refreshuser.VKIDGetUserFail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okio.IOException
+import org.json.JSONException
+import org.json.JSONObject
 
 @HiltViewModel
 class VkAuthViewModel @Inject constructor(
@@ -36,23 +41,19 @@ class VkAuthViewModel @Inject constructor(
                         }
 
                         CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                saveUserInFirebase(
-                                    token = token!!,
-                                    User(
-                                        userId = tokenManager.getUserId()!!,
-                                        username = user.firstName + " " + user.lastName,
-                                        avatarUrl = user.photo200 ?: "",
-                                        friends = fetchVkFriendsIds(token),
-                                        location = GeoPoint(0.0, 0.0)
-                                    )
+                            saveUserInFirebase(
+                                token = token!!,
+                                User(
+                                    userId = tokenManager.getUserId()!!,
+                                    username = user.firstName + " " + user.lastName,
+                                    avatarUrl = user.photo200 ?: "",
+                                    friends = fetchVkFriendsIds(token),
+                                    location = GeoPoint(0.0, 0.0)
                                 )
+                            )
 
-                                withContext(Dispatchers.Main) {
-                                    onSuccess()
-                                }
-                            } catch (e: Exception) {
-                                tokenManager.clear()
+                            withContext(Dispatchers.Main) {
+                                onSuccess()
                             }
                         }
                     }
@@ -66,17 +67,22 @@ class VkAuthViewModel @Inject constructor(
     }
 
     private suspend fun fetchVkFriendsIds(token: String): List<String> {
-        val url =
-            "https://api.vk.com/method/friends.get?access_token=$token&v=5.131"
+        val url = "https://api.vk.com/method/friends.get?access_token=$token&v=5.131"
+        var connection: HttpURLConnection? = null
 
         return try {
-            val connection = java.net.URL(url).openConnection() as java.net.HttpURLConnection
+            connection = URL(url).openConnection() as HttpURLConnection
             connection.requestMethod = "GET"
             connection.connect()
 
             val inputStream = connection.inputStream.bufferedReader().use { it.readText() }
 
-            val json = org.json.JSONObject(inputStream)
+            val json = JSONObject(inputStream)
+            // Проверяем наличие поля "response" в ответе
+            if (!json.has("response")) {
+                throw JSONException("Invalid response format: no 'response' field")
+            }
+
             val items = json.getJSONObject("response").getJSONArray("items")
 
             val friendIds = mutableListOf<String>()
@@ -84,9 +90,14 @@ class VkAuthViewModel @Inject constructor(
                 friendIds.add(items.getInt(i).toString())
             }
             friendIds
-        } catch (e: Exception) {
-            Log.e("VK_API", "Friends fetch error: ${e.message}")
+        } catch (e: IOException) {
+            Log.e("VK_API", "Network error fetching friends: ${e.message}", e)
             emptyList()
+        } catch (e: JSONException) {
+            Log.e("VK_API", "JSON parsing error: ${e.message}", e)
+            emptyList()
+        } finally {
+            connection?.disconnect()
         }
     }
 
