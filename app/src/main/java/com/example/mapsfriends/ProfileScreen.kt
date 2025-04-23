@@ -27,14 +27,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.mapsfriends.login.AuthViewModel
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    id: String,
-    viewModel: MapViewModel = hiltViewModel()
+    viewModel: MapViewModel = hiltViewModel(),
+    tokenManager: AuthViewModel = hiltViewModel(),
 ) {
     val user = viewModel.selectedUser.collectAsState().value
+    val id = tokenManager.getCurrentUserId()!!
 
     androidx.compose.runtime.LaunchedEffect(id) {
         viewModel.getUser(id)
