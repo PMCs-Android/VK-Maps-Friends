@@ -27,6 +27,18 @@ class AuthTokenManager @Inject constructor(@ApplicationContext context: Context)
     fun getUserId(): String? = sharedPreferences.getString("user_id", null)
 
     fun clear() {
-        sharedPreferences.edit().clear().apply()
+        try {
+            sharedPreferences.edit().clear().apply()
+        } catch (e: Exception) {
+            // Игнорируем ошибки при очистке
+        }
+    }
+
+    fun getAccessTokenSafely(): String? {
+        return try {
+            sharedPreferences.getString("access_token", null)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

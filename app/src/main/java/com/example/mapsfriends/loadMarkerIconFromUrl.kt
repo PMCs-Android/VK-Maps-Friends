@@ -9,6 +9,7 @@ import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
+import android.graphics.Typeface
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import coil.imageLoader
@@ -17,16 +18,45 @@ import kotlin.math.pow
 
 suspend fun loadOriginalBitmapFromUrl(context: Context, url: String): Bitmap? {
     return try {
+        if (url.isBlank()) {
+            return createDefaultAvatarBitmap(context)
+        }
+        
         val request = ImageRequest.Builder(context)
             .data(url)
             .allowHardware(false)
             .build()
         val result = context.imageLoader.execute(request)
-        result.drawable?.toBitmap()
+        result.drawable?.toBitmap() ?: createDefaultAvatarBitmap(context)
     } catch (e: Exception) {
         e.printStackTrace()
-        null
+        createDefaultAvatarBitmap(context)
     }
+}
+
+fun createDefaultAvatarBitmap(context: Context): Bitmap {
+    val size = 256
+    val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    
+    // Фон
+    val bgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ContextCompat.getColor(context, R.color.marker_border)
+    }
+    canvas.drawCircle(size / 2f, size / 2f, size / 2f, bgPaint)
+    
+    // Инициалы
+    val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+        textSize = size * 0.4f
+        typeface = Typeface.DEFAULT_BOLD
+        textAlign = Paint.Align.CENTER
+    }
+    
+    // Рисуем букву "U" (User)
+    canvas.drawText("U", size / 2f, size / 2f + textPaint.textSize / 3, textPaint)
+    
+    return bitmap
 }
 
 fun calculateMarkerSize(zoom: Float): Int {

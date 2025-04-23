@@ -35,7 +35,7 @@ android {
         )
 
         manifestPlaceholders["MAPS_API_KEY"] = project.properties["MAPS_API_KEY"] as? String ?: ""
-        manifestPlaceholders["VK_APP_ID"] = project.properties["VK_APP_ID"] as? String ?: ""
+        manifestPlaceholders["VK_APP_ID"] = "53221768"
     }
 
     buildTypes {
@@ -94,8 +94,14 @@ dependencies {
     implementation(libs.vkid)
     implementation(libs.vkid.support)
     implementation(libs.vkid.onetap)
+    
+    // VK SDK
+    implementation("com.vk:android-sdk-core:4.1.0")
+    implementation("com.vk:android-sdk-api:4.1.0")
+    
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

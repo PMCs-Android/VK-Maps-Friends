@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,6 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
+import android.util.Log
 
 data class MarkerData(
     val id: String,
@@ -37,6 +42,10 @@ data class MarkerData(
 
 @Composable
 fun MainScreen(navController: NavHostController) {
+    val viewModel: MapViewModel = hiltViewModel()
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -65,15 +74,50 @@ fun MainScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(8.dp))
 
             IconButton(
-                onClick = { /* Показать статистику шагов */ },
+                onClick = { 
+                    coroutineScope.launch {
+                        try {
+                            viewModel.logout()
+                            // Всегда перенаправляем на экран входа, даже если произошла ошибка
+                            navController.navigate("login") {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        } catch (e: Exception) {
+                            Log.e("MainScreen", "Ошибка при выходе из аккаунта", e)
+                            // Даже в случае ошибки перенаправляем на экран входа
+                            navController.navigate("login") {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    }
+                },
                 modifier = Modifier
                     .background(Color.White, RoundedCornerShape(12.dp))
-                    .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))
+                    .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(12.dp))
             ) {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.footstep_boot),
-                    contentDescription = "Footsteps",
-                    tint = colorResource(R.color.main_purple)
+                    imageVector = ImageVector.vectorResource(R.drawable.logout),
+                    contentDescription = "Выйти из аккаунта",
+                    tint = colorResource(R.color.main_pink)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            IconButton(
+                onClick = { 
+                    coroutineScope.launch {
+                        viewModel.fillTestData(context)
+                    }
+                },
+                modifier = Modifier
+                    .background(Color.White, RoundedCornerShape(12.dp))
+                    .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(12.dp))
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.refresh),
+                    contentDescription = "Fill Test Data",
+                    tint = colorResource(R.color.main_blue)
                 )
             }
         }

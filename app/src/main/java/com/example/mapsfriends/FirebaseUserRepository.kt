@@ -164,8 +164,19 @@ class FirebaseUserRepository : UserRepository {
                     return@addSnapshotListener
                 }
 
-                val friendIds = snapshot?.get("friends")
-                    as? List<String> ?: return@addSnapshotListener
+                if (snapshot == null || !snapshot.exists()) {
+                    Log.e("FriendObserver", "Документ пользователя не существует")
+                    callback(emptyList())
+                    return@addSnapshotListener
+                }
+
+                val friendIds = snapshot.get("friends") as? List<String> ?: emptyList()
+                
+                if (friendIds.isEmpty()) {
+                    Log.d("FriendObserver", "У пользователя нет друзей")
+                    callback(emptyList())
+                    return@addSnapshotListener
+                }
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val friends = friendIds.mapNotNull { friendId ->

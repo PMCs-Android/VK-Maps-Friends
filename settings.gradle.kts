@@ -9,6 +9,9 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/") }
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
+        maven { url = uri("https://jitpack.io") }
     }
 }
 dependencyResolutionManagement {
@@ -16,11 +19,12 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven(
-            "https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/"
-        )
+        maven { url = uri("https://artifactory-external.vkpartner.ru/artifactory/vkid-sdk-android/") }
+        maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
+        maven { url = uri("https://jitpack.io") }
+        maven { url = uri("https://sdk.vk.com/maven/") }
     }
 }
 
-rootProject.name = "Maps&Friends"
+rootProject.name = "MapsFriends"
 include(":app")

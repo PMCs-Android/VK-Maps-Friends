@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
@@ -34,18 +35,23 @@ fun MapScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val currentUser = remember { mockUsers.firstOrNull { it.id == "3" } ?: mockUsers.first() }
+    val currentUser = viewModel.currentUser.collectAsState().value
+    
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(currentUser.location, 18f)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.setupMarkersAndObserveLocations(
-            context,
-            currentUser.id,
-            cameraPositionState.position.zoom
+        position = CameraPosition.fromLatLngZoom(
+            currentUser?.location?.let { 
+                LatLng(it.latitude, it.longitude) 
+            } ?: LatLng(55.7558, 37.6173), // Дефолтная позиция (Москва)
+            18f
         )
     }
+
+    LaunchedEffect(currentUser?.userId) {
+        currentUser?.userId?.let { userId ->
+            viewModel.setupMarkersAndObserveLocations(context, userId)
+        }
+    }
+
     LaunchedEffect(cameraPositionState.position.zoom) {
         viewModel.updateMarkerIcons(cameraPositionState.position.zoom, context)
     }

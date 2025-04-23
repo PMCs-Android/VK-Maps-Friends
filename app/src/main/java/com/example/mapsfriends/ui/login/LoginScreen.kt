@@ -1,5 +1,6 @@
 package com.example.mapsfriends.ui.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,6 +33,16 @@ fun LoginScreen(
     val errorState = remember { mutableStateOf("") }
     val emailState = remember { mutableStateOf("") }
     val passwordState = remember { mutableStateOf("") }
+    
+    // Обработка ошибок при входе
+    LaunchedEffect(Unit) {
+        try {
+            Log.d("LoginScreen", "Инициализация экрана входа")
+        } catch (e: Exception) {
+            Log.e("LoginScreen", "Ошибка при инициализации экрана входа", e)
+            errorState.value = "Ошибка при инициализации экрана входа"
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -66,27 +78,44 @@ fun LoginScreen(
             )
         }
         VKIDButton(
-            onLoginSuccess = onLoginSuccess
+            onLoginSuccess = {
+                try {
+                    onLoginSuccess()
+                } catch (e: Exception) {
+                    Log.e("LoginScreen", "Ошибка при входе через VK", e)
+                    errorState.value = "Ошибка при входе через VK: ${e.message}"
+                }
+            }
         )
         LoginButton("Sign In") {
-            firebaseAuthViewModel.signIn(
-                emailState.value,
-                passwordState.value,
-                onSignInSuccess = onLoginSuccess,
-                onSignInFailure = { error ->
-                    errorState.value = error
-                }
-            )
+            try {
+                firebaseAuthViewModel.signIn(
+                    emailState.value,
+                    passwordState.value,
+                    onSignInSuccess = onLoginSuccess,
+                    onSignInFailure = { error ->
+                        errorState.value = error
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e("LoginScreen", "Ошибка при входе", e)
+                errorState.value = "Ошибка при входе: ${e.message}"
+            }
         }
         LoginButton("Sign Up") {
-            firebaseAuthViewModel.signUp(
-                emailState.value,
-                passwordState.value,
-                onSignUpSuccess = onLoginSuccess,
-                onSignUpFailure = { error ->
-                    errorState.value = error
-                }
-            )
+            try {
+                firebaseAuthViewModel.signUp(
+                    emailState.value,
+                    passwordState.value,
+                    onSignUpSuccess = onLoginSuccess,
+                    onSignUpFailure = { error ->
+                        errorState.value = error
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e("LoginScreen", "Ошибка при регистрации", e)
+                errorState.value = "Ошибка при регистрации: ${e.message}"
+            }
         }
     }
 }
