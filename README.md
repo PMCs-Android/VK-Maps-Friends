@@ -7,4 +7,4 @@
 - [Иван Протопопов](https://github.com/Illuuusion)
 - [Максим Паншин](https://github.com/homemadelobotomy)
 - [Никита Шиц](https://github.com/shitznikita)
-- [Елизавета Суровец](https://github.com/SurovetsElizaveta)
+- [Елизовета Суровец](https://github.com/SurovetsElizaveta)
