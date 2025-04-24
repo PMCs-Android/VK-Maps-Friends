@@ -5,9 +5,8 @@
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    <domain-config cleartextTrafficPermitted="false">
-        <domain includeSubdomains="true">firebaseapp.com</domain>
-        <domain includeSubdomains="true">googleapis.com</domain>
+    <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">vk.com</domain>
+        <domain includeSubdomains="true">api.vk.com</domain>
     </domain-config>
 </network-security-config> 

@@ -14,8 +14,7 @@ android {
     defaultConfig {
         applicationId = "com.example.mapsfriends"
         minSdk = 24
-        //noinspection OldTargetApi
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -23,13 +22,9 @@ android {
 
         addManifestPlaceholders(
             mapOf(
-                // ID вашего приложения (app_id).
                 "VKIDClientID" to "53221768",
-                // Ваш защищенный ключ (client_secret).
                 "VKIDClientSecret" to "MdXayYI8ryeHVJ6uaAKJ",
-                // Обычно используется vk.com.
                 "VKIDRedirectHost" to "vk.com",
-                // Обычно используется vk{ID приложения}.
                 "VKIDRedirectScheme" to "vk53221768",
             ),
         )
@@ -58,6 +53,12 @@ android {
     buildFeatures {
         compose = true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.1"
+    }
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
@@ -79,23 +80,17 @@ dependencies {
     implementation(libs.firebase.common.ktx)
     implementation(libs.play.services.location)
     implementation(libs.androidx.security.crypto.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
-    implementation("com.google.firebase:firebase-firestore")
+    
+    // Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    
+    // VK SDK
     implementation(libs.vkid)
     implementation(libs.vkid.support)
     implementation(libs.vkid.onetap)
-    
-    // VK SDK
     implementation("com.vk:android-sdk-core:4.1.0")
     implementation("com.vk:android-sdk-api:4.1.0")
     
@@ -104,4 +99,12 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth)
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

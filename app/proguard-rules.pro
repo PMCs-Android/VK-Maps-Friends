@@ -1,6 +1,6 @@
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# proguardFiles setting in build.gradle.kts.
 #
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
@@ -19,3 +19,20 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Hilt
+-keep class dagger.hilt.** { *; }
+-keep class javax.inject.** { *; }
+-keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }
+
+# Keep your application class
+-keep class com.example.mapsfriends.MapsFriendsApp { *; }
+-keep class com.example.mapsfriends.MainActivity { *; }
+
+# Keep Compose
+-keep class androidx.compose.** { *; }
+-keepclassmembers class androidx.compose.** { *; }
+
+# Keep VK SDK
+-keep class com.vk.api.sdk.** { *; }
+-keep class com.vk.id.** { *; }

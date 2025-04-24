@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mapsfriends.User
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.mapsfriends.UserRepository
+import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class VkAuthViewModel @Inject constructor(
-    private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Initial)
@@ -27,7 +26,7 @@ class VkAuthViewModel @Inject constructor(
     fun signUp(vkToken: String) {
         viewModelScope.launch {
             try {
-                Log.d("VkAuthViewModel", "Начало процесса регистрации через VK")
+                Log.d("VkAuthViewModel", "Начало процесса авторизации через VK")
                 _authState.value = AuthState.Loading
 
                 // Получаем данные пользователя из ВК
@@ -40,7 +39,7 @@ class VkAuthViewModel @Inject constructor(
                 }
                 
                 // Проверяем наличие необходимых полей
-                if (!userData.has("first_name") || !userData.has("last_name")) {
+                if (!userData.has("first_name") || !userData.has("last_name") || !userData.has("id")) {
                     Log.e("VkAuthViewModel", "Отсутствуют обязательные поля в данных пользователя")
                     _authState.value = AuthState.Error("Отсутствуют обязательные поля в данных пользователя")
                     return@launch
@@ -49,44 +48,59 @@ class VkAuthViewModel @Inject constructor(
                 val firstName = userData.getString("first_name")
                 val lastName = userData.getString("last_name")
                 val photoUrl = userData.optString("photo_max", "")
+                val vkUserId = userData.getString("id")
                 
-                Log.d("VkAuthViewModel", "Получены данные пользователя из VK: firstName=$firstName, lastName=$lastName, photoUrl=$photoUrl")
+                Log.d("VkAuthViewModel", "Получены данные пользователя из VK: firstName=$firstName, lastName=$lastName, photoUrl=$photoUrl, vkUserId=$vkUserId")
 
-                // Проверяем, авторизован ли пользователь в Firebase
-                val currentUser = auth.currentUser
-                if (currentUser == null) {
-                    Log.e("VkAuthViewModel", "Пользователь не авторизован в Firebase")
-                    _authState.value = AuthState.Error("Пользователь не авторизован в Firebase")
+                // Получаем список друзей
+                val friendsIds = try {
+                    fetchVkFriendsIds(vkToken)
+                } catch (e: Exception) {
+                    Log.e("VkAuthViewModel", "Ошибка при получении списка друзей из VK", e)
+                    _authState.value = AuthState.Error("Ошибка при получении списка друзей из VK: ${e.message}")
                     return@launch
                 }
+                
+                Log.d("VkAuthViewModel", "Получен список друзей: ${friendsIds.size} друзей")
 
-                // Создаем пользователя в Firebase
+                // Проверяем, существует ли пользователь в базе данных
+                val existingUser = userRepository.getUserById(vkUserId)
+                
+                if (existingUser != null) {
+                    // Пользователь существует, обновляем его данные
+                    Log.d("VkAuthViewModel", "Пользователь уже существует, обновляем данные")
+                    userRepository.setUser(
+                        userId = vkUserId,
+                        username = "$firstName $lastName",
+                        avatarUrl = photoUrl,
+                        friends = friendsIds,
+                        location = existingUser.location // Сохраняем текущую локацию
+                    )
+                } else {
+                    // Создаем нового пользователя
+                    Log.d("VkAuthViewModel", "Создаем нового пользователя")
+                    userRepository.setUser(
+                        userId = vkUserId,
+                        username = "$firstName $lastName",
+                        avatarUrl = photoUrl,
+                        friends = friendsIds,
+                        location = GeoPoint(0.0, 0.0) // Начальная локация
+                    )
+                }
+
+                // Создаем объект пользователя для возврата
                 val user = User(
-                    userId = currentUser.uid,
+                    userId = vkUserId,
                     username = "$firstName $lastName",
                     avatarUrl = photoUrl,
-                    friends = emptyList()
+                    friends = friendsIds
                 )
-                Log.d("VkAuthViewModel", "Создан объект пользователя: ${user.username}")
-
-                // Сохраняем пользователя в Firestore
-                try {
-                    firestore.collection("users")
-                        .document(user.userId)
-                        .set(user)
-                        .await()
-                    Log.d("VkAuthViewModel", "Пользователь успешно сохранен в Firestore")
-                } catch (e: Exception) {
-                    Log.e("VkAuthViewModel", "Ошибка при сохранении пользователя в Firestore", e)
-                    _authState.value = AuthState.Error("Ошибка при сохранении пользователя в Firestore: ${e.message}")
-                    return@launch
-                }
-
+                
+                Log.d("VkAuthViewModel", "Авторизация через VK успешно завершена")
                 _authState.value = AuthState.Success(user)
-                Log.d("VkAuthViewModel", "Регистрация через VK успешно завершена")
             } catch (e: Exception) {
-                Log.e("VkAuthViewModel", "Ошибка при регистрации через VK", e)
-                _authState.value = AuthState.Error("Ошибка при регистрации через VK: ${e.message}")
+                Log.e("VkAuthViewModel", "Ошибка при авторизации через VK", e)
+                _authState.value = AuthState.Error("Ошибка при авторизации через VK: ${e.message}")
             }
         }
     }

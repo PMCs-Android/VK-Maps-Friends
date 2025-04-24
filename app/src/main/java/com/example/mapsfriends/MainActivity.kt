@@ -5,6 +5,10 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
 import com.example.mapsfriends.login.AuthTokenManager
 import com.vk.api.sdk.VK
 import com.vk.id.VKID
@@ -29,18 +33,34 @@ class MainActivity : ComponentActivity() {
             VKID.init(this)
             Log.d("MainActivity", "VK ID успешно инициализирован")
             
-            val startDestination = if (tokenManager.getAccessTokenSafely() != null) "main" else "login"
+            // Проверяем наличие токена
+            val token = tokenManager.getAccessTokenSafely()
+            val startDestination = if (token != null) "main" else "login"
             
             Log.d("MainActivity", "Запуск приложения с начальным экраном: $startDestination")
             
             setContent {
-                App(startDestination)
+                MaterialTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        App(startDestination)
+                    }
+                }
             }
         } catch (e: Exception) {
             Log.e("MainActivity", "Ошибка при инициализации VK SDK", e)
             // В случае ошибки всегда запускаем экран входа
             setContent {
-                App("login")
+                MaterialTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        App("login")
+                    }
+                }
             }
         }
     }

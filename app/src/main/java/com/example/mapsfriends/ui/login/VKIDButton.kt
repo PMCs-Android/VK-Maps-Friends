@@ -38,6 +38,12 @@ fun VKIDButton(
             when (authState) {
                 is AuthState.Success -> {
                     Log.d("VKIDButton", "Успешная авторизация через VK")
+                    val user = (authState as AuthState.Success).user
+                    // Сохраняем токен и ID пользователя
+                    tokenManager.saveAuthData(
+                        token = user.userId, // Используем VK ID как токен
+                        userId = user.userId
+                    )
                     onLoginSuccess()
                 }
                 is AuthState.Error -> {
@@ -59,16 +65,11 @@ fun VKIDButton(
         onAuth = { _, accessToken ->
             try {
                 Log.d("VKIDButton", "Получен токен VK: ${accessToken.token}")
-                tokenManager.saveAuthData(
-                    token = accessToken.token,
-                    userId = accessToken.userID.toString()
-                )
-
-                // Передаем токен в метод signUp
+                // Передаем токен в метод signUp для авторизации
                 vkAuthViewModel.signUp(vkToken = accessToken.token)
             } catch (e: Exception) {
-                Log.e("VKIDButton", "Ошибка при сохранении токена VK", e)
-                Toast.makeText(context, "Ошибка при сохранении токена: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("VKIDButton", "Ошибка при авторизации через VK", e)
+                Toast.makeText(context, "Ошибка при авторизации: ${e.message}", Toast.LENGTH_LONG).show()
             }
         },
         onFail = { _, fail ->
@@ -76,46 +77,36 @@ fun VKIDButton(
                 Log.e("VKIDButton", "Ошибка авторизации VK: ${fail.description}")
                 when (fail) {
                     is VKIDAuthFail.Canceled -> {
-                        Toast.makeText(context, fail.description, Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Авторизация отменена", Toast.LENGTH_LONG).show()
                     }
                     is VKIDAuthFail.FailedApiCall -> {
-                        Toast.makeText(context, fail.description, Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Ошибка API VK: ${fail.description}", Toast.LENGTH_LONG).show()
                     }
                     is VKIDAuthFail.FailedOAuthState -> {
-                        Toast.makeText(context, fail.description, Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Ошибка состояния OAuth: ${fail.description}", Toast.LENGTH_LONG).show()
                     }
                     is VKIDAuthFail.FailedRedirectActivity -> {
-                        Toast.makeText(context, fail.description, Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Ошибка перенаправления: ${fail.description}", Toast.LENGTH_LONG).show()
                     }
                     is VKIDAuthFail.NoBrowserAvailable -> {
-                        Toast.makeText(context, fail.description, Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, "Браузер недоступен", Toast.LENGTH_LONG).show()
                     }
                     else -> {
                         Toast.makeText(
                             context,
-                            fail.description,
+                            "Ошибка авторизации: ${fail.description}",
                             Toast.LENGTH_LONG,
                         ).show()
                     }
                 }
             } catch (e: Exception) {
-                Log.e("VKIDButton", "Ошибка при обработке ошибки авторизации VK", e)
-                Toast.makeText(context, "Ошибка при авторизации: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("VKIDButton", "Ошибка при обработке ошибки авторизации", e)
+                Toast.makeText(context, "Неизвестная ошибка: ${e.message}", Toast.LENGTH_LONG).show()
             }
         },
-        scenario = OneTapTitleScenario.SignIn,
-        signInAnotherAccountButtonEnabled = true,
-        style =
-            OneTapStyle
-                .Light(
-                    cornersStyle = OneTapButtonCornersStyle.Custom(2f),
-                    sizeStyle = OneTapButtonSizeStyle.SMALL_32,
-                    elevationStyle = OneTapButtonElevationStyle.Custom(4f),
-                ),
-        authParams =
-            VKIDAuthUiParams {
-                scopes = setOf("email", "friends")
-            },
-        modifier = Modifier.padding(16.dp),
+
+
     )
 }
+
+
