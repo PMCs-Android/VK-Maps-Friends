@@ -32,7 +32,6 @@ data class User(
 }
 
 interface UserRepository {
-
     suspend fun getUserById(userId: String): User?
 
     suspend fun getFriendsList(userId: String): List<User>?
