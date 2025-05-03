@@ -295,7 +295,7 @@ fun CreateEventAddLocation() {
         Box(
             modifier = Modifier.padding(CreateEventScreen.SMALL_PADDING_1.dp)
         ) {
-            //MapScreen()
+            // MapScreen()
         }
     }
 }
