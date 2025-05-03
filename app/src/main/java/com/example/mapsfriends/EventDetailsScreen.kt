@@ -220,29 +220,29 @@ fun EventLocation() {
     }
 }
 
- @Composable
- fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: NavHostController) {
-     Row(
-         modifier = Modifier
-             .fillMaxWidth()
-             .background(Color.White, RoundedCornerShape(20.dp))
-             .padding(10.dp),
-         horizontalArrangement = Arrangement.SpaceEvenly
-     ) {
-         TextButton(
-             onClick = { /* Удаление ивента */
-                 viewModel.deleteEvent(event.eventId)
-                 navController.navigate("events")
-             },
-             modifier = Modifier
-                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
-         ) {
-             Text(
-                 text = LocalContext.current.getString(R.string.dalete),
-                 fontSize = 20.sp,
-                 color = colorResource(R.color.main_pink),
-                 fontWeight = FontWeight.Bold,
-             )
-         }
-     }
- }
+@Composable
+fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: NavHostController) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White, RoundedCornerShape(20.dp))
+            .padding(10.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        TextButton(
+            onClick = { /* Удаление ивента */
+                viewModel.deleteEvent(event.eventId)
+                navController.navigate("events")
+                      },
+            modifier = Modifier
+                .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
+        ) {
+            Text(
+                text = LocalContext.current.getString(R.string.dalete),
+                fontSize = 20.sp,
+                color = colorResource(R.color.main_pink),
+                fontWeight = FontWeight.Bold,
+                )
+        }
+    }
+}

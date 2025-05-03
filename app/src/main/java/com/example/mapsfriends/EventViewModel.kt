@@ -125,7 +125,7 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    fun getEvent(eventId : String) {
+    fun getEvent(eventId: String) {
         viewModelScope.launch {
             try {
                 _currentEvent.value = eventRepository.getEventById(eventId)
