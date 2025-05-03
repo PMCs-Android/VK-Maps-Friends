@@ -138,60 +138,46 @@ fun DateInput(
     state: DatePickerState,
     selectedDate: MutableState<String>
 ) {
-    AnimatedVisibility(
-        visible = showDatePicker.value,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
-    ) {
-        if (showDatePicker.value) {
-            DatePickerDialog(
-                onDismissRequest = {
-                    showDatePicker.value = false
-                },
-                confirmButton = {
-                    TextButton(
-                        onClick = {
-                            state.selectedDateMillis?.let {
-                                val date = Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault())
-                                    .toLocalDate()
-                                if (date.dayOfMonth.toString().length < 2 &&
-                                    date.month.value.toString().length < 2
-                                ) {
-                                    selectedDate.value = "0${date.dayOfMonth}.0${date.month.value}"
-                                } else if (date.dayOfMonth.toString().length < 2 &&
-                                    date.month.value.toString().length == 2
-                                ) {
-                                    selectedDate.value = "0${date.dayOfMonth}.${date.month.value}"
-                                } else if (date.dayOfMonth.toString().length == 2 &&
-                                    date.month.value.toString().length < 2
-                                ) {
-                                    selectedDate.value = "${date.dayOfMonth}.0${date.month.value}"
-                                } else {
-                                    selectedDate.value = "${date.dayOfMonth}.${date.month.value}"
-                                }
-                            }
-                            showDatePicker.value = false
+    if (showDatePicker.value) {
+        DatePickerDialog(
+            onDismissRequest = {
+                showDatePicker.value = false
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        state.selectedDateMillis?.let {
+                            val date = Instant.ofEpochMilli(it)
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                            selectedDate.value = "%02d.%02d".format(
+                                date.dayOfMonth,
+                                date.monthValue
+                            )
                         }
-                    ) {
-                        Text("Отмена")
+                        showDatePicker.value = false
                     }
-                    TextButton(
-                        onClick = { showDatePicker.value = false }
-                    ) {
-                        Text("OK")
-                    }
-                },
-                colors = DatePickerDefaults.colors(
-                    containerColor = Color.White,
-                    headlineContentColor = colorResource(R.color.main_purple),
-                    selectedDayContainerColor = colorResource(R.color.main_purple),
-                    selectedDayContentColor = Color.White,
-                    todayContentColor = colorResource(R.color.main_purple),
-                    todayDateBorderColor = colorResource(R.color.main_blue)
-                )
-            ) {
-                DatePicker(state = state)
-            }
+                ) {
+                    Text("OK", color = colorResource(R.color.main_purple))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showDatePicker.value = false }
+                ) {
+                    Text("Отмена", color = colorResource(R.color.main_purple))
+                }
+            },
+            colors = DatePickerDefaults.colors(
+                containerColor = Color.White,
+                headlineContentColor = colorResource(R.color.main_purple),
+                selectedDayContainerColor = colorResource(R.color.main_purple),
+                selectedDayContentColor = Color.White,
+                todayContentColor = colorResource(R.color.main_purple),
+                todayDateBorderColor = colorResource(R.color.main_blue)
+            )
+        ) {
+            DatePicker(state = state)
         }
     }
 }
