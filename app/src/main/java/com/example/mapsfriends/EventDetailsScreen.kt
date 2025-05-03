@@ -215,7 +215,7 @@ fun EventLocation() {
             modifier = Modifier
                 .padding(10.dp)
         ) {
-        // MapScreen()
+            // MapScreen()
         }
     }
 }
@@ -233,7 +233,7 @@ fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: Na
             onClick = { /* Удаление ивента */
                 viewModel.deleteEvent(event.eventId)
                 navController.navigate("events")
-                      },
+            },
             modifier = Modifier
                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
         ) {
@@ -242,7 +242,7 @@ fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: Na
                 fontSize = 20.sp,
                 color = colorResource(R.color.main_pink),
                 fontWeight = FontWeight.Bold,
-                )
+            )
         }
     }
 }
