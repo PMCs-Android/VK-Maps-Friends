@@ -129,8 +129,11 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _currentEvent.value = eventRepository.getEventById(eventId)
-                _avatars.value = userRepository.getUserAvatars(_currentEvent.value?.participants ?:
-                emptyList()).filterValues { it != null } as Map<String, String>
+//                _avatars.value = result.filterValues { it != null } as Map<String, String>
+                _avatars.value = userRepository.getUserAvatars(
+                    _currentEvent.value?.participants
+                        ?: emptyList()
+                ).filterValues { it != null } as Map<String, String>
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error loading event: ${e.message}")
             } catch (e: IOException) {

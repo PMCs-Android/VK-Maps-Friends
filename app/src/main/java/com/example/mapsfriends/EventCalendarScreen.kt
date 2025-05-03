@@ -154,7 +154,7 @@ fun OneEvent(
     event: Event,
     viewModel: EventViewModel,
     navController: NavHostController,
-    refresh : MutableState<Boolean>
+    refresh: MutableState<Boolean>
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val avatars = userViewModel.avatars.collectAsState().value
