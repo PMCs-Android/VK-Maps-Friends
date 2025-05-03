@@ -42,8 +42,18 @@ interface UserRepository {
     suspend fun updateUserAvatar(userId: String, avatarUrl: String)
 
     suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>)
-    suspend fun addEventToUser(creatorID: String, eventId: String)
+
+    suspend fun setUser(
+        userId: String,
+        username: String,
+        avatarUrl: String,
+        friends: List<String>,
+        location: GeoPoint
+    )
+
     suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit)
-    suspend fun addFreind(userId: String, friendId: String)
+    suspend fun addFriend(userId: String, friendId: String)
+    suspend fun observeFriendsList(userId: String, callback: (List<User>) -> Unit)
+    suspend fun addEventToUser(creatorID: String, eventId: String)
     suspend fun getUserAvatars(userIds: List<String>): Map<String, String?>
 }

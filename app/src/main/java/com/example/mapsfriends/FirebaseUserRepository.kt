@@ -1,10 +1,14 @@
 package com.example.mapsfriends
 
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okio.IOException
 
@@ -85,12 +89,32 @@ class FirebaseUserRepository : UserRepository {
             .await()
     }
 
+    override suspend fun setUser(
+        userId: String,
+        username: String,
+        avatarUrl: String,
+        friends: List<String>,
+        location: GeoPoint
+    ) {
+        val user = User(
+            userId = userId,
+            username = username,
+            avatarUrl = avatarUrl,
+            friends = friends,
+            location = location
+        )
+
+        db.document(userId)
+            .set(user)
+            .await()
+    }
+
     override suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit) {
         db
             .document(userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    println("Ошибка подписки: ${error.message}")
+                    Log.e("LocationObserver", "Ошибка подписки: ${error.message}")
                     return@addSnapshotListener
                 }
 
@@ -101,7 +125,7 @@ class FirebaseUserRepository : UserRepository {
             }
     }
 
-    override suspend fun addFreind(userId: String, friendId: String) {
+    override suspend fun addFriend(userId: String, friendId: String) {
         if (userId == friendId) {
             return
         }
@@ -129,6 +153,29 @@ class FirebaseUserRepository : UserRepository {
                 currentFriends + friendId
             )
         }
+    }
+
+    override suspend fun observeFriendsList(
+        userId: String,
+        callback: (List<User>) -> Unit
+    ) {
+        db.document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("FriendObserver", "Ошибка: ${error.message}")
+                    return@addSnapshotListener
+                }
+
+                val friendIds = snapshot?.get("friends")
+                        as? List<String> ?: return@addSnapshotListener
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val friends = friendIds.mapNotNull { friendId ->
+                        getUserById(friendId)
+                    }
+                    callback(friends)
+                }
+            }
     }
 
     override suspend fun addEventToUser(creatorID: String, eventId: String) {
