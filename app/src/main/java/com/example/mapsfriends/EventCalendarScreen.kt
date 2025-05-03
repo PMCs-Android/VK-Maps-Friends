@@ -163,8 +163,8 @@ fun OneEvent(
     }
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = event.time.slice(5..8),
-            fontSize = 16.sp,
+            text = event.time.slice(5..10),
+            fontSize = CreateEventScreen.SMALL_PADDING_3.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
             modifier = Modifier

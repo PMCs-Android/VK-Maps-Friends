@@ -19,8 +19,6 @@ class UserViewModel @Inject constructor(
     val friends: StateFlow<List<User>> = _friends.asStateFlow()
     private val _avatars = MutableStateFlow<Map<String, String>>(emptyMap())
     val avatars: StateFlow<Map<String, String>> = _avatars
-////    private val _avatar = MutableStateFlow<String>("")
-////    val avatar: StateFlow<String> = _avatar
 
     fun loadFriends(userId: String) {
         viewModelScope.launch {
@@ -54,14 +52,4 @@ class UserViewModel @Inject constructor(
             }
         }
     }
-
-//    fun loadAvatar(userId: String) {
-//        viewModelScope.launch {
-//            try {
-//                _avatar.value = userRepository.getUserAvatar(userId) ?: ""
-//            } catch (e: Exception) {
-//                _avatar.value = ""
-//            }
-//        }
-//    }
 }

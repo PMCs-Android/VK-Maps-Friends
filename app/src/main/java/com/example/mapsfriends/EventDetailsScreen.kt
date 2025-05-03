@@ -23,11 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -91,30 +86,7 @@ fun EventDetailsScreen(
                 }
             }
             EventLocation()
-//            EventDeleteButton(viewModel, event)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.White, RoundedCornerShape(20.dp))
-                    .padding(10.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                TextButton(
-                    onClick = { /* Удаление ивента */
-                        viewModel.deleteEvent(event.eventId)
-                        navController.navigate("events")
-                    },
-                    modifier = Modifier
-                        .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
-                ) {
-                    Text(
-                        text = LocalContext.current.getString(R.string.dalete),
-                        fontSize = 20.sp,
-                        color = colorResource(R.color.main_pink),
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
+            EventDeleteButton(viewModel, event, navController)
         }
     }
 }
@@ -146,9 +118,7 @@ fun EventHeader(
             fontSize = 32.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .weight(3f)
-                .align(Alignment.CenterVertically)
+            modifier = Modifier.weight(3f).align(Alignment.CenterVertically)
         )
         if (avatars.containsKey(event.creatorId)) {
             Text(text = "!" + avatars[event.creatorId])
@@ -176,7 +146,7 @@ fun EventHeader(
                 color = Color.White
             )
             Text(
-                text = event.time.slice(5..8),
+                text = event.time.slice(5..10),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -198,7 +168,7 @@ fun EventDescription(event: Event) {
             text = event.description,
             fontSize = 16.sp,
             modifier = Modifier
-                .padding(10.dp)
+                .padding(CreateEventScreen.SMALL_PADDING_1.dp)
         )
     }
 }
@@ -250,29 +220,29 @@ fun EventLocation() {
     }
 }
 
-// @Composable
-// fun EventDeleteButton(viewModel: EventViewModel, event: Event) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(Color.White, RoundedCornerShape(20.dp))
-//            .padding(10.dp),
-//        horizontalArrangement = Arrangement.SpaceEvenly
-//    ) {
-//        TextButton(
-//            onClick = { /* Удаление ивента */
-//                viewModel.deleteEvent(event.eventId)
-//
-//            },
-//            modifier = Modifier
-//                .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
-//        ) {
-//            Text(
-//                text = LocalContext.current.getString(R.string.dalete),
-//                fontSize = 20.sp,
-//                color = colorResource(R.color.main_pink),
-//                fontWeight = FontWeight.Bold,
-//            )
-//        }
-//    }
-// }
+ @Composable
+ fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: NavHostController) {
+     Row(
+         modifier = Modifier
+             .fillMaxWidth()
+             .background(Color.White, RoundedCornerShape(20.dp))
+             .padding(10.dp),
+         horizontalArrangement = Arrangement.SpaceEvenly
+     ) {
+         TextButton(
+             onClick = { /* Удаление ивента */
+                 viewModel.deleteEvent(event.eventId)
+                 navController.navigate("events")
+             },
+             modifier = Modifier
+                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
+         ) {
+             Text(
+                 text = LocalContext.current.getString(R.string.dalete),
+                 fontSize = 20.sp,
+                 color = colorResource(R.color.main_pink),
+                 fontWeight = FontWeight.Bold,
+             )
+         }
+     }
+ }

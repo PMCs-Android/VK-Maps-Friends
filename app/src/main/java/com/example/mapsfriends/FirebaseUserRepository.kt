@@ -85,36 +85,6 @@ class FirebaseUserRepository : UserRepository {
             .await()
     }
 
-    override suspend fun setUser(
-        userId: String,
-        username: String,
-        avatarUrl: String,
-        friends: List<String>,
-        location: GeoPoint
-    ) {
-        try {
-            val userData = hashMapOf(
-                "user_id" to userId,
-                "username" to username,
-                "avatar_url" to avatarUrl,
-                "friends" to friends,
-                "location" to location
-            )
-
-            db.document(userId)
-                .set(userData)
-                .await()
-
-            println("User saved with ID: $userId")
-        } catch (e: FirebaseFirestoreException) {
-            println("Firestore error saving user: ${e.message}")
-        } catch (e: IOException) {
-            println("Network error saving user: ${e.message}")
-        } catch (e: IllegalStateException) {
-            println("Data error saving user: ${e.message}")
-        }
-    }
-
     override suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit) {
         db
             .document(userId)
@@ -191,23 +161,4 @@ class FirebaseUserRepository : UserRepository {
             emptyMap()
         }
     }
-
-//    override suspend fun getUserAvatar(userId: String): String? {
-//        return try {
-//            val document = db
-//                .document(userId)
-//                .get()
-//                .await()
-//
-//            if (document.exists()) {
-//                document.getString("avatar_url")?.takeIf { it.isNotEmpty() }
-//            } else {
-//                println("User $userId not found")
-//                null
-//            }
-//        } catch (e: IOException) {
-//            println("Network error while fetching avatar  ${e.message}")
-//            null
-//        }
-//    }
 }

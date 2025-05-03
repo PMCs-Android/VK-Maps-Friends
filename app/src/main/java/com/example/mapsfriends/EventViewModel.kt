@@ -53,10 +53,6 @@ class EventViewModel @Inject constructor(
         _currentEvent.value = _currentEvent.value?.copy(description = description)
     }
 
-    fun setEventLocation(location: GeoPoint) {
-        _currentEvent.value = _currentEvent.value?.copy(location = location)
-    }
-
     fun setEventTime(time: String) {
         _currentEvent.value = _currentEvent.value?.copy(time = time)
     }
@@ -133,7 +129,6 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _currentEvent.value = eventRepository.getEventById(eventId)
-//                _avatars.value = result.filterValues { it != null } as Map<String, String>
                 _avatars.value = userRepository.getUserAvatars(_currentEvent.value?.participants ?:
                 emptyList()).filterValues { it != null } as Map<String, String>
             } catch (e: FirebaseFirestoreException) {
