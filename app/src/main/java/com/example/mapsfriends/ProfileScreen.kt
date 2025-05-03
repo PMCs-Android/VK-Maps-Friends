@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -24,10 +25,29 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.mapsfriends.login.AuthViewModel
 
 @Composable
-fun ProfileScreen(navController: NavHostController) {
+fun ProfileScreen(
+    navController: NavHostController,
+    viewModel: MapViewModel = hiltViewModel(),
+    tokenManager: AuthViewModel = hiltViewModel(),
+) {
+    val user = viewModel.selectedUser.collectAsState().value
+    val id = tokenManager.getCurrentUserId()!!
+
+    androidx.compose.runtime.LaunchedEffect(id) {
+        viewModel.getUser(id)
+    }
+
+    if (user == null) {
+        LoadingView()
+        viewModel.getUser(id)
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,11 +87,23 @@ fun ProfileScreen(navController: NavHostController) {
                 .align(Alignment.CenterHorizontally)
         )
         Text(
-            text = mockUsers[2].name,
+            text = user.username,
             fontSize = 28.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+    }
+}
+@Composable
+fun LoadingView() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+    ) {
+        Text(text = "Загрузка профиля...", color = Color.White)
     }
 }

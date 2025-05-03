@@ -8,19 +8,26 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mapsfriends.ui.login.LoginScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun App() {
+fun App(startDestination: String) {
     val navController = rememberNavController()
 
     NavHost(
         navController,
-        startDestination = "main"
+        startDestination = startDestination
     ) {
+        composable("login") {
+            LoginScreen(
+                onLoginSuccess = { navController.navigate("main") }
+            )
+        }
         composable("main") { MainScreen(navController) }
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }
+        composable("create") { RequestDetailsScreen(navController) }
         composable("create") { CreateEventScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
         composable(
@@ -34,5 +41,9 @@ fun App() {
         }
         composable("messenger") { MessengerScreen(navController) }
         composable("requestDetails") { RequestDetailsScreen(navController) }
+        composable("map") {
+            MapScreen(navController = navController)
+        }
+        composable("profile") { ProfileScreen(navController) }
     }
 }
