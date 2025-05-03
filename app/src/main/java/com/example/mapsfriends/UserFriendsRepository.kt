@@ -1,7 +1,5 @@
 package com.example.mapsfriends
 
-import com.google.firebase.firestore.GeoPoint
-
 interface UserFriendsRepository {
     suspend fun getFriendsList(userId: String): List<User>?
     suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>)

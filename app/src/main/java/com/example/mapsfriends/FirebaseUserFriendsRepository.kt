@@ -84,7 +84,7 @@ class FirebaseUserFriendsRepository : UserFriendsRepository {
                 }
 
                 val friendIds = snapshot?.get("friends")
-                        as? List<String> ?: return@addSnapshotListener
+                    as? List<String> ?: return@addSnapshotListener
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val friends = friendIds.mapNotNull { friendId ->
