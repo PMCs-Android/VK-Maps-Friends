@@ -106,7 +106,7 @@ class FirebaseEventRepository : EventRepository {
                 val participantsId = document.get("participants") as? List<String>
                 participantsId?.let {
                     participantsId.mapNotNull { participantId ->
-                        FirebaseUserRepository().getUserById(participantId)
+                        FirebaseUserProfileRepository().getUserById(participantId)
                     }
                 } ?: emptyList()
             } else {

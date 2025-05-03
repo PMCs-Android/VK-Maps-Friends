@@ -19,8 +19,14 @@ class MyApp : Application()
 object AppModule {
     @Provides
     @Singleton
-    fun provideUserRepository(): UserRepository {
-        return FirebaseUserRepository()
+    fun provideUserProfileRepository(): UserProfileRepository {
+        return FirebaseUserProfileRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserFriendsRepository(): UserFriendsRepository {
+        return FirebaseUserFriendsRepository()
     }
 
     @Provides

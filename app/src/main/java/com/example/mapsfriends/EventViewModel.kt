@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
-    private val userRepository: UserRepository
+    private val userProfileRepository: UserProfileRepository,
+    private val userFriendsRepository: UserFriendsRepository
 ) : ViewModel() {
     private val _currentEvent = MutableStateFlow<Event?>(null)
     private val _participants = MutableStateFlow<List<User>>(emptyList())
@@ -38,7 +39,7 @@ class EventViewModel @Inject constructor(
             participants = listOf(currentUser.userId)
         )
         viewModelScope.launch {
-            userRepository.getUserById(currentUser.userId)?.let { creator ->
+            userProfileRepository.getUserById(currentUser.userId)?.let { creator ->
                 _participants.value = listOf(creator)
             }
             println("create new event ${_participants.value.size}")
@@ -69,7 +70,7 @@ class EventViewModel @Inject constructor(
                         eventRepository.addParticipant(event.eventId, user.userId)
                     }
                 loadParticipants(event.eventId)
-                userRepository.addEventToUser(event.creatorId, event.eventId)
+                userProfileRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error saving event: ${e.message}")
             } catch (e: IOException) {
@@ -130,7 +131,7 @@ class EventViewModel @Inject constructor(
             try {
                 _currentEvent.value = eventRepository.getEventById(eventId)
 //                _avatars.value = result.filterValues { it != null } as Map<String, String>
-                _avatars.value = userRepository.getUserAvatars(
+                _avatars.value = userProfileRepository.getUserAvatars(
                     _currentEvent.value?.participants
                         ?: emptyList()
                 ).filterValues { it != null } as Map<String, String>

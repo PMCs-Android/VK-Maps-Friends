@@ -146,7 +146,7 @@ fun EventHeader(
                 color = Color.White
             )
             Text(
-                text = event.time.slice(5..10),
+                text = event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -168,7 +168,7 @@ fun EventDescription(event: Event) {
             text = event.description,
             fontSize = 16.sp,
             modifier = Modifier
-                .padding(CreateEventScreen.SMALL_PADDING_1.dp)
+                .padding(Dimensions.SMALL_PADDING_1.dp)
         )
     }
 }

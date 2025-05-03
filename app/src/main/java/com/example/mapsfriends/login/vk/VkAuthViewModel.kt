@@ -2,7 +2,7 @@ package com.example.mapsfriends.login.vk
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.mapsfriends.FirebaseUserRepository
+import com.example.mapsfriends.FirebaseUserProfileRepository
 import com.example.mapsfriends.User
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.GeoPoint
@@ -26,7 +26,7 @@ import org.json.JSONObject
 class VkAuthViewModel @Inject constructor(
     private val tokenManager: AuthTokenManager
 ) : ViewModel() {
-    private val repository = FirebaseUserRepository()
+    private val repository = FirebaseUserProfileRepository()
 
     fun signUp(onSuccess: () -> Unit) {
         CoroutineScope(Dispatchers.Main).launch {

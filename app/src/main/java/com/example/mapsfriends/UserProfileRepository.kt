@@ -31,17 +31,10 @@ data class User(
     }
 }
 
-interface UserRepository {
+interface UserProfileRepository {
     suspend fun getUserById(userId: String): User?
-
-    suspend fun getFriendsList(userId: String): List<User>?
-
     suspend fun updateUserLocation(userId: String, location: GeoPoint)
-
     suspend fun updateUserAvatar(userId: String, avatarUrl: String)
-
-    suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>)
-
     suspend fun setUser(
         userId: String,
         username: String,
@@ -49,10 +42,7 @@ interface UserRepository {
         friends: List<String>,
         location: GeoPoint
     )
-
     suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit)
-    suspend fun addFriend(userId: String, friendId: String)
-    suspend fun observeFriendsList(userId: String, callback: (List<User>) -> Unit)
     suspend fun addEventToUser(creatorID: String, eventId: String)
     suspend fun getUserAvatars(userIds: List<String>): Map<String, String?>
 }

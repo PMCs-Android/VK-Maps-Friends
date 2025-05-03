@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userProfileRepository: UserProfileRepository,
+    private val userFriendsRepository: UserFriendsRepository
 ) : ViewModel() {
     private val _friends = MutableStateFlow<List<User>>(emptyList())
     val friends: StateFlow<List<User>> = _friends.asStateFlow()
@@ -23,7 +24,7 @@ class UserViewModel @Inject constructor(
     fun loadFriends(userId: String) {
         viewModelScope.launch {
             try {
-                val friendsList = userRepository.getFriendsList(userId) ?: emptyList()
+                val friendsList = userFriendsRepository.getFriendsList(userId) ?: emptyList()
                 _friends.value = friendsList
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error loading friends: ${e.message}")
@@ -41,7 +42,7 @@ class UserViewModel @Inject constructor(
     fun loadAvatars(userIds: List<String>) {
         viewModelScope.launch {
             try {
-                val result = userRepository.getUserAvatars(userIds)
+                val result = userProfileRepository.getUserAvatars(userIds)
                 _avatars.value = result.filterValues { it != null } as Map<String, String>
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error loading avatars: ${e.message}")

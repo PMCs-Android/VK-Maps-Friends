@@ -62,8 +62,8 @@ fun CreateEventDateInput(
     Row(
         modifier = Modifier
             .width(DateTimePickers.LARGE_DIALOG.dp)
-            .background(Color.White, RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp))
-            .padding(start = CreateEventScreen.SMALL_PADDING_1.dp),
+            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
+            .padding(start = Dimensions.SMALL_PADDING_1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -92,8 +92,8 @@ fun CreateEventTimeInput(
     Row(
         modifier = Modifier
             .width(DateTimePickers.LARGE_DIALOG.dp)
-            .background(Color.White, RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp))
-            .padding(start = CreateEventScreen.SMALL_PADDING_1.dp),
+            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
+            .padding(start = Dimensions.SMALL_PADDING_1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -118,7 +118,7 @@ fun CreateEventTimeInput(
 fun EventDateText(date: String = "Дата") {
     Text(
         text = date,
-        fontSize = CreateEventScreen.SMALL_PADDING_3.sp,
+        fontSize = Dimensions.SMALL_PADDING_3.sp,
     )
 }
 
@@ -126,7 +126,7 @@ fun EventDateText(date: String = "Дата") {
 fun EventTimeText(time: String = "Время") {
     Text(
         text = time,
-        fontSize = CreateEventScreen.SMALL_PADDING_3.sp,
+        fontSize = Dimensions.SMALL_PADDING_3.sp,
     )
 }
 

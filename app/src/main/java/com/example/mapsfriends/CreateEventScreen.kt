@@ -54,22 +54,6 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import java.time.LocalDateTime
 
-object CreateEventScreen {
-    const val BORDER_WIDTH = 4
-    const val SMALL_PADDING_1 = 10
-    const val SMALL_PADDING_2 = 12
-    const val SMALL_PADDING_3 = 16
-    const val MEDIUM_SPACING_1 = 20
-    const val MEDIUM_SPACING_2 = 30
-    const val MEDIUM_SPACING_3 = 36
-    const val MEDIUM_SPACING_4 = 48
-    const val MEDIUM_SPACING_5 = 68
-    const val LARGE_ELEMENT_1 = 80
-    const val LARGE_ELEMENT_2 = 300
-    const val LARGE_ELEMENT_3 = 400
-    const val LARGE_ELEMENT_4 = 800
-}
-
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,15 +90,15 @@ fun CreateEventScreen(navController: NavHostController) {
                 )
             )
             .padding(
-                vertical = CreateEventScreen.MEDIUM_SPACING_2.dp,
-                horizontal = CreateEventScreen.SMALL_PADDING_1.dp
+                vertical = Dimensions.MEDIUM_SPACING_2.dp,
+                horizontal = Dimensions.SMALL_PADDING_1.dp
             )
     ) {
         ExitButton(navController)
         CreateEventTitleInput(viewModel, currentEvent)
-        Row(modifier = Modifier.padding(top = CreateEventScreen.SMALL_PADDING_1.dp)) {
+        Row(modifier = Modifier.padding(top = Dimensions.SMALL_PADDING_1.dp)) {
             CreateEventDateInput(showDatePicker, date)
-            Spacer(modifier = Modifier.width(CreateEventScreen.SMALL_PADDING_1.dp))
+            Spacer(modifier = Modifier.width(Dimensions.SMALL_PADDING_1.dp))
             CreateEventTimeInput(showTimePicker, time)
         }
         DateInput(showDatePicker, state, date)
@@ -127,8 +111,8 @@ fun CreateEventScreen(navController: NavHostController) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White, RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp))
-                .padding(CreateEventScreen.SMALL_PADDING_1.dp),
+                .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
+                .padding(Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             CreateEventDoneButton(viewModel, navController)
@@ -142,9 +126,9 @@ fun ExitButton(navController: NavHostController) {
         onClick = { navController.popBackStack() },
         modifier = Modifier
             .border(
-                CreateEventScreen.BORDER_WIDTH.dp,
+                Dimensions.BORDER_WIDTH.dp,
                 Color.White,
-                RoundedCornerShape(CreateEventScreen.SMALL_PADDING_2.dp)
+                RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp)
             )
     ) {
         Icon(
@@ -160,12 +144,12 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
     TextField(
         value = event?.title ?: "",
         onValueChange = { viewModel.setEventTitle(it) },
-        textStyle = TextStyle(fontSize = CreateEventScreen.MEDIUM_SPACING_1.sp),
-        shape = RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp),
+        textStyle = TextStyle(fontSize = Dimensions.MEDIUM_SPACING_1.sp),
+        shape = RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(CreateEventScreen.MEDIUM_SPACING_5.dp)
-            .padding(top = CreateEventScreen.SMALL_PADDING_1.dp),
+            .height(Dimensions.MEDIUM_SPACING_5.dp)
+            .padding(top = Dimensions.SMALL_PADDING_1.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
@@ -175,7 +159,7 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
         placeholder = {
             Text(
                 text = "Название",
-                fontSize = CreateEventScreen.SMALL_PADDING_3.sp,
+                fontSize = Dimensions.SMALL_PADDING_3.sp,
                 color = Color.Gray
             )
         },
@@ -191,12 +175,12 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
     TextField(
         value = event?.description ?: "",
         onValueChange = { viewModel.setEventDescription(it) },
-        textStyle = TextStyle(fontSize = CreateEventScreen.MEDIUM_SPACING_1.sp),
-        shape = RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp),
+        textStyle = TextStyle(fontSize = Dimensions.MEDIUM_SPACING_1.sp),
+        shape = RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = CreateEventScreen.SMALL_PADDING_1.dp)
-            .height(CreateEventScreen.LARGE_ELEMENT_1.dp),
+            .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
+            .height(Dimensions.LARGE_ELEMENT_1.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
@@ -206,7 +190,7 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
         placeholder = {
             Text(
                 text = "Описание",
-                fontSize = CreateEventScreen.SMALL_PADDING_3.sp,
+                fontSize = Dimensions.SMALL_PADDING_3.sp,
                 color = Color.Gray
             )
         },
@@ -235,9 +219,9 @@ fun CreateEventAddParticipants(
     ) {
         Row(
             modifier = Modifier
-                .height(CreateEventScreen.MEDIUM_SPACING_4.dp)
-                .background(Color.White, RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp))
-                .padding(start = CreateEventScreen.SMALL_PADDING_1.dp),
+                .height(Dimensions.MEDIUM_SPACING_4.dp)
+                .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
+                .padding(start = Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
 
@@ -247,7 +231,7 @@ fun CreateEventAddParticipants(
                     model = participant.avatarUrl,
                     contentDescription = "Friend Avatar",
                     modifier = Modifier
-                        .size(CreateEventScreen.MEDIUM_SPACING_3.dp)
+                        .size(Dimensions.MEDIUM_SPACING_3.dp)
                         .clip(CircleShape)
                 )
             }
@@ -277,23 +261,23 @@ fun CreateEventAddParticipants(
 fun CreateEventAddLocation() {
     Column(
         modifier = Modifier
-            .padding(vertical = CreateEventScreen.SMALL_PADDING_1.dp)
-            .height(CreateEventScreen.LARGE_ELEMENT_2.dp)
-            .background(Color.White, RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp))
+            .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
+            .height(Dimensions.LARGE_ELEMENT_2.dp)
+            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
 
     ) {
         Text(
             text = mockEvents[0].location,
-            fontSize = CreateEventScreen.SMALL_PADDING_3.sp,
+            fontSize = Dimensions.SMALL_PADDING_3.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .padding(
-                    start = CreateEventScreen.SMALL_PADDING_1.dp,
-                    top = CreateEventScreen.SMALL_PADDING_1.dp
+                    start = Dimensions.SMALL_PADDING_1.dp,
+                    top = Dimensions.SMALL_PADDING_1.dp
                 )
         )
         Box(
-            modifier = Modifier.padding(CreateEventScreen.SMALL_PADDING_1.dp)
+            modifier = Modifier.padding(Dimensions.SMALL_PADDING_1.dp)
         ) {
             // MapScreen()
         }
@@ -308,14 +292,14 @@ fun CreateEventDoneButton(viewModel: EventViewModel, navController: NavHostContr
             navController.navigate("events")
         },
         modifier = Modifier.border(
-            CreateEventScreen.BORDER_WIDTH.dp,
+            Dimensions.BORDER_WIDTH.dp,
             colorResource(R.color.main_blue),
-            RoundedCornerShape(CreateEventScreen.MEDIUM_SPACING_1.dp)
+            RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp)
         )
     ) {
         Text(
             text = "Готово!",
-            fontSize = CreateEventScreen.MEDIUM_SPACING_1.sp,
+            fontSize = Dimensions.MEDIUM_SPACING_1.sp,
             color = colorResource(R.color.main_blue),
             fontWeight = FontWeight.Bold,
         )
