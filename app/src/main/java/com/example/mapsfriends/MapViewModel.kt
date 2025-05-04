@@ -16,7 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MapViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class MapViewModel @Inject constructor(
+    private val userProfileRepository: UserProfileRepository,
+    private val userFriendsRepository: UserFriendsRepository
+) : ViewModel() {
     val markers = mutableStateListOf<MarkerData>()
     val selectedMarkerId = mutableStateOf<String?>(null)
     private val _selectedUser = MutableStateFlow<User?>(null)
@@ -24,7 +27,7 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
 
     fun getUser(userId: String) {
         viewModelScope.launch {
-            _selectedUser.value = userRepository.getUserById(userId)
+            _selectedUser.value = userProfileRepository.getUserById(userId)
         }
     }
 
@@ -35,7 +38,7 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
     }
 
     private suspend fun loadMarkersIntoMap(context: Context, userId: String, zoom: Float) {
-        userRepository.observeFriendsList(userId) { friends ->
+        userFriendsRepository.observeFriendsList(userId) { friends ->
             viewModelScope.launch {
                 val friendIds = friends?.map { it.userId } ?: emptyList()
 
@@ -51,7 +54,7 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
                     }
 
                     val existingIndex = markers.indexOfFirst { it.id == user.userId }
-                    userRepository.observeLocation(user.userId) { newLocation ->
+                    userProfileRepository.observeLocation(user.userId) { newLocation ->
                         updateMarkerPosition(user.userId, newLocation)
                     }
 

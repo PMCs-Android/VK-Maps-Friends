@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -20,8 +22,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,10 +36,21 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 
 @Composable
-fun EventDetailsScreen(navController: NavHostController) {
+fun EventDetailsScreen(
+    navController: NavHostController,
+    eventId: String
+) {
+    val viewModel = hiltViewModel<EventViewModel>()
+    LaunchedEffect(eventId) {
+        viewModel.getEvent(eventId)
+    }
+    val event = viewModel.currentEvent.collectAsState().value
+    val avatars = viewModel.avatars.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,33 +64,39 @@ fun EventDetailsScreen(navController: NavHostController) {
             )
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
-        EventHeader(navController)
-        EventDescription()
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            EventMembers()
-            Spacer(modifier = Modifier.width(16.dp))
-            IconButton(
-                onClick = { navController.navigate("messenger") },
+        if (event != null) {
+            EventHeader(navController, event, avatars as Map<String, String>)
+            EventDescription(event)
+            Row(
                 modifier = Modifier
-                    .background(Color.White, RoundedCornerShape(20.dp))
+                    .fillMaxWidth(),
             ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.event_chat),
-                    contentDescription = "Event chat",
-                    tint = colorResource(R.color.main_purple)
-                )
+                EventMembers(avatars)
+                Spacer(modifier = Modifier.width(16.dp))
+                IconButton(
+                    onClick = { /* ереход в чат */ navController.navigate("messenger") },
+                    modifier = Modifier
+                        .background(Color.White, RoundedCornerShape(20.dp))
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.event_chat),
+                        contentDescription = "Event chat",
+                        tint = colorResource(R.color.main_purple)
+                    )
+                }
             }
+            EventLocation()
+            EventDeleteButton(viewModel, event, navController)
         }
-        EventLocation()
-        EventDeleteButton()
     }
 }
 
 @Composable
-fun EventHeader(navController: NavHostController) {
+fun EventHeader(
+    navController: NavHostController,
+    event: Event,
+    avatars: Map<String, String>
+) {
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -92,34 +114,39 @@ fun EventHeader(navController: NavHostController) {
         }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = mockEvents[0].name,
+            text = event.title,
             fontSize = 32.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .weight(3f)
-                .align(Alignment.CenterVertically)
+            modifier = Modifier.weight(3f).align(Alignment.CenterVertically)
         )
-        Icon(
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "CreatorIcon",
-            modifier = Modifier
-                .width(36.dp)
-                .height(36.dp)
-                .weight(1f)
-                .align(Alignment.CenterVertically)
-        )
+        if (avatars.containsKey(event.creatorId)) {
+            Text(text = "!" + avatars[event.creatorId])
+            AsyncImage(
+                model = avatars[event.creatorId],
+                contentDescription = "Creator Avatar",
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "Default Avatar",
+                tint = colorResource(R.color.bg_pink)
+            )
+        }
         Column(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = "${mockEvents[0].day} ${monthList[mockEvents[0].month - 1]}",
+                text = event.time.slice(0..4),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Text(
-                text = mockEvents[0].time,
+                text = event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -129,7 +156,7 @@ fun EventHeader(navController: NavHostController) {
 }
 
 @Composable
-fun EventDescription() {
+fun EventDescription(event: Event) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -138,41 +165,32 @@ fun EventDescription() {
             .background(Color.White, RoundedCornerShape(20.dp))
     ) {
         Text(
-            text = mockEvents[0].description,
+            text = event.description,
             fontSize = 16.sp,
             modifier = Modifier
-                .padding(10.dp)
+                .padding(Dimensions.SMALL_PADDING_1.dp)
         )
     }
 }
 
 @Composable
-fun EventMembers() {
+fun EventMembers(
+    avatars: Map<String, String>
+) {
     Row(
         modifier = Modifier
             .height(48.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
-            .padding(start = 10.dp)
+            .padding(horizontal = 10.dp)
     ) {
-        mockEvents[0].members.forEach { member ->
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "MemberIcon",
-                tint = colorResource(R.color.bg_pink),
+        avatars.forEach { member ->
+            AsyncImage(
+                model = member.value,
+                contentDescription = "Participant Avatar",
                 modifier = Modifier
-                    .width(36.dp)
-                    .height(36.dp)
+                    .size(48.dp)
                     .align(Alignment.CenterVertically)
-            )
-        }
-        IconButton(
-            onClick = { /* Добавить человека */ },
-            modifier = Modifier
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.add_plus),
-                contentDescription = "Add member",
-                tint = colorResource(R.color.main_purple)
+                    .clip(CircleShape)
             )
         }
     }
@@ -185,6 +203,7 @@ fun EventLocation() {
             .padding(vertical = 10.dp)
             .height(300.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
+
     ) {
         Text(
             text = mockEvents[0].location,
@@ -202,7 +221,7 @@ fun EventLocation() {
 }
 
 @Composable
-fun EventDeleteButton() {
+fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: NavHostController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -211,7 +230,10 @@ fun EventDeleteButton() {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         TextButton(
-            onClick = { /* Удаление ивента */ },
+            onClick = { /* Удаление ивента */
+                viewModel.deleteEvent(event.eventId)
+                navController.navigate("events")
+            },
             modifier = Modifier
                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
         ) {

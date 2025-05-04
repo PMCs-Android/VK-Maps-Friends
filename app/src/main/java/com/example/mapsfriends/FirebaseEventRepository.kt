@@ -11,28 +11,45 @@ class FirebaseEventRepository : EventRepository {
     private val database = Firebase.firestore
 
     override suspend fun createEvent(event: Event) {
-        val newParticipants = if (event.participants.contains(event.creatorId)) {
-            event.participants
-        } else {
-            event.participants + event.creatorId
-        }
+        try {
+            val creatorExists = Firebase.firestore
+                .collection("users")
+                .document(event.creatorId)
+                .get()
+                .await()
+                .exists()
 
-        events.document(event.eventId)
-            .set(event.copy(participants = newParticipants))
-            .await()
+            if (!creatorExists) {
+                throw IllegalArgumentException("Создатель события не найден")
+            }
+            Firebase.firestore
+                .collection("events")
+                .document(event.eventId)
+                .set(event)
+                .await()
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error: ${e.message}")
+        } catch (e: IllegalStateException) {
+            println("Data error: ${e.message}")
+        } catch (e: IOException) {
+            println("Network error: ${e.message}")
+        }
     }
 
     override suspend fun addParticipant(eventId: String, userId: String) {
-        if (!database.collection("users").document(userId).get().await().exists()) {
+        val eventRef = Firebase.firestore.collection("events").document(eventId)
+        val userRef = Firebase.firestore.collection("users").document(userId)
+
+        if (!userRef.get().await().exists()) {
             return
         }
 
-        val currentParticipants = events.document(eventId)
+        val currentParticipants = eventRef
             .get()
             .await()
             .get("participants") as? List<String> ?: emptyList()
 
-        events.document(eventId)
+        eventRef
             .update("participants", currentParticipants + userId)
             .await()
     }
@@ -89,7 +106,7 @@ class FirebaseEventRepository : EventRepository {
                 val participantsId = document.get("participants") as? List<String>
                 participantsId?.let {
                     participantsId.mapNotNull { participantId ->
-                        FirebaseUserRepository().getUserById(participantId)
+                        FirebaseUserProfileRepository().getUserById(participantId)
                     }
                 } ?: emptyList()
             } else {

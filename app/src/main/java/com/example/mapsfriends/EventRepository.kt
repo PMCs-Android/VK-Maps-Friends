@@ -14,8 +14,8 @@ data class Event(
     companion object {
         fun fromFirestore(map: Map<String, Any>): Event {
             return Event(
-                eventId = map["event_id"] as? String ?: "",
-                creatorId = map["creator_id"] as? String ?: "",
+                eventId = map["eventId"] as? String ?: "",
+                creatorId = map["creatorId"] as? String ?: "",
                 title = map["title"] as? String ?: "",
                 description = map["description"] as? String ?: "",
                 location = map["location"] as? GeoPoint ?: GeoPoint(0.0, 0.0),
