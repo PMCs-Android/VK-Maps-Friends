@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -15,7 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory.HUE_AZURE
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
@@ -34,20 +39,31 @@ fun MapScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val currentUser = remember { mockUsers.firstOrNull { it.id == "3" } ?: mockUsers.first() }
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(currentUser.location, 18f)
-    }
+    val currentUser by viewModel.currentUser.collectAsState()
+    val cameraPositionState = rememberCameraPositionState()
 
     LaunchedEffect(Unit) {
-        viewModel.setupMarkersAndObserveLocations(
-            context,
-            currentUser.id,
-            cameraPositionState.position.zoom
-        )
+        currentUser?.let {
+            viewModel.setupMarkersAndObserveLocations(
+                context = context,
+                userId = it.userId,
+                zoom = cameraPositionState.position.zoom
+            )
+        }
     }
     LaunchedEffect(cameraPositionState.position.zoom) {
         viewModel.updateMarkerIcons(cameraPositionState.position.zoom, context)
+    }
+
+    LaunchedEffect(currentUser) {
+        currentUser?.let {
+            cameraPositionState.move(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(it.location.latitude, it.location.longitude),
+                    18f
+                )
+            )
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -63,6 +79,19 @@ fun MapScreen(
                 compassEnabled = false
             )
         ) {
+            currentUser?.let { user ->
+                Marker(
+                    state = MarkerState(
+                        position = LatLng(
+                            user.location.latitude,
+                            user.location.longitude
+                        )
+                    ),
+                    title = "Вы здесь",
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+                )
+            }
+
             viewModel.markers.forEach { markerData ->
                 CreateMapMarker(
                     markerData = markerData,

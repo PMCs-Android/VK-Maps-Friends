@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.firebase.common.ktx)
     implementation(libs.play.services.location)
     implementation(libs.androidx.security.crypto.ktx)
+    implementation(libs.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

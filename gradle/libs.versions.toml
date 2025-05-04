@@ -17,6 +17,7 @@ gmsVersion = "4.4.2"
 bomVersion = "33.10.0"
 vkidVersion = "2.2.0"
 securityCryptoKtx = "1.0.0"
+coreKtxVersion = "1.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -47,6 +48,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth-ktx" }
 androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version = "1.1.0-alpha07" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
