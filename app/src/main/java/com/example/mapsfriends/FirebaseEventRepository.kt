@@ -3,25 +3,56 @@ package com.example.mapsfriends
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
+import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
 import okio.IOException
 
-class FirebaseEventRepository : EventRepository {
+class FirebaseEventRepository @Inject constructor(
+    private val userRepository: UserRepository
+) : EventRepository {
     private val events = Firebase.firestore.collection("events")
     private val database = Firebase.firestore
 
     override suspend fun createEvent(event: Event) {
-        val newParticipants = if (event.participants.contains(event.creatorId)) {
-            event.participants
-        } else {
-            event.participants + event.creatorId
-        }
 
         events.document(event.eventId)
-            .set(event.copy(participants = newParticipants))
+            .set(event)
             .await()
+        event.invites.forEach { sendInvite(event.eventId, it) }
     }
 
+    override suspend fun sendInvite(eventId: String, userId: String) {
+        val user = database
+            .collection("users")
+            .document(userId)
+            .get()
+            .await()
+        val event = events
+            .document(eventId)
+            .get()
+            .await()
+
+        if (user.exists() && event.exists()) {
+            val userInvites = user.get("invites") as? List<String> ?: emptyList()
+            val eventInvites = event.get("invites") as? List<String> ?: emptyList()
+
+            val participants = event.get("participants") as? List<String> ?: emptyList()
+
+            if (participants.contains(userId)) return
+
+            if (!userInvites.contains(eventId)) {
+                database
+                    .collection("users")
+                    .document(userId)
+                    .update("invites", userInvites + eventId)
+            }
+            if (!eventInvites.contains(userId)) {
+                events
+                    .document(eventId)
+                    .update("invites", eventInvites + userId)
+            }
+        }
+    }
     override suspend fun addParticipant(eventId: String, userId: String) {
         if (!database.collection("users").document(userId).get().await().exists()) {
             return
@@ -42,8 +73,7 @@ class FirebaseEventRepository : EventRepository {
             val doc = events.document(eventId).get().await()
 
             if (doc.exists()) {
-                val event = Event.fromFirestore(doc.data!!)
-                println("Event from Firestore: $event")
+                val event = doc.toObject(Event::class.java)
                 event
             } else {
                 null
@@ -62,12 +92,31 @@ class FirebaseEventRepository : EventRepository {
 
     override suspend fun deleteEvent(eventId: String) {
         try {
-            database.runTransaction { transaction ->
-                val event = transaction.get(events.document(eventId))
-                if (!event.exists()) {
-                    throw NoSuchElementException("Event with ID $eventId doesn't exist")
+            val event = events.document(eventId).get().await()
+            if (!event.exists()) {
+                throw NoSuchElementException("Event with ID $eventId doesn't exist")
+            }
+
+            val inviteIds = event.get("invites") as? List<String> ?: emptyList()
+            if (inviteIds.isEmpty()) {
+                println("No invites found for event $eventId")
+            }
+
+            events.document(eventId).delete().await()
+            println("Event $eventId deleted")
+
+            inviteIds.forEach { inviteId ->
+                val userDoc = database.collection("users").document(inviteId).get().await()
+                if (userDoc.exists()) {
+                    val userInvites = userDoc.get("invites") as? List<String> ?: emptyList()
+                    val updatedInvites = userInvites.filter { it != eventId } // Удаляем eventId
+
+                    database.collection("users").document(inviteId)
+                        .update("invites", updatedInvites).await()
+                    println("Removed event $eventId from user invites for $inviteId")
+                } else {
+                    println("User $inviteId not found")
                 }
-                events.document(eventId).delete()
             }
         } catch (e: IOException) {
             println("Network error: $e")
@@ -77,7 +126,21 @@ class FirebaseEventRepository : EventRepository {
             println("Firestore operation failed: ${e.code} - ${e.message}")
         }
     }
-
+    override suspend fun removeInvite(eventId: String, userId: String) {
+        val user = userRepository.getUserById(userId)
+        val event = getEventById(eventId)
+        if (user == null || event == null) return
+        val updatedUserInvites = user.invites.toMutableList().apply { remove(eventId) }
+        database.collection("users")
+            .document(userId)
+            .update("invites", updatedUserInvites)
+            .await()
+        val updatedEventInvites = event.invites.toMutableList().apply { remove(userId) }
+        events
+            .document(eventId)
+            .update("invites", updatedEventInvites)
+            .await()
+    }
     override suspend fun getParticipants(eventId: String): List<User> {
         return try {
             val document = events
@@ -89,7 +152,7 @@ class FirebaseEventRepository : EventRepository {
                 val participantsId = document.get("participants") as? List<String>
                 participantsId?.let {
                     participantsId.mapNotNull { participantId ->
-                        FirebaseUserRepository().getUserById(participantId)
+                        userRepository.getUserById(participantId)
                     }
                 } ?: emptyList()
             } else {
@@ -113,7 +176,7 @@ class FirebaseEventRepository : EventRepository {
                 .get()
                 .await()
             document.documents.mapNotNull { doc ->
-                Event.fromFirestore(doc.data!!)
+                doc.toObject(Event::class.java)
             }
         } catch (e: IOException) {
             println("Network error: $e")

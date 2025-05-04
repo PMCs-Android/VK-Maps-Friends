@@ -5,14 +5,23 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okio.IOException
 
-class FirebaseUserRepository : UserRepository {
+class FirebaseUserRepository @Inject constructor(
+    private val eventRepositoryProvider: javax.inject.Provider<EventRepository>
+) : UserRepository {
     private val db = Firebase.firestore.collection("users")
+    private val eventRepository: EventRepository
+        get() = eventRepositoryProvider.get()
+
+    companion object {
+        private const val MAX_WHERE_IN_LIMIT = 10
+    }
 
     override suspend fun getFriendsList(userId: String): List<User>? {
         return try {
@@ -51,11 +60,9 @@ class FirebaseUserRepository : UserRepository {
                 .await()
 
             if (document.exists()) {
-                val user = User.fromFirestore(document.data!!)
-                println("User from Firestore: $user")
+                val user = document.toObject(User::class.java)
                 user
             } else {
-                println("User not found: ")
                 null
             }
         } catch (e: IOException) {
@@ -76,17 +83,17 @@ class FirebaseUserRepository : UserRepository {
             .update("location", location)
     }
 
-    override suspend fun updateUserAvatar(userId: String, avatarUrl: String) {
-        db.document(userId)
-            .update("avatar_url", avatarUrl)
-    }
+//    override suspend fun updateUserAvatar(userId: String, avatarUrl: String) {
+//        db.document(userId)
+//            .update("avatar_url", avatarUrl)
+//    }
 
-    override suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>) {
-        db
-            .document(userId)
-            .update("friends", listFriendsFromVk)
-            .await()
-    }
+//    override suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>) {
+//        db
+//            .document(userId)
+//            .update("friends", listFriendsFromVk)
+//            .await()
+//    }
 
     override suspend fun setUser(
         userId: String,
@@ -95,17 +102,43 @@ class FirebaseUserRepository : UserRepository {
         friends: List<String>,
         location: GeoPoint
     ) {
+
+        val existingUser = db.document(userId).get().await()
+        if (existingUser.exists()) {
+            return
+        }
+
+        val registeredFriends = friends.chunked(MAX_WHERE_IN_LIMIT).flatMap { chunk ->
+            val snapshots = db.whereIn("user_id", chunk).get().await()
+            snapshots.documents.mapNotNull { it.getString("user_id") }
+        }
+
         val user = User(
             userId = userId,
             username = username,
             avatarUrl = avatarUrl,
-            friends = friends,
+            friends = registeredFriends,
+            allFriends = friends,
             location = location
         )
-
         db.document(userId)
             .set(user)
             .await()
+        val userFriendsInFirestore = db
+            .whereArrayContains("allFriends", userId)
+            .get()
+            .await()
+        for (doc in userFriendsInFirestore) {
+            val friendId = doc.get("userId") as? String ?: continue
+            val currentFriends = doc.get("friends") as? List<String> ?: emptyList()
+
+            if (!currentFriends.contains(userId)) {
+                val updatedFriends = currentFriends + userId
+                db.document(friendId)
+                    .update("friends", updatedFriends)
+                    .await()
+            }
+        }
     }
 
     override suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit) {
@@ -153,6 +186,7 @@ class FirebaseUserRepository : UserRepository {
             )
         }
     }
+
     override suspend fun observeFriendsList(
         userId: String,
         callback: (List<User>) -> Unit
@@ -174,5 +208,31 @@ class FirebaseUserRepository : UserRepository {
                     callback(friends)
                 }
             }
+    }
+
+    override suspend fun observeInvites(userId: String, callback: (List<Event>) -> Unit) {
+        db.document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    return@addSnapshotListener
+                }
+                val eventsId = snapshot?.get("invites")
+                    as? List<String> ?: return@addSnapshotListener
+                CoroutineScope(Dispatchers.IO).launch {
+                    val events = eventsId.mapNotNull { eventId ->
+                        eventRepository.getEventById(eventId)
+                    }
+                    callback(events)
+                }
+            }
+    }
+
+    override suspend fun acceptInvite(userId: String, eventId: String) {
+        eventRepository.removeInvite(eventId, userId)
+        eventRepository.addParticipant(eventId, userId)
+    }
+
+    override suspend fun declineInvite(userId: String, eventId: String) {
+        eventRepository.removeInvite(eventId, userId)
     }
 }

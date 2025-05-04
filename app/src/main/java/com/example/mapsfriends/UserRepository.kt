@@ -7,29 +7,10 @@ data class User(
     val username: String = "",
     val avatarUrl: String = "",
     val friends: List<String> = emptyList(),
-    val location: GeoPoint = GeoPoint(0.0, 0.0)
-) {
-    companion object {
-        fun fromFirestore(map: Map<String, Any>): User {
-            return User(
-                userId = map["user_id"] as? String ?: "",
-                username = map["username"] as? String ?: "",
-                avatarUrl = map["avatar_url"] as? String ?: "",
-                friends = map["friends"] as? List<String> ?: emptyList(),
-                location = map["location"] as? GeoPoint ?: GeoPoint(0.0, 0.0)
-            )
-        }
-    }
-    fun toFirestore(): Map<String, Any> {
-        return mapOf(
-            "user_id" to userId,
-            "username" to username,
-            "avatar_url" to avatarUrl,
-            "friends" to friends,
-            "location" to location
-        )
-    }
-}
+    val allFriends: List<String> = emptyList(),
+    val location: GeoPoint = GeoPoint(0.0, 0.0),
+    val invites: List<String> = emptyList()
+)
 
 interface UserRepository {
 
@@ -39,9 +20,9 @@ interface UserRepository {
 
     suspend fun updateUserLocation(userId: String, location: GeoPoint)
 
-    suspend fun updateUserAvatar(userId: String, avatarUrl: String)
+    // suspend fun updateUserAvatar(userId: String, avatarUrl: String)
 
-    suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>)
+    // suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>)
 
     suspend fun setUser(
         userId: String,
@@ -54,4 +35,7 @@ interface UserRepository {
     suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit)
     suspend fun addFriend(userId: String, friendId: String)
     suspend fun observeFriendsList(userId: String, callback: (List<User>) -> Unit)
+    suspend fun acceptInvite(userId: String, eventId: String)
+    suspend fun declineInvite(userId: String, eventId: String)
+    suspend fun observeInvites(userId: String, callback: (List<Event>) -> Unit)
 }
