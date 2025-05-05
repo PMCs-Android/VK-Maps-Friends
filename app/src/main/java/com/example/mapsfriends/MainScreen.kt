@@ -101,7 +101,9 @@ fun MainScreen(navController: NavHostController) {
 
             ) {
                 IconButton(
-                    onClick = { /* Показать чаты */ },
+                    onClick = { /* Показать чаты */
+                        navController.navigate("chats")
+                    },
                     modifier = Modifier
                         .background(Color.White, RoundedCornerShape(12.dp))
                         .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(12.dp))

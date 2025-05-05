@@ -1,5 +1,7 @@
 package com.example.mapsfriends
 
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -15,8 +17,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
-    private val userProfileRepository: UserProfileRepository,
-    private val userFriendsRepository: UserFriendsRepository
+    private val userProfileRepository: UserProfileRepository
 ) : ViewModel() {
     private val _currentEvent = MutableStateFlow<Event?>(null)
     private val _participants = MutableStateFlow<List<User>>(emptyList())
@@ -28,18 +29,18 @@ class EventViewModel @Inject constructor(
     val participants: StateFlow<List<User>> = _participants
     val avatars: StateFlow<Map<String, String?>> = _avatars
 
-    fun createNewEvent() {
+    fun createNewEvent(creatorId: String) {
         _currentEvent.value = Event(
             eventId = UUID.randomUUID().toString(),
-            creatorId = currentUser.userId,
+            creatorId = creatorId,
             title = "",
             description = "",
             location = GeoPoint(0.0, 0.0),
             time = "",
-            participants = listOf(currentUser.userId)
+            participants = listOf(creatorId)
         )
         viewModelScope.launch {
-            userProfileRepository.getUserById(currentUser.userId)?.let { creator ->
+            userProfileRepository.getUserById(creatorId)?.let { creator ->
                 _participants.value = listOf(creator)
             }
             println("create new event ${_participants.value.size}")
@@ -115,6 +116,7 @@ class EventViewModel @Inject constructor(
     }
 
     fun deleteEvent(eventId: String) {
+        println("DELETE ${eventId}")
         viewModelScope.launch {
             try {
                 eventRepository.deleteEvent(eventId)
@@ -130,7 +132,6 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _currentEvent.value = eventRepository.getEventById(eventId)
-//                _avatars.value = result.filterValues { it != null } as Map<String, String>
                 _avatars.value = userProfileRepository.getUserAvatars(
                     _currentEvent.value?.participants
                         ?: emptyList()

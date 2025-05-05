@@ -40,27 +40,27 @@ val mockUsers = listOf(
     )
 )
 
-val currentUser = User(
-    userId = "111",
-    username = "test user",
-    avatarUrl = "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818." +
-        "jpeg/orig",
-    friends = listOf("112", "113"),
-    location = GeoPoint(55.751244, 37.618423)
-)
-
-val friend1 = User(
-    userId = "112",
-    username = "test user2",
-    avatarUrl = "https://avatars.mds.yandex.net/get-entity_search/1969011/918366713/orig",
-    friends = listOf(),
-    location = GeoPoint(55.740000, 37.600000)
-)
-
-val friend2 = User(
-    userId = "113",
-    username = "test user3",
-    avatarUrl = "https://i.pinimg.com/736x/be/46/46/be4646a42ab267d93f035f93752eb796.jpg",
-    friends = listOf(),
-    location = GeoPoint(55.760000, 37.620000)
-)
+//val currentUser = User(
+//    userId = "111",
+//    username = "test user",
+//    avatarUrl = "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818." +
+//        "jpeg/orig",
+//    friends = listOf("112", "113"),
+//    location = GeoPoint(55.751244, 37.618423)
+//)
+//
+//val friend1 = User(
+//    userId = "112",
+//    username = "test user2",
+//    avatarUrl = "https://avatars.mds.yandex.net/get-entity_search/1969011/918366713/orig",
+//    friends = listOf(),
+//    location = GeoPoint(55.740000, 37.600000)
+//)
+//
+//val friend2 = User(
+//    userId = "113",
+//    username = "test user3",
+//    avatarUrl = "https://i.pinimg.com/736x/be/46/46/be4646a42ab267d93f035f93752eb796.jpg",
+//    friends = listOf(),
+//    location = GeoPoint(55.760000, 37.620000)
+//)

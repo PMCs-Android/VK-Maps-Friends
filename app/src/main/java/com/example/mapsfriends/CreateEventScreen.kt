@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -52,12 +53,16 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.mapsfriends.login.AuthViewModel
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateEventScreen(navController: NavHostController) {
+fun CreateEventScreen(
+    navController: NavHostController,
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
     val date = remember { mutableStateOf("") }
     val time = remember { mutableStateOf("") }
     val showDatePicker = remember { mutableStateOf(false) }
@@ -71,10 +76,11 @@ fun CreateEventScreen(navController: NavHostController) {
     val viewModel = hiltViewModel<EventViewModel>()
     val currentEvent by viewModel.currentEvent.collectAsState()
     val showAddFriend = remember { mutableStateOf(false) }
+    val creatorId = authViewModel.getCurrentUserId()!!
 
     LaunchedEffect(Unit) {
         if (currentEvent == null) {
-            viewModel.createNewEvent()
+            viewModel.createNewEvent(creatorId)
         }
     }
 
@@ -94,7 +100,7 @@ fun CreateEventScreen(navController: NavHostController) {
                 horizontal = Dimensions.SMALL_PADDING_1.dp
             )
     ) {
-        ExitButton(navController)
+        ExitButton(navController, viewModel, currentEvent?.eventId ?: "")
         CreateEventTitleInput(viewModel, currentEvent)
         Row(modifier = Modifier.padding(top = Dimensions.SMALL_PADDING_1.dp)) {
             CreateEventDateInput(showDatePicker, date)
@@ -106,8 +112,8 @@ fun CreateEventScreen(navController: NavHostController) {
         viewModel.setEventTime(date.value + " " + time.value)
 
         CreateEventDescriptionInput(viewModel, currentEvent)
-        CreateEventAddParticipants(showAddFriend, viewModel)
-        CreateEventAddLocation()
+        CreateEventAddParticipants(showAddFriend, viewModel, creatorId)
+        CreateEventAddLocation(navController)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -121,9 +127,12 @@ fun CreateEventScreen(navController: NavHostController) {
 }
 
 @Composable
-fun ExitButton(navController: NavHostController) {
+fun ExitButton(navController: NavHostController, eventViewModel: EventViewModel, eventId: String) {
     IconButton(
-        onClick = { navController.popBackStack() },
+        onClick = {
+            eventViewModel.deleteEvent(eventId)
+            navController.popBackStack()
+        },
         modifier = Modifier
             .border(
                 Dimensions.BORDER_WIDTH.dp,
@@ -204,7 +213,8 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
 @Composable
 fun CreateEventAddParticipants(
     showAddFriend: MutableState<Boolean>,
-    viewModel: EventViewModel
+    viewModel: EventViewModel,
+    creatorId: String
 ) {
     val participants by viewModel.participants.collectAsState()
     val createdEventId = viewModel.currentEvent.collectAsState().value?.eventId
@@ -232,7 +242,8 @@ fun CreateEventAddParticipants(
                     contentDescription = "Friend Avatar",
                     modifier = Modifier
                         .size(Dimensions.MEDIUM_SPACING_3.dp)
-                        .clip(CircleShape)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.FillBounds
                 )
             }
             IconButton(
@@ -252,13 +263,14 @@ fun CreateEventAddParticipants(
     if (showAddFriend.value) {
         AddParticipantsScreen(
             viewModel,
-            showAddFriend
+            showAddFriend,
+            creatorId
         )
     }
 }
 
 @Composable
-fun CreateEventAddLocation() {
+fun CreateEventAddLocation(navController: NavHostController) {
     Column(
         modifier = Modifier
             .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
@@ -277,9 +289,9 @@ fun CreateEventAddLocation() {
                 )
         )
         Box(
-            modifier = Modifier.padding(Dimensions.SMALL_PADDING_1.dp)
+            modifier = Modifier.fillMaxWidth().padding(Dimensions.SMALL_PADDING_1.dp)
         ) {
-            // MapScreen()
+             MapScreen(navController)
         }
     }
 }

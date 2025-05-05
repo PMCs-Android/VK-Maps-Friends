@@ -44,9 +44,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.mapsfriends.login.AuthViewModel
 
 @Composable
-fun EventCalendarScreen(navController: NavHostController) {
+fun EventCalendarScreen(
+    navController: NavHostController
+    ) {
+    val authViewModel = hiltViewModel<AuthViewModel>()
+//    val user = authViewModel.currentUser.collectAsState().value
+    val creatorId = authViewModel.getCurrentUserId()!!
+    LaunchedEffect(creatorId) {
+        authViewModel.getUser(creatorId)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -65,7 +74,7 @@ fun EventCalendarScreen(navController: NavHostController) {
             modifier = Modifier
                 .weight(1f)
         ) {
-            NotEmptyEvents(navController)
+            NotEmptyEvents(navController, creatorId)
         }
         BottomBar(navController)
     }
@@ -98,13 +107,16 @@ fun MyEventsHeader(navController: NavHostController) {
 }
 
 @Composable
-fun NotEmptyEvents(navController: NavHostController) {
+fun NotEmptyEvents(
+    navController: NavHostController,
+    creatorId: String
+) {
     val viewModel = hiltViewModel<EventViewModel>()
     val events = viewModel.events.collectAsState().value
     val refresh = remember { mutableStateOf(true) }
 
     LaunchedEffect(refresh) {
-        viewModel.loadEventsForUser(currentUser.userId)
+        viewModel.loadEventsForUser(creatorId)
     }
 
     Row(
@@ -156,59 +168,63 @@ fun OneEvent(
     navController: NavHostController,
     refresh: MutableState<Boolean>
 ) {
-    val userViewModel = hiltViewModel<UserViewModel>()
-    val avatars = userViewModel.avatars.collectAsState().value
-    LaunchedEffect(event) {
-        userViewModel.loadAvatars(event.participants)
-    }
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
-            fontSize = Dimensions.SMALL_PADDING_3.sp,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(10.dp)
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { navController.navigate("eventDetails/${event.eventId}") }
-                .weight(1f)
-                .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = event.title,
-                    fontSize = 20.sp,
-                    color = Color.Black,
-                    fontWeight = FontWeight.Bold
-                )
-                Row {
-                    avatars.forEach { participantAvatar ->
-                        AsyncImage(
-                            model = participantAvatar.value,
-                            contentDescription = "Friend Avatar",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clip(CircleShape)
-                        )
+    if (event.title == "") {
+        viewModel.deleteEvent(event.eventId)
+    } else {
+        val userViewModel = hiltViewModel<UserViewModel>()
+        val avatars = userViewModel.avatars.collectAsState().value
+        LaunchedEffect(event) {
+            userViewModel.loadAvatars(event.participants)
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
+                fontSize = Dimensions.SMALL_PADDING_3.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(10.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { navController.navigate("eventDetails/${event.eventId}") }
+                    .weight(1f)
+                    .background(Color.White, RoundedCornerShape(20.dp))
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = event.title,
+                        fontSize = 20.sp,
+                        color = Color.Black,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Row {
+                        avatars.forEach { participantAvatar ->
+                            AsyncImage(
+                                model = participantAvatar.value,
+                                contentDescription = "Friend Avatar",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
                     }
-                }
-                Text(
-                    text = event.description,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(top = 10.dp)
-                )
+                    Text(
+                        text = event.description,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 10.dp)
+                    )
 //                Text(
 //                    text = "~${event.time}",
 //                    fontSize = 12.sp
 //                )
+                }
+                DeleteButton(event, viewModel, refresh)
             }
-            DeleteButton(event, viewModel, refresh)
         }
     }
 }

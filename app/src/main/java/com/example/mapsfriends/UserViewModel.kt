@@ -20,6 +20,20 @@ class UserViewModel @Inject constructor(
     val friends: StateFlow<List<User>> = _friends.asStateFlow()
     private val _avatars = MutableStateFlow<Map<String, String>>(emptyMap())
     val avatars: StateFlow<Map<String, String>> = _avatars
+//    private val _selectedUser = MutableStateFlow<User?>(null)
+//    val selectedUser: StateFlow<User?> = _selectedUser
+//
+//    fun getUser(userId: String) {
+//        viewModelScope.launch {
+//            try {
+//            _selectedUser.value = userProfileRepository.getUserById(userId)
+//            } catch (e: FirebaseFirestoreException) {
+//                println("Firestore error loading event: ${e.message}")
+//            } catch (e: IOException) {
+//                println("Network error loading event: ${e.message}")
+//            }
+//        }
+//    }
 
     fun loadFriends(userId: String) {
         viewModelScope.launch {
