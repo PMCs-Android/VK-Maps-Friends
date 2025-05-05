@@ -2,7 +2,6 @@ package com.example.mapsfriends.login.vk
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.mapsfriends.FirebaseUserRepository
 import com.example.mapsfriends.User
 import com.example.mapsfriends.UserRepository
 import com.example.mapsfriends.login.AuthTokenManager
@@ -43,7 +42,7 @@ class VkAuthViewModel @Inject constructor(
 
                         CoroutineScope(Dispatchers.IO).launch {
                             saveUserInFirebase(
-                                token = token!!,
+                                token = token,
                                 User(
                                     userId = tokenManager.getUserId()!!,
                                     username = user.firstName + " " + user.lastName,
@@ -67,7 +66,7 @@ class VkAuthViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchVkFriendsIds(token: String): List<String> {
+    private fun fetchVkFriendsIds(token: String): List<String> {
         val url = "https://api.vk.com/method/friends.get?access_token=$token&v=5.131"
         var connection: HttpURLConnection? = null
 

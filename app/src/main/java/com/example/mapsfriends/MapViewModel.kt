@@ -1,7 +1,6 @@
 package com.example.mapsfriends
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,16 +10,23 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MapViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class MapViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+
     val markers = mutableStateListOf<MarkerData>()
     val selectedMarkerId = mutableStateOf<String?>(null)
+
     private val _selectedUser = MutableStateFlow<User?>(null)
     val selectedUser: StateFlow<User?> = _selectedUser
+
+    private val locationJobs = mutableMapOf<String, Job>()
 
     fun getUser(userId: String) {
         viewModelScope.launch {
@@ -30,52 +36,48 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
 
     fun setupMarkersAndObserveLocations(context: Context, userId: String, zoom: Float) {
         viewModelScope.launch {
-            loadMarkersIntoMap(context, userId, zoom)
-        }
-    }
+            userRepository.observeFriendsList(userId)
+                .collect { friends ->
+                    val friendIds = friends.map { it.userId }
 
-    private suspend fun loadMarkersIntoMap(context: Context, userId: String, zoom: Float) {
-        userRepository.observeFriendsList(userId) { friends ->
-            viewModelScope.launch {
-                val friendIds = friends?.map { it.userId } ?: emptyList()
+                    markers.removeAll { marker -> marker.id !in friendIds }
 
-                markers.removeAll { marker -> marker.id !in friendIds }
+                    friends.forEach { user ->
+                        if (user.userId.isBlank()) return@forEach
 
-                friends?.forEach { user ->
-                    val userId = user.userId
+                        val existingIndex = markers.indexOfFirst { it.id == user.userId }
 
-                    // Добавляем проверку, чтобы убедиться, что userId не пустой
-                    if (userId.isNullOrBlank()) {
-                        Log.e("MapViewModel", "Invalid userId: $userId for user ${user.username}")
-                        return@forEach // Пропускаем этого пользователя, если userId некорректен
-                    }
+                        locationJobs[user.userId]?.cancel()
 
-                    val existingIndex = markers.indexOfFirst { it.id == user.userId }
-                    userRepository.observeLocation(user.userId) { newLocation ->
-                        updateMarkerPosition(user.userId, newLocation)
-                    }
+                        val locationJob = viewModelScope.launch {
+                            userRepository.observeLocation(user.userId)
+                                .collect { newLocation ->
+                                    updateMarkerPosition(user.userId, newLocation)
+                                }
+                        }
+                        locationJobs[user.userId] = locationJob
 
-                    val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
-                    originalBitmap?.let {
-                        val initialSize = calculateMarkerSize(zoom)
-                        val newMarker = MarkerData(
-                            id = user.userId,
-                            position = convertToLatLng(user.location),
-                            title = user.username,
-                            originalBitmap = it,
-                            icon = BitmapDescriptorFactory.fromBitmap(
-                                createMarkerWithBorderAndTail(context, it, initialSize)
+                        val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
+                        originalBitmap?.let {
+                            val initialSize = calculateMarkerSize(zoom)
+                            val newMarker = MarkerData(
+                                id = user.userId,
+                                position = convertToLatLng(user.location),
+                                title = user.username,
+                                originalBitmap = it,
+                                icon = BitmapDescriptorFactory.fromBitmap(
+                                    createMarkerWithBorderAndTail(context, it, initialSize)
+                                )
                             )
-                        )
 
-                        if (existingIndex != -1) {
-                            markers[existingIndex] = newMarker
-                        } else {
-                            markers.add(newMarker)
+                            if (existingIndex != -1) {
+                                markers[existingIndex] = newMarker
+                            } else {
+                                markers.add(newMarker)
+                            }
                         }
                     }
                 }
-            }
         }
     }
 
@@ -89,14 +91,20 @@ class MapViewModel @Inject constructor(private val userRepository: UserRepositor
     }
 
     private fun updateMarkerPosition(userId: String, newLocation: GeoPoint) {
-        val markerIndex = markers.indexOfFirst { it.id == userId }
-        if (markerIndex != -1) {
-            val updatedMarker = markers[markerIndex].copy(position = convertToLatLng(newLocation))
-            markers[markerIndex] = updatedMarker
+        val index = markers.indexOfFirst { it.id == userId }
+        if (index != -1) {
+            val updated = markers[index].copy(position = convertToLatLng(newLocation))
+            markers[index] = updated
         }
     }
 
     private fun convertToLatLng(point: GeoPoint): LatLng {
         return LatLng(point.latitude, point.longitude)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        locationJobs.values.forEach { it.cancel() }
+        locationJobs.clear()
     }
 }

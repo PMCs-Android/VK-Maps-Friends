@@ -1,13 +1,13 @@
 package com.example.mapsfriends
 
-import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okio.IOException
@@ -31,8 +31,8 @@ class FirebaseUserRepository @Inject constructor(
                 .await()
 
             if (document.exists()) {
-                val friendsId = document.get("friends") as? List<String>
-                friendsId?.let {
+                val friendsId = document.getStringList("friends")
+                friendsId.let {
                     friendsId.mapNotNull { friendId ->
                         getUserById(friendId)
                     }
@@ -130,7 +130,7 @@ class FirebaseUserRepository @Inject constructor(
             .await()
         for (doc in userFriendsInFirestore) {
             val friendId = doc.get("userId") as? String ?: continue
-            val currentFriends = doc.get("friends") as? List<String> ?: emptyList()
+            val currentFriends = doc.getStringList("friends")
 
             if (!currentFriends.contains(userId)) {
                 val updatedFriends = currentFriends + userId
@@ -141,20 +141,20 @@ class FirebaseUserRepository @Inject constructor(
         }
     }
 
-    override suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit) {
-        db
+    override fun observeLocation(userId: String): Flow<GeoPoint> = callbackFlow {
+        val listener = db
             .document(userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e("LocationObserver", "Ошибка подписки: ${error.message}")
+                    close(error)
                     return@addSnapshotListener
                 }
-
                 val newLocation = snapshot?.getGeoPoint("location")
                 if (newLocation != null) {
-                    callback(newLocation)
+                    trySend(newLocation).isSuccess
                 }
             }
+        awaitClose { listener.remove() }
     }
 
     override suspend fun addFriend(userId: String, friendId: String) {
@@ -173,7 +173,7 @@ class FirebaseUserRepository @Inject constructor(
                 throw NoSuchElementException("Friend with ID $friendId not found")
             }
 
-            val currentFriends = userDocument.get("friends") as? List<String> ?: emptyList()
+            val currentFriends = userDocument.getStringList("friends")
 
             if (currentFriends.contains(friendId)) {
                 throw IllegalStateException("User $userId already has friend $friendId")
@@ -187,44 +187,41 @@ class FirebaseUserRepository @Inject constructor(
         }
     }
 
-    override suspend fun observeFriendsList(
-        userId: String,
-        callback: (List<User>) -> Unit
-    ) {
-        db.document(userId)
+    override fun observeFriendsList(userId: String): Flow<List<User>> = callbackFlow {
+        val listener = db.document(userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e("FriendObserver", "Ошибка: ${error.message}")
+                    close(error)
                     return@addSnapshotListener
                 }
-
-                val friendIds = snapshot?.get("friends")
-                    as? List<String> ?: return@addSnapshotListener
-
-                CoroutineScope(Dispatchers.IO).launch {
+                val friendIds = snapshot?.getStringList("friends") ?: return@addSnapshotListener
+                launch {
                     val friends = friendIds.mapNotNull { friendId ->
                         getUserById(friendId)
                     }
-                    callback(friends)
+                    trySend(friends).isSuccess
                 }
             }
+        awaitClose { listener.remove() }
     }
 
-    override suspend fun observeInvites(userId: String, callback: (List<Event>) -> Unit) {
-        db.document(userId)
+    override fun observeInvites(userId: String): Flow<List<Event>> = callbackFlow {
+        val listener = db.document(userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
+                    close(error)
                     return@addSnapshotListener
                 }
-                val eventsId = snapshot?.get("invites")
-                    as? List<String> ?: return@addSnapshotListener
-                CoroutineScope(Dispatchers.IO).launch {
+                val eventsId = snapshot?.getStringList("invites")
+                    ?: return@addSnapshotListener
+                launch {
                     val events = eventsId.mapNotNull { eventId ->
                         eventRepository.getEventById(eventId)
                     }
-                    callback(events)
+                    trySend(events).isSuccess
                 }
             }
+        awaitClose { listener.remove() }
     }
 
     override suspend fun acceptInvite(userId: String, eventId: String) {
