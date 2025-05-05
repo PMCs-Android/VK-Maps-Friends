@@ -113,7 +113,7 @@ fun NotEmptyEvents(
 ) {
     val viewModel = hiltViewModel<EventViewModel>()
     val events = viewModel.events.collectAsState().value
-    val refresh = remember { mutableStateOf(true) }
+    val refresh = remember { mutableStateOf(false) }
 
     LaunchedEffect(refresh) {
         viewModel.loadEventsForUser(creatorId)
@@ -234,7 +234,7 @@ fun DeleteButton(event: Event, viewModel: EventViewModel, refresh: MutableState<
     IconButton(
         onClick = { /* Удаление ивента */
             viewModel.deleteEvent(event.eventId)
-            refresh.value = !(refresh.value)
+            refresh.value = true
         },
         modifier = Modifier
             .border(

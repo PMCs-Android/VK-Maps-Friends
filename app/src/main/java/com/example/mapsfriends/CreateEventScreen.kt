@@ -67,6 +67,8 @@ fun CreateEventScreen(
     val time = remember { mutableStateOf("") }
     val showDatePicker = remember { mutableStateOf(false) }
     val showTimePicker = remember { mutableStateOf(false) }
+    val dateError = remember { mutableStateOf(false) }
+    val timeError = remember { mutableStateOf(false) }
     val state = rememberDatePickerState()
     val timePickerState = rememberTimePickerState(
         initialHour = LocalDateTime.now().hour,
@@ -103,13 +105,12 @@ fun CreateEventScreen(
         ExitButton(navController, viewModel, currentEvent?.eventId ?: "")
         CreateEventTitleInput(viewModel, currentEvent)
         Row(modifier = Modifier.padding(top = Dimensions.SMALL_PADDING_1.dp)) {
-            CreateEventDateInput(showDatePicker, date)
+            CreateEventDateInput(showDatePicker, date, dateError)
             Spacer(modifier = Modifier.width(Dimensions.SMALL_PADDING_1.dp))
-            CreateEventTimeInput(showTimePicker, time)
+            CreateEventTimeInput(showTimePicker, time, timeError)
         }
         DateInput(showDatePicker, state, date)
         TimeInput(showTimePicker, timePickerState, time)
-        viewModel.setEventTime(date.value + " " + time.value)
 
         CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel, creatorId)
@@ -121,7 +122,7 @@ fun CreateEventScreen(
                 .padding(Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            CreateEventDoneButton(viewModel, navController)
+            CreateEventDoneButton(viewModel, navController, dateError, timeError, date, time)
         }
     }
 }
@@ -150,6 +151,7 @@ fun ExitButton(navController: NavHostController, eventViewModel: EventViewModel,
 
 @Composable
 fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
+    val isError = viewModel.titleError.value
     TextField(
         value = event?.title ?: "",
         onValueChange = { viewModel.setEventTitle(it) },
@@ -157,13 +159,15 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
         shape = RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(Dimensions.MEDIUM_SPACING_5.dp)
+            .height(Dimensions.LARGE_ELEMENT_1.dp)
             .padding(top = Dimensions.SMALL_PADDING_1.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent
+            focusedIndicatorColor = Color.Transparent,
+            errorContainerColor = Color.White,
+            errorIndicatorColor = Color.Transparent
         ),
         placeholder = {
             Text(
@@ -171,6 +175,15 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
                 fontSize = Dimensions.SMALL_PADDING_3.sp,
                 color = Color.Gray
             )
+        },
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(
+                    "Это поле обязательно для заполнения",
+                    color = Color.Red
+                )
+            }
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -181,6 +194,7 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
 
 @Composable
 fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
+    val isError = viewModel.descriptionError.value
     TextField(
         value = event?.description ?: "",
         onValueChange = { viewModel.setEventDescription(it) },
@@ -194,7 +208,9 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent
+            focusedIndicatorColor = Color.Transparent,
+            errorContainerColor = Color.White,
+            errorIndicatorColor = Color.Transparent
         ),
         placeholder = {
             Text(
@@ -202,6 +218,15 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
                 fontSize = Dimensions.SMALL_PADDING_3.sp,
                 color = Color.Gray
             )
+        },
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(
+                    "Это поле обязательно для заполнения",
+                    color = Color.Red
+                )
+            }
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -297,11 +322,24 @@ fun CreateEventAddLocation(navController: NavHostController) {
 }
 
 @Composable
-fun CreateEventDoneButton(viewModel: EventViewModel, navController: NavHostController) {
+fun CreateEventDoneButton(
+    viewModel: EventViewModel,
+    navController: NavHostController,
+    dateError: MutableState<Boolean>,
+    timeError: MutableState<Boolean>,
+    date: MutableState<String>,
+    time: MutableState<String>
+) {
     TextButton(
         onClick = {
-            viewModel.saveCurrentEvent()
-            navController.navigate("events")
+            dateError.value = date.value.isBlank()
+            timeError.value = time.value.isBlank()
+
+            if (viewModel.validateFields() && !dateError.value && !timeError.value) {
+                viewModel.setEventTime(date.value + " " + time.value)
+                viewModel.saveCurrentEvent()
+                navController.navigate("events")
+            }
         },
         modifier = Modifier.border(
             Dimensions.BORDER_WIDTH.dp,

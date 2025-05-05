@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -58,27 +59,38 @@ object DateTimePickers {
 fun CreateEventDateInput(
     showDatePicker: MutableState<Boolean>,
     selectedDate: MutableState<String>,
+    dateError: MutableState<Boolean>
 ) {
-    Row(
-        modifier = Modifier
-            .width(DateTimePickers.LARGE_DIALOG.dp)
-            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
-            .padding(start = Dimensions.SMALL_PADDING_1.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (selectedDate.value == "") {
-            EventDateText()
-        } else {
-            EventDateText(selectedDate.value)
-        }
-        IconButton(
-            onClick = { showDatePicker.value = true }
+    Column{
+        Row(
+            modifier = Modifier
+                .width(110.dp)
+                .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
+                .padding(start = Dimensions.SMALL_PADDING_1.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.calendar),
-                contentDescription = "Date Picker",
-                tint = colorResource(R.color.main_blue),
+            if (selectedDate.value == "") {
+                EventDateText()
+            } else {
+                EventDateText(selectedDate.value)
+            }
+            IconButton(
+                onClick = { showDatePicker.value = true }
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.calendar),
+                    contentDescription = "Date Picker",
+                    tint = colorResource(R.color.main_blue),
+                )
+            }
+        }
+        if (dateError.value) {
+            Text(
+                text = "Выберите дату",
+                color = Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 8.dp)
             )
         }
     }
@@ -87,28 +99,39 @@ fun CreateEventDateInput(
 @Composable
 fun CreateEventTimeInput(
     showTimePicker: MutableState<Boolean>,
-    selectedTime: MutableState<String>
+    selectedTime: MutableState<String>,
+    timeError: MutableState<Boolean>
 ) {
-    Row(
-        modifier = Modifier
-            .width(DateTimePickers.LARGE_DIALOG.dp)
-            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
-            .padding(start = Dimensions.SMALL_PADDING_1.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (selectedTime.value == "") {
-            EventTimeText()
-        } else {
-            EventTimeText(selectedTime.value)
-        }
-        IconButton(
-            onClick = { showTimePicker.value = true }
+    Column{
+        Row(
+            modifier = Modifier
+                .width(110.dp)
+                .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
+                .padding(start = Dimensions.SMALL_PADDING_1.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.clock),
-                contentDescription = "Time Picker",
-                tint = colorResource(R.color.main_blue)
+            if (selectedTime.value == "") {
+                EventTimeText()
+            } else {
+                EventTimeText(selectedTime.value)
+            }
+            IconButton(
+                onClick = { showTimePicker.value = true }
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.clock),
+                    contentDescription = "Time Picker",
+                    tint = colorResource(R.color.main_blue)
+                )
+            }
+        }
+        if (timeError.value) {
+            Text(
+                text = "Выберите время",
+                color = Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 8.dp)
             )
         }
     }

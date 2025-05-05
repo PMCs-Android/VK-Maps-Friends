@@ -1,6 +1,8 @@
 package com.example.mapsfriends
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -23,11 +25,29 @@ class EventViewModel @Inject constructor(
     private val _participants = MutableStateFlow<List<User>>(emptyList())
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     private val _avatars = MutableStateFlow<Map<String, String?>>(emptyMap())
+    private val _titleError = mutableStateOf(false)
+    private val _descriptionError = mutableStateOf(false)
+    private val _dateError = mutableStateOf(false)
+    private val _timeError = mutableStateOf(false)
 
     val events: StateFlow<List<Event>> = _events
     val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
     val avatars: StateFlow<Map<String, String?>> = _avatars
+    val titleError: MutableState<Boolean> = _titleError
+    val descriptionError: MutableState<Boolean> = _descriptionError
+    val dateError: MutableState<Boolean> = _dateError
+    val timeError: MutableState<Boolean> = _timeError
+
+    fun validateFields(): Boolean {
+        val isValid = !currentEvent.value?.title.isNullOrBlank() &&
+                !currentEvent.value?.description.isNullOrBlank()
+
+        _titleError.value = currentEvent.value?.title.isNullOrBlank()
+        _descriptionError.value = currentEvent.value?.description.isNullOrBlank()
+
+        return isValid
+    }
 
     fun createNewEvent(creatorId: String) {
         _currentEvent.value = Event(
@@ -116,7 +136,6 @@ class EventViewModel @Inject constructor(
     }
 
     fun deleteEvent(eventId: String) {
-        println("DELETE ${eventId}")
         viewModelScope.launch {
             try {
                 eventRepository.deleteEvent(eventId)
