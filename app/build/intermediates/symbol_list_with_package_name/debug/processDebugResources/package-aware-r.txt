@@ -825,6 +825,7 @@ drawable abc_vector_test
 drawable acception
 drawable add_plus
 drawable back_arrow
+drawable baseline_more_vert_24
 drawable btn_checkbox_checked_mtrl
 drawable btn_checkbox_checked_to_unchecked_mtrl_animation
 drawable btn_checkbox_unchecked_mtrl

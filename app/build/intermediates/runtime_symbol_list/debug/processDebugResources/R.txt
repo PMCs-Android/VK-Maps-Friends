@@ -824,6 +824,7 @@ int drawable abc_vector_test 0x7f07004f
 int drawable acception 0x7f070050
 int drawable add_plus 0x7f070051
 int drawable back_arrow 0x7f070052
+int drawable baseline_more_vert_24 0x7f0700ab
 int drawable btn_checkbox_checked_mtrl 0x7f070053
 int drawable btn_checkbox_checked_to_unchecked_mtrl_animation 0x7f070054
 int drawable btn_checkbox_unchecked_mtrl 0x7f070055

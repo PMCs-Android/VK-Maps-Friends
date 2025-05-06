@@ -20,6 +20,7 @@ dimen marker_tail_height
 drawable acception
 drawable add_plus
 drawable back_arrow
+drawable baseline_more_vert_24
 drawable button_round_background
 drawable calendar
 drawable chat_main_page

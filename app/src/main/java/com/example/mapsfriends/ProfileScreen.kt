@@ -1,32 +1,47 @@
 package com.example.mapsfriends
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.mapsfriends.login.AuthViewModel
 
 @Composable
@@ -36,9 +51,21 @@ fun ProfileScreen(
     tokenManager: AuthViewModel = hiltViewModel(),
 ) {
     val user = viewModel.selectedUser.collectAsState().value
-    val id = tokenManager.getCurrentUserId()!!
 
-    androidx.compose.runtime.LaunchedEffect(id) {
+    val id = tokenManager.getCurrentUserId()
+    if (id == null) {
+        LaunchedEffect(Unit) {
+            navController.navigate("login") {
+                popUpTo(navController.graph.startDestinationId) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
+        return
+    }
+
+    LaunchedEffect(id) {
         viewModel.getUser(id)
     }
 
@@ -47,6 +74,8 @@ fun ProfileScreen(
         viewModel.getUser(id)
         return
     }
+
+    val menu = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -61,22 +90,59 @@ fun ProfileScreen(
             )
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
-        IconButton(
-            onClick = { navController.popBackStack() },
+        Row(
             modifier = Modifier
-                .border(
-                    4.dp,
-                    Color.White,
-                    RoundedCornerShape(16.dp)
-                )
-
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.cross),
-                contentDescription = "Delete",
-                tint = Color.White,
-            )
+            IconButton(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier
+                    .border(
+                        4.dp,
+                        Color.White,
+                        RoundedCornerShape(16.dp)
+                    )
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.cross),
+                    contentDescription = "Delete",
+                    tint = Color.White,
+                )
+            }
+
+            Box {
+                IconButton(onClick = { menu.value = true }) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.baseline_more_vert_24),
+                        contentDescription = "More options",
+                        tint = Color.White
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = menu.value,
+                    onDismissRequest = { menu.value = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Выйти из аккаунта") },
+                        onClick = {
+                            menu.value = false
+                            navController.navigate("login") {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                            tokenManager.logout()
+                        }
+                    )
+                }
+            }
         }
+
         Icon(
             imageVector = Icons.Default.AccountCircle,
             contentDescription = "Profile Icon",
@@ -86,6 +152,20 @@ fun ProfileScreen(
                 .width(240.dp)
                 .align(Alignment.CenterHorizontally)
         )
+
+//        AsyncImage(
+//            model = user.avatarUrl, // URL вашего изображения
+//            contentDescription = "Profile Avatar", // Описание для доступности
+//            modifier = Modifier
+//                .height(240.dp)
+//                .width(240.dp)
+//                .align(Alignment.CenterHorizontally)
+//                .padding(top = 20.dp, bottom = 16.dp) // Добавим отступы
+//                .clip(CircleShape) // Делаем изображение круглым
+//                .border(2.dp, Color.White, CircleShape), // Белая рамка вокруг круга
+//            contentScale = ContentScale.Crop, // Обрезаем изображение, чтобы оно заполнило круг
+//        )
+
         Text(
             text = user.username,
             fontSize = 28.sp,
@@ -102,7 +182,7 @@ fun LoadingView() {
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center
+        verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Загрузка профиля...", color = Color.White)
     }
