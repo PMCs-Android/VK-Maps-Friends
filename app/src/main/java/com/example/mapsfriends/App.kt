@@ -1,11 +1,16 @@
 package com.example.mapsfriends
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.mapsfriends.ui.login.LoginScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun App(startDestination: String) {
     val navController = rememberNavController()
@@ -23,7 +28,17 @@ fun App(startDestination: String) {
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }
         composable("create") { RequestDetailsScreen(navController) }
-        composable("eventDetails") { EventDetailsScreen(navController) }
+        composable("create") { CreateEventScreen(navController) }
+        composable("profile") { ProfileScreen(navController) }
+        composable(
+            route = "eventDetails/{eventId}",
+            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            EventDetailsScreen(
+                navController = navController,
+                eventId = backStackEntry.arguments?.getString("eventId") ?: ""
+            )
+        }
         composable("messenger") { MessengerScreen(navController) }
         composable("requestDetails") { RequestDetailsScreen(navController) }
         composable("map") {

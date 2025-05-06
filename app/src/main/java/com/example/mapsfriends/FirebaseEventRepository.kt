@@ -15,7 +15,7 @@ import kotlinx.coroutines.tasks.await
 import okio.IOException
 
 class FirebaseEventRepository @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserProfileRepository
 ) : EventRepository {
     private val events = Firebase.firestore.collection("events")
     private val database = Firebase.firestore
@@ -31,8 +31,8 @@ class FirebaseEventRepository @Inject constructor(
             .await()
 
         coroutineScope {
-            event.invites.map { inviteeId ->
-                launch { sendInvite(event.eventId, inviteeId) }
+            event.invites.map { inviteId ->
+                launch { sendInvite(event.eventId, inviteId) }
             }.joinAll()
         }
     }
@@ -61,13 +61,17 @@ class FirebaseEventRepository @Inject constructor(
             events
                 .document(eventId)
                 .update("invites", FieldValue.arrayUnion(userId))
+
         }
     }
 
     override suspend fun addParticipant(eventId: String, userId: String) {
-        if (!database.collection("users").document(userId).get().await().exists()) {
+        val userRef = Firebase.firestore.collection("users").document(userId)
+
+        if (!userRef.get().await().exists()) {
             return
         }
+
         events.document(eventId)
             .update("participants", FieldValue.arrayUnion(userId))
             .await()
@@ -183,6 +187,7 @@ class FirebaseEventRepository @Inject constructor(
                 val eventList = snapshot?.documents?.mapNotNull { it.toObject(Event::class.java) }
                 trySend(eventList ?: emptyList())
             }
+
         awaitClose { listener.remove() }
     }
 

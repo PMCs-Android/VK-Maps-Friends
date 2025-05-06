@@ -19,15 +19,23 @@ class MyApp : Application()
 object AppModule {
     @Provides
     @Singleton
-    fun provideUserRepository(
+    fun provideUserProfileRepository(
         eventRepositoryProvider: javax.inject.Provider<EventRepository>
-    ): UserRepository {
-        return FirebaseUserRepository(eventRepositoryProvider)
+    ): UserProfileRepository {
+        return FirebaseUserProfileRepository(eventRepositoryProvider)
     }
 
     @Provides
     @Singleton
-    fun provideEventRepository(userRepository: UserRepository): EventRepository {
+    fun provideUserFriendsRepository(
+        userProfileRepository: UserProfileRepository
+    ): UserFriendsRepository {
+        return FirebaseUserFriendsRepository(userProfileRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideEventRepository(userRepository: UserProfileRepository): EventRepository {
         return FirebaseEventRepository(userRepository)
     }
 

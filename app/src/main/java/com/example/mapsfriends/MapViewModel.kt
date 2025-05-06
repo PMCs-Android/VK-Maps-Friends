@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userFriendsRepository: UserFriendsRepository,
+    private val userProfileRepository: UserProfileRepository
 ) : ViewModel() {
 
     val markers = mutableStateListOf<MarkerData>()
@@ -30,13 +31,13 @@ class MapViewModel @Inject constructor(
 
     fun getUser(userId: String) {
         viewModelScope.launch {
-            _selectedUser.value = userRepository.getUserById(userId)
+            _selectedUser.value = userProfileRepository.getUserById(userId)
         }
     }
 
     fun setupMarkersAndObserveLocations(context: Context, userId: String, zoom: Float) {
         viewModelScope.launch {
-            userRepository.observeFriendsList(userId)
+            userFriendsRepository.observeFriendsList(userId)
                 .collect { friends ->
                     val friendIds = friends.map { it.userId }
 
@@ -50,7 +51,7 @@ class MapViewModel @Inject constructor(
                         locationJobs[user.userId]?.cancel()
 
                         val locationJob = viewModelScope.launch {
-                            userRepository.observeLocation(user.userId)
+                            userProfileRepository.observeLocation(user.userId)
                                 .collect { newLocation ->
                                     updateMarkerPosition(user.userId, newLocation)
                                 }
