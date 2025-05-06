@@ -1,8 +1,8 @@
 package com.example.mapsfriends.login.firebase
 
 import androidx.lifecycle.ViewModel
-import com.example.mapsfriends.UserProfileRepository
 import com.example.mapsfriends.User
+import com.example.mapsfriends.UserProfileRepository
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth

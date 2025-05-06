@@ -61,7 +61,6 @@ class FirebaseEventRepository @Inject constructor(
             events
                 .document(eventId)
                 .update("invites", FieldValue.arrayUnion(userId))
-
         }
     }
 

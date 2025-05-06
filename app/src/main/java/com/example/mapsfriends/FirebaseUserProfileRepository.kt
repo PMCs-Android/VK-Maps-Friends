@@ -4,17 +4,17 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
+import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okio.IOException
-import javax.inject.Inject
 
 class FirebaseUserProfileRepository @Inject constructor (
     private val eventRepositoryProvider: javax.inject.Provider<EventRepository>
-            ): UserProfileRepository {
+) : UserProfileRepository {
     private val db = Firebase.firestore.collection("users")
 
     private val eventRepository: EventRepository
@@ -179,5 +179,4 @@ class FirebaseUserProfileRepository @Inject constructor (
     override suspend fun declineInvite(userId: String, eventId: String) {
         eventRepository.removeInvite(eventId, userId)
     }
-
 }

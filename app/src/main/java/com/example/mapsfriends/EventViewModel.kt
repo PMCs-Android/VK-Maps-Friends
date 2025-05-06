@@ -25,9 +25,9 @@ class EventViewModel @Inject constructor(
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     private val _avatars = MutableStateFlow<Map<String, String?>>(emptyMap())
 
-   val eventsFlow: StateFlow<List<Event>> = eventRepository
-       .observeEventsByUserId(currentUser.userId)
-       .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val eventsFlow: StateFlow<List<Event>> = eventRepository
+        .observeEventsByUserId(currentUser.userId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
@@ -104,7 +104,6 @@ class EventViewModel @Inject constructor(
     suspend fun loadParticipants(eventId: String) {
         _participants.value = eventRepository.getParticipants(eventId)
     }
-
 
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {

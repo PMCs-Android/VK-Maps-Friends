@@ -2,8 +2,8 @@ package com.example.mapsfriends.login.vk
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.mapsfriends.UserProfileRepository
 import com.example.mapsfriends.User
+import com.example.mapsfriends.UserProfileRepository
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.GeoPoint
 import com.vk.id.VKID

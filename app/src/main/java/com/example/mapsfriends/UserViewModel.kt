@@ -25,7 +25,7 @@ class UserViewModel @Inject constructor(
 
     val friendsFlow: StateFlow<List<User>> = userFriendsRepository
         .observeFriendsList(currentUser.userId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
     fun loadFriends(userId: String) {
         viewModelScope.launch {
             try {

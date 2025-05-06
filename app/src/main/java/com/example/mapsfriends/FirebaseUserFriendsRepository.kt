@@ -11,10 +11,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okio.IOException
 
-
 class FirebaseUserFriendsRepository @Inject constructor(
     private val userProfileRepository: UserProfileRepository
-): UserFriendsRepository {
+) : UserFriendsRepository {
     private val db = Firebase.firestore.collection("users")
 
     override suspend fun getFriendsList(userId: String): List<User>? {
@@ -76,7 +75,6 @@ class FirebaseUserFriendsRepository @Inject constructor(
         }
     }
 
-
     override fun observeFriendsList(userId: String): Flow<List<User>> = callbackFlow {
         val listener = db.document(userId)
             .addSnapshotListener { snapshot, error ->
@@ -94,8 +92,6 @@ class FirebaseUserFriendsRepository @Inject constructor(
             }
         awaitClose { listener.remove() }
     }
-
-
 
     override suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>) {
         db

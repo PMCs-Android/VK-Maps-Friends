@@ -104,7 +104,6 @@ fun NotEmptyEvents(navController: NavHostController) {
     val events by viewModel.eventsFlow.collectAsState()
     val refresh = remember { mutableStateOf(true) }
 
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,7 +160,7 @@ fun OneEvent(
     }
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = "",//event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
+            text = "", // event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
             fontSize = Dimensions.SMALL_PADDING_3.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
