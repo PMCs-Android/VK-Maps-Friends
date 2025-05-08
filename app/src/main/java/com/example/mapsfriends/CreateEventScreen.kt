@@ -28,6 +28,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -75,6 +76,11 @@ fun CreateEventScreen(navController: NavHostController) {
     LaunchedEffect(Unit) {
         if (currentEvent == null) {
             viewModel.createNewEvent()
+        }
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.tryDeleteIncompleteEvent()
         }
     }
 
@@ -209,11 +215,11 @@ fun CreateEventAddParticipants(
     val participants by viewModel.participants.collectAsState()
     val createdEventId = viewModel.currentEvent.collectAsState().value?.eventId
 
-    LaunchedEffect(showAddFriend.value) {
-        if (!showAddFriend.value) {
-            viewModel.loadParticipants(createdEventId.toString())
-        }
-    }
+//    LaunchedEffect(showAddFriend.value) {
+//        if (!showAddFriend.value) {
+//            viewModel.loadParticipants(createdEventId.toString())
+//        }
+//    }
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -238,7 +244,7 @@ fun CreateEventAddParticipants(
             IconButton(
                 onClick = {
                     showAddFriend.value = true
-                    viewModel.saveCurrentEvent()
+                    //viewModel.saveCurrentEvent()
                 },
             ) {
                 Icon(

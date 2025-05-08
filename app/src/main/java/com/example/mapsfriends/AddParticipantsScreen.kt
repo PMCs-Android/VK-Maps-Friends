@@ -44,6 +44,7 @@ fun AddParticipantsScreen(
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val friends by userViewModel.friendsFlow.collectAsState()
+
     LaunchedEffect(Unit) {
         userViewModel.loadFriends(currentUser.userId)
     }

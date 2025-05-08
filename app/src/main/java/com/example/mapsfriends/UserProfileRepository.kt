@@ -10,7 +10,8 @@ data class User(
     val friends: List<String> = emptyList(),
     val allFriends: List<String> = emptyList(),
     val location: GeoPoint = GeoPoint(0.0, 0.0),
-    val invites: List<String> = emptyList()
+    val invites: List<String> = emptyList(),
+    val events: List<String> = emptyList()
 )
 
 interface UserProfileRepository {

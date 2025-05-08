@@ -1,6 +1,7 @@
 package com.example.mapsfriends
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.firestore
@@ -125,8 +126,7 @@ class FirebaseUserProfileRepository @Inject constructor (
     override suspend fun addEventToUser(creatorID: String, eventId: String) {
         try {
             val userRef = db.document(creatorID)
-            val currentEvents = userRef.get().await().getStringList("events")
-            userRef.update("events", currentEvents + eventId).await()
+            userRef.update("events", FieldValue.arrayUnion(eventId)).await()
         } catch (e: FirebaseFirestoreException) {
             println("Firestore error adding event to user: ${e.message}")
         } catch (e: IOException) {
@@ -142,7 +142,7 @@ class FirebaseUserProfileRepository @Inject constructor (
                 .await()
 
             documents.associate { doc ->
-                doc.id to doc.getString("avatar_url")?.takeIf { it.isNotEmpty() }
+                doc.id to doc.getString("avatarUrl" )?.takeIf { it.isNotEmpty() }
             }
         } catch (e: FirebaseFirestoreException) {
             println("Firestore error getting avatars: ${e.message}")
