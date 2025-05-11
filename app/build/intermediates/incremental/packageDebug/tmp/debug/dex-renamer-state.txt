@@ -1,4 +1,4 @@
-#Sun May 11 19:20:57 MSK 2025
+#Sun May 11 22:02:53 MSK 2025
 base.0=D\:\\VK-Maps-Friends\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=D\:\\VK-Maps-Friends\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
 base.10=D\:\\VK-Maps-Friends\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex

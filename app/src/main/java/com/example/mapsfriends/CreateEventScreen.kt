@@ -74,6 +74,7 @@ fun CreateEventScreen(navController: NavHostController) {
     val showAddFriend = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+
         if (currentEvent == null) {
             viewModel.createNewEvent()
         }

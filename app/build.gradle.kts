@@ -33,6 +33,8 @@ android {
                 "VKIDRedirectScheme" to "vk53221768",
             ),
         )
+        manifestPlaceholders["MAPS_API_KEY"] = project.properties["MAPS_API_KEY"] as? String ?: ""
+        manifestPlaceholders["VK_APP_ID"] = "53221768"
     }
 
     buildTypes {

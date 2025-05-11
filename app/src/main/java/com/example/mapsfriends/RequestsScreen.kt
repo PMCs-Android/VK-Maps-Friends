@@ -162,7 +162,8 @@ fun OneRequest(
     ) {
         Text(
             text = eventDate["time"]!!,
-            fontSize = 16.sp, color = Color.White,
+            fontSize = 16.sp,
+            color = Color.White,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
@@ -198,7 +199,9 @@ fun OneRequest(
                             (event.participants + event.invites).size.toString(),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.align(Alignment.CenterVertically).padding(horizontal = 4.dp)
+                        modifier = Modifier.align(Alignment.CenterVertically).padding(
+                            horizontal = 4.dp
+                        )
                     )
                 }
 

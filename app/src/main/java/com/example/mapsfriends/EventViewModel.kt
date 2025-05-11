@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val userProfileRepository: UserProfileRepository,
-    private val userFriendsRepository: UserFriendsRepository
+    private val userFriendsRepository: UserFriendsRepository,
 ) : ViewModel() {
     private val _currentEvent = MutableStateFlow<Event?>(null)
     private val _participants = MutableStateFlow<List<User>>(emptyList())

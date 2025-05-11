@@ -2,22 +2,23 @@ package com.example.mapsfriends
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
-    private val userFriendsRepository: UserFriendsRepository
+    private val userFriendsRepository: UserFriendsRepository,
+    private val tokenManager: AuthTokenManager
 ) : ViewModel() {
     private val _friends = MutableStateFlow<List<User>>(emptyList())
     val friends: StateFlow<List<User>> = _friends.asStateFlow()
@@ -26,9 +27,32 @@ class UserViewModel @Inject constructor(
     private val _avatarsPerEvent = MutableStateFlow<Map<String, Map<String, String>>>(emptyMap())
     val avatarsPerEvent: StateFlow<Map<String, Map<String, String>>> = _avatarsPerEvent
 
-    val friendsFlow: StateFlow<List<User>> = userFriendsRepository
-        .observeFriendsList(currentUser.userId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    private val _currentUser = MutableStateFlow<User>(User())
+    val currentUser: StateFlow<User> = _currentUser
+
+    init {
+        viewModelScope.launch {
+            _currentUser.value = userProfileRepository.getUserById(tokenManager.getUserId()!!)!!
+        }
+    }
+    fun getUser(userId: String) {
+        viewModelScope.launch {
+            _currentUser.value = userProfileRepository.getUserById(userId)!!
+        }
+    }
+
+    fun startObservingUserFriends(userId: String) {
+        viewModelScope.launch {
+            userFriendsRepository.observeFriendsList(userId)
+                .catch { e ->
+                    println("Error observing events: ${e.message}")
+                    _friends.value = emptyList()
+                }
+                .collect { eventList ->
+                    _friends.value = eventList
+                }
+        }
+    }
 
     fun loadFriends(userId: String) {
         viewModelScope.launch {

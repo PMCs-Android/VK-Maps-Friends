@@ -37,9 +37,20 @@ class MapViewModel @Inject constructor(
 
     fun setupMarkersAndObserveLocations(context: Context, userId: String, zoom: Float) {
         viewModelScope.launch {
+            val currentUser = userProfileRepository.getUserById(userId)!!
+            addOrUpdateMarkerForUser(context, currentUser, zoom)
+
+            locationJobs[userId]?.cancel()
+            val ownLocationJob = viewModelScope.launch {
+                userProfileRepository.observeLocation(userId)
+                    .collect { newLocation ->
+                        updateMarkerPosition(userId, newLocation)
+                    }
+            }
+            locationJobs[userId] = ownLocationJob
             userFriendsRepository.observeFriendsList(userId)
                 .collect { friends ->
-                    val friendIds = friends.map { it.userId }
+                    val friendIds = friends.map { it.userId } + userId
 
                     markers.removeAll { marker -> marker.id !in friendIds }
 
@@ -99,7 +110,7 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    private fun convertToLatLng(point: GeoPoint): LatLng {
+    fun convertToLatLng(point: GeoPoint): LatLng {
         return LatLng(point.latitude, point.longitude)
     }
 
@@ -107,5 +118,28 @@ class MapViewModel @Inject constructor(
         super.onCleared()
         locationJobs.values.forEach { it.cancel() }
         locationJobs.clear()
+    }
+    private suspend fun addOrUpdateMarkerForUser(context: Context, user: User, zoom: Float) {
+        val existingIndex = markers.indexOfFirst { it.id == user.userId }
+
+        val originalBitmap = loadOriginalBitmapFromUrl(context, user.avatarUrl)
+        originalBitmap?.let {
+            val initialSize = calculateMarkerSize(zoom)
+            val newMarker = MarkerData(
+                id = user.userId,
+                position = convertToLatLng(user.location),
+                title = user.username,
+                originalBitmap = it,
+                icon = BitmapDescriptorFactory.fromBitmap(
+                    createMarkerWithBorderAndTail(context, it, initialSize)
+                )
+            )
+
+            if (existingIndex != -1) {
+                markers[existingIndex] = newMarker
+            } else {
+                markers.add(newMarker)
+            }
+        }
     }
 }
