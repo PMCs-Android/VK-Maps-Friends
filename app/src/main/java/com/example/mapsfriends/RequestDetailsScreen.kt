@@ -13,6 +13,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -20,10 +22,21 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 
 @Composable
-fun RequestDetailsScreen(navController: NavHostController) {
+fun RequestDetailsScreen(navController: NavHostController, eventId: String,
+                         userViewModel: UserViewModel = hiltViewModel(),
+                         viewModel: EventViewModel = hiltViewModel()) {
+
+
+    val avatars = viewModel.avatars.collectAsState().value
+    LaunchedEffect(eventId) {
+        viewModel.getEvent(eventId)
+    }
+    val event = viewModel.currentEvent.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,12 +49,13 @@ fun RequestDetailsScreen(navController: NavHostController) {
                 )
             )
             .padding(vertical = 30.dp, horizontal = 10.dp)
-    ) {
-//        EventHeader(navController)
-//        EventDescription()
-//        EventMembers()
-        EventLocation()
-        RequestAcceptRefuseButtons()
+    ) {if(event != null){
+            EventHeader(navController,event,avatars as Map<String, String>)
+            EventDescription(event)
+            EventMembers(avatars)
+            EventLocation()
+            RequestAcceptRefuseButtons()
+        }
     }
 }
 

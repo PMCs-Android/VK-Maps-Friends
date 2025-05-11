@@ -106,6 +106,8 @@ fun NotEmptyEvents(navController: NavHostController) {
     val events by viewModel.eventsFlow.collectAsState()
     val refresh = remember { mutableStateOf(true) }
 
+   val eventShortDays = viewModel.getShortDays(events)
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -128,7 +130,7 @@ fun NotEmptyEvents(navController: NavHostController) {
                     )
                 }
                 Text(
-                    text = "вт",
+                    text = eventShortDays[event.eventId]!!,
                     fontSize = 16.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Medium,
@@ -163,6 +165,7 @@ fun OneEvent(
             userViewModel.loadAvatarsForEventCard(event.eventId,event.participants)
         }
     }
+
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),

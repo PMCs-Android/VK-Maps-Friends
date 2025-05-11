@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
@@ -110,14 +113,11 @@ class EventViewModel @Inject constructor(
 //    suspend fun loadParticipants(eventId: String) {
 //        _participants.value = eventRepository.getParticipants(eventId)
 //    }
-    suspend fun acceptInvite(){
-        userProfileRepository.acceptInvite("1","05ec5cd4-9235-4065-bfc9-767de36a2ec8")
-    }
 
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             try {
-                eventRepository.deleteEvent(eventId)
+                eventRepository.deleteParticipant(eventId, currentUser.userId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error deleting event: ${e.message}")
             } catch (e: IOException) {
@@ -155,4 +155,16 @@ class EventViewModel @Inject constructor(
             }
         }
     }
+
+    fun getShortDays(events:List<Event>):Map<String,String>{
+        val year = LocalDate.now().year
+        return events.associate { event ->
+            val (datePart, _) = event.time.split(" ")
+            val (day, month) = datePart.split(".").map { it.toInt() }
+            val date = LocalDate.of(year,month,day)
+            val shortDay = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("ru")).take(2)
+            event.eventId to shortDay
+        }
+    }
+
 }

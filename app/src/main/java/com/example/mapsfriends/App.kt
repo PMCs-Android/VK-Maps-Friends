@@ -27,7 +27,16 @@ fun App(startDestination: String) {
         composable("main") { MainScreen(navController) }
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }
-        composable("create") { RequestDetailsScreen(navController) }
+        composable(
+            route = "requestDetails/{eventId}",
+            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            RequestDetailsScreen(
+                navController = navController,
+                eventId = backStackEntry.arguments?.getString("eventId") ?: ""
+            )
+
+        }
         composable("create") { CreateEventScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
         composable(
@@ -40,7 +49,6 @@ fun App(startDestination: String) {
             )
         }
         composable("messenger") { MessengerScreen(navController) }
-        composable("requestDetails") { RequestDetailsScreen(navController) }
         composable("map") {
             MapScreen(navController = navController)
         }

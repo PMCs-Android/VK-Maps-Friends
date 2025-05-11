@@ -135,7 +135,9 @@ class FirebaseUserProfileRepository @Inject constructor (
     }
 
     override suspend fun getUserAvatars(userIds: List<String>): Map<String, String?> {
+        if (userIds.isEmpty()) return emptyMap()
         return try {
+
             val documents = db
                 .whereIn(FieldPath.documentId(), userIds)
                 .get()
