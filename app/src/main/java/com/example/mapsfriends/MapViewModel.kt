@@ -27,7 +27,6 @@ class MapViewModel @Inject constructor(
     private val _selectedUser = MutableStateFlow<User?>(null)
     val selectedUser: StateFlow<User?> = _selectedUser
 
-
     private val locationJobs = mutableMapOf<String, Job>()
 
     fun getUser(userId: String) {

@@ -16,8 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -36,17 +34,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
-fun RequestsScreen(navController: NavHostController,
-                   viewModel: InvitesViewModel = hiltViewModel()) {
+fun RequestsScreen(
+    navController: NavHostController,
+    viewModel: InvitesViewModel = hiltViewModel()
+) {
     val invites by viewModel.invitesFlow.collectAsState()
     Column(
         modifier = Modifier
@@ -65,7 +62,7 @@ fun RequestsScreen(navController: NavHostController,
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(invites){ event ->
+            items(invites) { event ->
                 OneRequest(navController, event)
             }
         }
@@ -99,14 +96,17 @@ fun RequestsHeader(navController: NavHostController) {
 }
 
 @Composable
-fun RequestButtons(eventId:String,
-    viewModel: InvitesViewModel = hiltViewModel()) {
+fun RequestButtons(
+    eventId: String,
+    viewModel: InvitesViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
     ) {
         IconButton(
             onClick = { /* Принятие приглашения */
-                       viewModel.acceptInvite(eventId) },
+                viewModel.acceptInvite(eventId)
+            },
             modifier = Modifier
                 .border(
                     2.dp,
@@ -123,8 +123,8 @@ fun RequestButtons(eventId:String,
         Spacer(modifier = Modifier.height(4.dp))
         IconButton(
             onClick = { /* Удаление приглашения */
-            viewModel.declineInvite(eventId)
-                      },
+                viewModel.declineInvite(eventId)
+            },
             modifier = Modifier
                 .border(
                     2.dp,
@@ -142,9 +142,12 @@ fun RequestButtons(eventId:String,
 }
 
 @Composable
-fun OneRequest(navController: NavHostController, event: Event,
-               userViewModel:UserViewModel = hiltViewModel(),
-               eventViewModel: EventViewModel = hiltViewModel()) {
+fun OneRequest(
+    navController: NavHostController,
+    event: Event,
+    userViewModel: UserViewModel = hiltViewModel(),
+    eventViewModel: EventViewModel = hiltViewModel()
+) {
 
     val eventDate = parseEventDate(event.time)
 
@@ -159,20 +162,17 @@ fun OneRequest(navController: NavHostController, event: Event,
     ) {
         Text(
             text = eventDate["time"]!!,
-            fontSize = 16.sp,
-            color = Color.White,
+            fontSize = 16.sp, color = Color.White,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(10.dp)
         )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
                 .clickable { navController.navigate("requestDetails/${event.eventId}") }
                 .weight(1f)
-                .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(16.dp)
+                .background(Color.White, RoundedCornerShape(20.dp)).padding(16.dp)
         ) {
             Column(
                 modifier = Modifier.weight(1f)
@@ -188,20 +188,17 @@ fun OneRequest(navController: NavHostController, event: Event,
                         AsyncImage(
                             model = participantAvatar.value,
                             contentDescription = "Friend Avatar",
-                            modifier = Modifier
-                                .size(24.dp)
+                            modifier = Modifier.size(24.dp)
                                 .clip(CircleShape)
                         )
                     }
 
                     Text(
-                        text = event.participants.size.toString() + "/"
-                                + (event.participants + event.invites).size.toString(),
+                        text = event.participants.size.toString() + "/" +
+                            (event.participants + event.invites).size.toString(),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(horizontal = 4.dp)
+                        modifier = Modifier.align(Alignment.CenterVertically).padding(horizontal = 4.dp)
                     )
                 }
 

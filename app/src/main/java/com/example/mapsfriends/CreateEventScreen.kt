@@ -244,7 +244,7 @@ fun CreateEventAddParticipants(
             IconButton(
                 onClick = {
                     showAddFriend.value = true
-                    //viewModel.saveCurrentEvent()
+                    // viewModel.saveCurrentEvent()
                 },
             ) {
                 Icon(

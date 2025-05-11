@@ -35,7 +35,6 @@ fun App(startDestination: String) {
                 navController = navController,
                 eventId = backStackEntry.arguments?.getString("eventId") ?: ""
             )
-
         }
         composable("create") { CreateEventScreen(navController) }
         composable("profile") { ProfileScreen(navController) }

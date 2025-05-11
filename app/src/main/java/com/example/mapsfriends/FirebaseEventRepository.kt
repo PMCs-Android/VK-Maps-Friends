@@ -4,12 +4,10 @@ import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -79,13 +77,11 @@ class FirebaseEventRepository @Inject constructor(
                 .await()
 
             userRef.update("events", FieldValue.arrayUnion(eventId))
-
         } catch (e: FirebaseFirestoreException) {
             println("Firestore error while adding participant: ${e.message}")
         } catch (e: IOException) {
             println("Network error while adding participant: ${e.message}")
         }
-
     }
 
     override suspend fun getEventById(eventId: String): Event? {
@@ -126,7 +122,7 @@ class FirebaseEventRepository @Inject constructor(
                         async {
                             database.collection("users")
                                 .document(inviteId)
-                                .update("invites",FieldValue.arrayRemove(eventId))
+                                .update("invites", FieldValue.arrayRemove(eventId))
                         }
                     }.awaitAll()
                 }
@@ -137,12 +133,11 @@ class FirebaseEventRepository @Inject constructor(
                         async {
                             database.collection("users")
                                 .document(participantId)
-                                .update("events",FieldValue.arrayRemove(eventId))
+                                .update("events", FieldValue.arrayRemove(eventId))
                         }
                     }.awaitAll()
                 }
             }
-
         } catch (e: IOException) {
             println("Network error: $e")
         } catch (e: IllegalStateException) {
@@ -230,7 +225,7 @@ class FirebaseEventRepository @Inject constructor(
                 println("Event with Id: $eventId  or User: $userId doesn't exists")
                 return
             }
-            userRef.update("events",FieldValue.arrayRemove(eventId))
+            userRef.update("events", FieldValue.arrayRemove(eventId))
                 .await()
             eventRef
                 .update("participants", FieldValue.arrayRemove(userId))
@@ -240,7 +235,9 @@ class FirebaseEventRepository @Inject constructor(
         } catch (e: IllegalStateException) {
             println("Data conversion error at participant $userId delete: $e")
         } catch (e: FirebaseFirestoreException) {
-            println("Firestore operation failed at participant $userId delete: ${e.code} - ${e.message}")
+            println(
+                "Firestore operation failed at participant $userId delete: ${e.code} - ${e.message}"
+            )
         }
     }
 }

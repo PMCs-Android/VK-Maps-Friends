@@ -1,6 +1,5 @@
 package com.example.mapsfriends
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -106,7 +105,7 @@ fun NotEmptyEvents(navController: NavHostController) {
     val events by viewModel.eventsFlow.collectAsState()
     val refresh = remember { mutableStateOf(true) }
 
-   val eventShortDays = viewModel.getShortDays(events)
+    val eventShortDays = viewModel.getShortDays(events)
 
     Row(
         modifier = Modifier
@@ -161,8 +160,8 @@ fun OneEvent(
     val avatars = userViewModel.avatarsPerEvent.collectAsState().value[event.eventId] ?: emptyMap()
 
     LaunchedEffect(event) {
-        if(!userViewModel.avatarsPerEvent.value.containsKey(event.eventId)){
-            userViewModel.loadAvatarsForEventCard(event.eventId,event.participants)
+        if (!userViewModel.avatarsPerEvent.value.containsKey(event.eventId)) {
+            userViewModel.loadAvatarsForEventCard(event.eventId, event.participants)
         }
     }
 
@@ -248,8 +247,9 @@ fun BottomBar(navController: NavHostController) {
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         TextButton(
-            onClick = { navController.navigate("requests")
-                      },
+            onClick = {
+                navController.navigate("requests")
+            },
             modifier = Modifier
                 .height(64.dp)
                 .width(104.dp)

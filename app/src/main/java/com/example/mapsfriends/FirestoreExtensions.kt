@@ -10,10 +10,12 @@ fun DocumentSnapshot.getStringList(field: String): List< String> {
         emptyList()
     }
 }
-fun parseEventDate(input: String): Map<String,String> {
+fun parseEventDate(input: String): Map<String, String> {
     val (datePart, timePart) = input.split(" ")
     val (day, month) = datePart.split(".")
-    return mapOf("day" to day ,
+    return mapOf(
+        "day" to day,
         "month" to month,
-        "time" to timePart)
+        "time" to timePart
+    )
 }

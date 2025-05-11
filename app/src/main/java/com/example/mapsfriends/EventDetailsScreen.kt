@@ -123,7 +123,7 @@ fun EventHeader(
             modifier = Modifier.weight(3f).align(Alignment.CenterVertically)
         )
         if (avatars.containsKey(event.creatorId)) {
-            //Text(text = "!" + avatars[event.creatorId])
+            // Text(text = "!" + avatars[event.creatorId])
             AsyncImage(
                 model = avatars[event.creatorId],
                 contentDescription = "Creator Avatar",

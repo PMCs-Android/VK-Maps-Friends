@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,9 +16,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.TextStyle
-import java.util.Locale
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
@@ -82,7 +81,7 @@ class EventViewModel @Inject constructor(
 //                    .forEach { user ->
 //                        eventRepository.addParticipant(event.eventId, user.userId)
 //                    }
-                //userProfileRepository.addEventToUser(event.creatorId, event.eventId)
+                // userProfileRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error saving event: ${e.message}")
             } catch (e: IOException) {
@@ -156,15 +155,14 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    fun getShortDays(events:List<Event>):Map<String,String>{
+    fun getShortDays(events: List<Event>): Map<String, String> {
         val year = LocalDate.now().year
         return events.associate { event ->
             val (datePart, _) = event.time.split(" ")
             val (day, month) = datePart.split(".").map { it.toInt() }
-            val date = LocalDate.of(year,month,day)
+            val date = LocalDate.of(year, month, day)
             val shortDay = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("ru")).take(2)
             event.eventId to shortDay
         }
     }
-
 }

@@ -144,7 +144,7 @@ class FirebaseUserProfileRepository @Inject constructor (
                 .await()
 
             documents.associate { doc ->
-                doc.id to doc.getString("avatarUrl" )?.takeIf { it.isNotEmpty() }
+                doc.id to doc.getString("avatarUrl")?.takeIf { it.isNotEmpty() }
             }
         } catch (e: FirebaseFirestoreException) {
             println("Firestore error getting avatars: ${e.message}")

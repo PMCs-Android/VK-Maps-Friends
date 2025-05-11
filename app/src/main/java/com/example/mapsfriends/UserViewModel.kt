@@ -23,9 +23,8 @@ class UserViewModel @Inject constructor(
     val friends: StateFlow<List<User>> = _friends.asStateFlow()
     private val _avatars = MutableStateFlow<Map<String, String>>(emptyMap())
     val avatars: StateFlow<Map<String, String>> = _avatars
-    private val _avatarsPerEvent = MutableStateFlow<Map<String,Map<String,String>>>(emptyMap())
-    val avatarsPerEvent: StateFlow<Map<String,Map<String,String>>> = _avatarsPerEvent
-
+    private val _avatarsPerEvent = MutableStateFlow<Map<String, Map<String, String>>>(emptyMap())
+    val avatarsPerEvent: StateFlow<Map<String, Map<String, String>>> = _avatarsPerEvent
 
     val friendsFlow: StateFlow<List<User>> = userFriendsRepository
         .observeFriendsList(currentUser.userId)
@@ -49,13 +48,13 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun loadAvatarsForEventCard(eventId:String, userIds: List<String>){
+    fun loadAvatarsForEventCard(eventId: String, userIds: List<String>) {
         viewModelScope.launch {
-            val avatars = userProfileRepository.getUserAvatars(userIds).filterValues { it != null } as Map<String, String>
+            val avatars = userProfileRepository.getUserAvatars(userIds)
+                .filterValues { it != null } as Map<String, String>
             _avatarsPerEvent.update { it + (eventId to avatars) }
         }
     }
-
 
     fun loadAvatars(userIds: List<String>) {
         viewModelScope.launch {

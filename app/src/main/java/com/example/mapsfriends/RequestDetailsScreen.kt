@@ -26,10 +26,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 
 @Composable
-fun RequestDetailsScreen(navController: NavHostController, eventId: String,
-                         userViewModel: UserViewModel = hiltViewModel(),
-                         viewModel: EventViewModel = hiltViewModel()) {
-
+fun RequestDetailsScreen(
+    navController: NavHostController,
+    eventId: String,
+    userViewModel: UserViewModel = hiltViewModel(),
+    viewModel: EventViewModel = hiltViewModel()
+) {
 
     val avatars = viewModel.avatars.collectAsState().value
     LaunchedEffect(eventId) {
@@ -49,8 +51,9 @@ fun RequestDetailsScreen(navController: NavHostController, eventId: String,
                 )
             )
             .padding(vertical = 30.dp, horizontal = 10.dp)
-    ) {if(event != null){
-            EventHeader(navController,event,avatars as Map<String, String>)
+    ) {
+        if (event != null) {
+            EventHeader(navController, event, avatars as Map<String, String>)
             EventDescription(event)
             EventMembers(avatars)
             EventLocation()
