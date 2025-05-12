@@ -48,7 +48,7 @@ class VkAuthViewModel @Inject constructor(
                                     username = user.firstName + " " + user.lastName,
                                     avatarUrl = user.photo200 ?: "",
                                     friends = fetchVkFriendsIds(token),
-                                    location = GeoPoint(0.0,0.0)
+                                    location = GeoPoint(0.0, 0.0)
                                 )
                             )
 

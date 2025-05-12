@@ -58,7 +58,10 @@ import java.time.LocalDateTime
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateEventScreen(navController: NavHostController) {
+fun CreateEventScreen(
+    navController: NavHostController,
+    viewModel: EventViewModel = hiltViewModel()
+) {
     val date = remember { mutableStateOf("") }
     val time = remember { mutableStateOf("") }
     val showDatePicker = remember { mutableStateOf(false) }
@@ -69,15 +72,11 @@ fun CreateEventScreen(navController: NavHostController) {
         initialMinute = LocalDateTime.now().minute,
         is24Hour = true,
     )
-    val viewModel = hiltViewModel<EventViewModel>()
     val currentEvent by viewModel.currentEvent.collectAsState()
     val showAddFriend = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-
-        if (currentEvent == null) {
-            viewModel.createNewEvent()
-        }
+        if (currentEvent == null) viewModel.createNewEvent()
     }
     DisposableEffect(Unit) {
         onDispose {
@@ -86,8 +85,7 @@ fun CreateEventScreen(navController: NavHostController) {
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
@@ -111,13 +109,11 @@ fun CreateEventScreen(navController: NavHostController) {
         DateInput(showDatePicker, state, date)
         TimeInput(showTimePicker, timePickerState, time)
         viewModel.setEventTime(date.value + " " + time.value)
-
         CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel)
         CreateEventAddLocation()
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
                 .padding(Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly

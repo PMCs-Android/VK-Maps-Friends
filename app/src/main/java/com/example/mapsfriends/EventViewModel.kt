@@ -3,6 +3,7 @@ package com.example.mapsfriends
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
@@ -21,15 +22,15 @@ import kotlinx.coroutines.launch
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val userProfileRepository: UserProfileRepository,
-    private val userFriendsRepository: UserFriendsRepository,
+    private val tokenManager: AuthTokenManager
 ) : ViewModel() {
     private val _currentEvent = MutableStateFlow<Event?>(null)
     private val _participants = MutableStateFlow<List<User>>(emptyList())
-    private val _events = MutableStateFlow<List<Event>>(emptyList())
     private val _avatars = MutableStateFlow<Map<String, String?>>(emptyMap())
+    private val currentUserId: String = tokenManager.getUserId() ?: ""
 
     val eventsFlow: StateFlow<List<Event>> = eventRepository
-        .observeEventsByUserId(currentUser.userId)
+        .observeEventsByUserId(currentUserId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     val currentEvent: StateFlow<Event?> = _currentEvent
@@ -39,18 +40,12 @@ class EventViewModel @Inject constructor(
     fun createNewEvent() {
         _currentEvent.value = Event(
             eventId = UUID.randomUUID().toString(),
-            creatorId = currentUser.userId,
-//            title = "",
-//            description = "",
-//            location = GeoPoint(0.0, 0.0),
-//            time = "",
-//            participants = listOf(currentUser.userId)
+            creatorId = currentUserId,
         )
         viewModelScope.launch {
-            userProfileRepository.getUserById(currentUser.userId)?.let { creator ->
+            userProfileRepository.getUserById(currentUserId)?.let { creator ->
                 _participants.value = listOf(creator)
             }
-            println("create new event ${_participants.value.size}")
         }
     }
 
@@ -72,16 +67,10 @@ class EventViewModel @Inject constructor(
                 val event = _currentEvent.value?.copy(
                     invites = _participants.value
                         .map { it.userId }
-                        .filter { it != currentUser.userId }
+                        .filter { it != currentUserId }
                 ) ?: throw IllegalStateException("Event not created")
                 println("event id:${event.eventId}: Event: $event")
                 eventRepository.createEvent(event)
-//                _participants.value
-//                    .filter { it.userId != event.creatorId }
-//                    .forEach { user ->
-//                        eventRepository.addParticipant(event.eventId, user.userId)
-//                    }
-                // userProfileRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error saving event: ${e.message}")
             } catch (e: IOException) {
@@ -109,14 +98,10 @@ class EventViewModel @Inject constructor(
         }
     }
 
-//    suspend fun loadParticipants(eventId: String) {
-//        _participants.value = eventRepository.getParticipants(eventId)
-//    }
-
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             try {
-                eventRepository.deleteParticipant(eventId, currentUser.userId)
+                eventRepository.deleteParticipant(eventId, currentUserId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error deleting event: ${e.message}")
             } catch (e: IOException) {
@@ -129,7 +114,6 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _currentEvent.value = eventRepository.getEventById(eventId)
-//                _avatars.value = result.filterValues { it != null } as Map<String, String>
                 _avatars.value = userProfileRepository.getUserAvatars(
                     _currentEvent.value?.participants
                         ?: emptyList()

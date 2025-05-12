@@ -46,7 +46,7 @@ fun AddParticipantsScreen(
     val friends by userViewModel.friends.collectAsState()
 
     LaunchedEffect(Unit) {
-        userViewModel.startObservingUserFriends(currentUser.userId)
+        userViewModel.startObservingUserFriends()
     }
     ModalBottomSheet(
         onDismissRequest = {

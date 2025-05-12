@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.mapsfriends.login.AuthViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -33,29 +32,29 @@ import kotlinx.coroutines.launch
 fun MapScreen(
     navController: NavHostController,
     viewModel: MapViewModel = hiltViewModel(),
-    tokenManager: AuthViewModel = hiltViewModel(),
     userViewModel: UserViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    val currentUserID by tokenManager.currentUserId.collectAsState()
     val currentUser = userViewModel.currentUser.collectAsState().value
-    if (currentUser.location.latitude != 0.0 && currentUser.location.longitude != 0.0) {
+    if (currentUser != null &&
+        currentUser.location.latitude != 0.0 &&
+        currentUser.location.longitude != 0.0
+    ) {
         val cameraPositionState = rememberCameraPositionState {
-            position =
-                CameraPosition.fromLatLngZoom(viewModel.convertToLatLng(currentUser.location), 18f)
+            position = CameraPosition.fromLatLngZoom(
+                viewModel.convertToLatLng(currentUser.location),
+                18f
+            )
         }
 
-        LaunchedEffect(currentUserID) {
-            if (currentUserID != null) {
-                userViewModel.getUser(currentUserID!!)
-                userViewModel.startObservingUserFriends(currentUserID!!)
-                viewModel.setupMarkersAndObserveLocations(
-                    context,
-                    currentUserID!!,
-                    cameraPositionState.position.zoom
-                )
-            }
+        LaunchedEffect(currentUser) {
+            userViewModel.startObservingUserFriends()
+            viewModel.setupMarkersAndObserveLocations(
+                context,
+                currentUser.userId,
+                cameraPositionState.position.zoom
+            )
         }
 
         LaunchedEffect(cameraPositionState.position.zoom) {

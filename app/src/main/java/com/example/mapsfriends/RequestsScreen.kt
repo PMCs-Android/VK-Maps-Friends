@@ -146,7 +146,6 @@ fun OneRequest(
     navController: NavHostController,
     event: Event,
     userViewModel: UserViewModel = hiltViewModel(),
-    eventViewModel: EventViewModel = hiltViewModel()
 ) {
 
     val eventDate = parseEventDate(event.time)
@@ -178,33 +177,19 @@ fun OneRequest(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
+
                 Text(
                     text = event.title,
                     fontSize = 20.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                 )
-                Row {
-                    avatars.forEach { participantAvatar ->
-                        AsyncImage(
-                            model = participantAvatar.value,
-                            contentDescription = "Friend Avatar",
-                            modifier = Modifier.size(24.dp)
-                                .clip(CircleShape)
-                        )
-                    }
 
-                    Text(
-                        text = event.participants.size.toString() + "/" +
-                            (event.participants + event.invites).size.toString(),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal,
-                        modifier = Modifier.align(Alignment.CenterVertically).padding(
-                            horizontal = 4.dp
-                        )
-                    )
-                }
-
+                EventAvatarsRow(
+                    avatars = avatars,
+                    total = event.participants.size,
+                    invited = (event.participants.size + event.invites.size)
+                )
                 Text(
                     text = eventDate["day"] + " " + monthList[eventDate["month"]!!.toInt() - 1],
                     fontSize = 12.sp,
@@ -217,5 +202,28 @@ fun OneRequest(
             }
             RequestButtons(event.eventId)
         }
+    }
+}
+
+@Composable
+fun EventAvatarsRow(avatars: Map<String, String>, total: Int, invited: Int) {
+    Row {
+        avatars.forEach { participantAvatar ->
+            AsyncImage(
+                model = participantAvatar.value,
+                contentDescription = "Friend Avatar",
+                modifier = Modifier.size(24.dp)
+                    .clip(CircleShape)
+            )
+        }
+
+        Text(
+            text = "$total/$invited",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier.align(Alignment.CenterVertically).padding(
+                horizontal = 4.dp
+            )
+        )
     }
 }

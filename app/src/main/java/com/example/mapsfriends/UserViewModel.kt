@@ -27,22 +27,27 @@ class UserViewModel @Inject constructor(
     private val _avatarsPerEvent = MutableStateFlow<Map<String, Map<String, String>>>(emptyMap())
     val avatarsPerEvent: StateFlow<Map<String, Map<String, String>>> = _avatarsPerEvent
 
-    private val _currentUser = MutableStateFlow<User>(User())
-    val currentUser: StateFlow<User> = _currentUser
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser
 
     init {
         viewModelScope.launch {
-            _currentUser.value = userProfileRepository.getUserById(tokenManager.getUserId()!!)!!
+            val userId = tokenManager.getUserId()
+            if (userId != null) {
+                val user = userProfileRepository.getUserById(userId)
+                _currentUser.value = user
+            }
         }
     }
-    fun getUser(userId: String) {
-        viewModelScope.launch {
-            _currentUser.value = userProfileRepository.getUserById(userId)!!
-        }
-    }
+//    fun getUser(userId: String) {
+//        viewModelScope.launch {
+//            _currentUser.value = userProfileRepository.getUserById(userId)!!
+//        }
+//    }
 
-    fun startObservingUserFriends(userId: String) {
+    fun startObservingUserFriends() {
         viewModelScope.launch {
+            val userId = _currentUser.value?.userId ?: return@launch
             userFriendsRepository.observeFriendsList(userId)
                 .catch { e ->
                     println("Error observing events: ${e.message}")
