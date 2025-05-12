@@ -13,6 +13,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
@@ -37,8 +38,8 @@ class EventViewModel @Inject constructor(
     val descriptionError: MutableState<Boolean> = _descriptionError
 
     fun validateFields(): Boolean {
-        val isValid = !currentEvent.value?.title.isNullOrBlank() &&
-                !currentEvent.value?.description.isNullOrBlank()
+        val isValid =
+            !currentEvent.value?.title.isNullOrBlank() && !currentEvent.value?.description.isNullOrBlank()
 
         _titleError.value = currentEvent.value?.title.isNullOrBlank()
         _descriptionError.value = currentEvent.value?.description.isNullOrBlank()
@@ -48,9 +49,21 @@ class EventViewModel @Inject constructor(
 
     fun filterEventsByMonth(month: Int) {
         _selectedMonth.value = month
-        _events.value = _allEvents.value.filter { event->
+        _events.value = _allEvents.value.filter { event ->
             event.time.slice(3..4).toInt() == (month + 1)
-        }
+        }.sortedWith(compareBy({
+            LocalDate.of(
+                LocalDate.now().year,
+                it.time.slice(3..4).toInt(),
+                it.time.slice(0..1).toInt()
+            )
+        }, {
+            LocalDate.of(
+                LocalDate.now().year,
+                it.time.slice(6..7).toInt(),
+                it.time.slice(9..10).toInt()
+            )
+        }))
     }
 
     fun resetMonthFilter() {
@@ -94,11 +107,9 @@ class EventViewModel @Inject constructor(
                 val event = _currentEvent.value ?: throw IllegalStateException("Event not created")
                 println("event id:${event.eventId}: user id:${event.creatorId}")
                 eventRepository.createEvent(event)
-                _participants.value
-                    .filter { it.userId != event.creatorId }
-                    .forEach { user ->
-                        eventRepository.addParticipant(event.eventId, user.userId)
-                    }
+                _participants.value.filter { it.userId != event.creatorId }.forEach { user ->
+                    eventRepository.addParticipant(event.eventId, user.userId)
+                }
                 loadParticipants(event.eventId)
                 userProfileRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: FirebaseFirestoreException) {
@@ -133,7 +144,19 @@ class EventViewModel @Inject constructor(
     fun loadEventsForUser(userId: String) {
         viewModelScope.launch {
             try {
-                _allEvents.value = eventRepository.getEventsByUserId(userId)
+                _allEvents.value = eventRepository.getEventsByUserId(userId).sortedWith(compareBy({
+                    LocalDate.of(
+                        LocalDate.now().year,
+                        it.time.slice(3..4).toInt(),
+                        it.time.slice(0..1).toInt()
+                    )
+                }, {
+                    LocalDate.of(
+                        LocalDate.now().year,
+                        it.time.slice(6..7).toInt(),
+                        it.time.slice(9..10).toInt()
+                    )
+                }))
                 _events.value = _allEvents.value
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error loading events: ${e.message}")
@@ -163,8 +186,7 @@ class EventViewModel @Inject constructor(
             try {
                 _currentEvent.value = eventRepository.getEventById(eventId)
                 _avatars.value = userProfileRepository.getUserAvatars(
-                    _currentEvent.value?.participants
-                        ?: emptyList()
+                    _currentEvent.value?.participants ?: emptyList()
                 ).filterValues { it != null } as Map<String, String>
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error loading event: ${e.message}")

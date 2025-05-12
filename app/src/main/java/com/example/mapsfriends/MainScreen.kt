@@ -65,7 +65,9 @@ fun MainScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(8.dp))
 
             IconButton(
-                onClick = { /* Показать статистику шагов */ },
+                onClick = { /* Показать статистику шагов */
+                    navController.navigate("stepStatistic")
+                },
                 modifier = Modifier
                     .background(Color.White, RoundedCornerShape(12.dp))
                     .border(4.dp, colorResource(R.color.main_purple), RoundedCornerShape(12.dp))

@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -102,7 +103,7 @@ fun CreateEventScreen(
                 horizontal = Dimensions.SMALL_PADDING_1.dp
             )
     ) {
-        ExitButton(navController, viewModel, currentEvent?.eventId ?: "", creatorId)
+        CreateEventHeader(navController, viewModel, currentEvent?.eventId ?: "", creatorId)
         CreateEventTitleInput(viewModel, currentEvent)
         Row(modifier = Modifier.padding(top = Dimensions.SMALL_PADDING_1.dp)) {
             CreateEventDateInput(showDatePicker, date, dateError)
@@ -128,22 +129,33 @@ fun CreateEventScreen(
 }
 
 @Composable
-fun ExitButton(
+fun CreateEventHeader(
     navController: NavHostController,
     eventViewModel: EventViewModel,
     eventId: String,
     creatorId: String
 ) {
-    IconButton(
-        onClick = {
-            eventViewModel.deleteEvent(eventId, creatorId)
-            navController.popBackStack()
-        }
+    Box(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.cross),
-            contentDescription = "Back",
-            tint = Color.White
+        IconButton(
+            onClick = {
+                eventViewModel.deleteEvent(eventId, creatorId)
+                navController.popBackStack()
+            }
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.cross),
+                contentDescription = "Back",
+                tint = Color.White
+            )
+        }
+        Text(
+            text = "Создание ивента",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }

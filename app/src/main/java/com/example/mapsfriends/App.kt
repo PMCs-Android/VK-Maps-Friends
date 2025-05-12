@@ -40,7 +40,6 @@ fun App(startDestination: String) {
         }
         composable("messenger") { MessengerScreen(navController) }
         composable("chats") { ChatsListScreen(navController) }
-//        composable("requestDetails") { RequestDetailsScreen(navController) }
         composable(
             route = "requestDetails/{requestId}",
             arguments = listOf(navArgument("requestId") { type = NavType.StringType })
@@ -54,5 +53,6 @@ fun App(startDestination: String) {
             MapScreen(navController = navController)
         }
         composable("profile") { ProfileScreen(navController) }
+        composable("stepStatistic") { PedometerScreen(navController) }
     }
 }

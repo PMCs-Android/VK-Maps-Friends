@@ -189,7 +189,7 @@ fun OneEvent(
     }
     val day = event.time.slice(0..1).toInt()
     val month = event.time.slice(3..4).toInt()
-    val clockTime = event.time.slice(5..10)
+    val clockTime = event.time.slice(6..10)
     Row(
         modifier = Modifier
             .fillMaxWidth()
