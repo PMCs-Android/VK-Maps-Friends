@@ -37,13 +37,10 @@ fun MapScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val currentUser = userViewModel.currentUser.collectAsState().value
-    if (currentUser != null &&
-        currentUser.location.latitude != 0.0 &&
-        currentUser.location.longitude != 0.0
-    ) {
+    if (isValidUser(currentUser)) {
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(
-                viewModel.convertToLatLng(currentUser.location),
+                viewModel.convertToLatLng(currentUser!!.location),
                 18f
             )
         }
@@ -52,7 +49,7 @@ fun MapScreen(
             userViewModel.startObservingUserFriends()
             viewModel.setupMarkersAndObserveLocations(
                 context,
-                currentUser.userId,
+                currentUser!!.userId,
                 cameraPositionState.position.zoom
             )
         }
@@ -142,4 +139,9 @@ private fun handleMarkerClick(
         viewModel.selectedMarkerId.value = markerData.id
         true
     }
+}
+private fun isValidUser(currentUser: User?): Boolean {
+    return currentUser != null &&
+        currentUser.location.latitude != 0.0 &&
+        currentUser.location.longitude != 0.0
 }
