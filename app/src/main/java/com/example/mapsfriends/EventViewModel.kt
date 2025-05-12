@@ -1,29 +1,38 @@
 package com.example.mapsfriends
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val userProfileRepository: UserProfileRepository,
-    private val userFriendsRepository: UserFriendsRepository
+    private val tokenManager: AuthTokenManager
 ) : ViewModel() {
     private val _currentEvent = MutableStateFlow<Event?>(null)
     private val _participants = MutableStateFlow<List<User>>(emptyList())
-    private val _events = MutableStateFlow<List<Event>>(emptyList())
     private val _avatars = MutableStateFlow<Map<String, String?>>(emptyMap())
+    private val currentUserId: String = tokenManager.getUserId() ?: ""
 
-    val events: StateFlow<List<Event>> = _events
+    val eventsFlow: StateFlow<List<Event>> = eventRepository
+        .observeEventsByUserId(currentUserId)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
     val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
     val avatars: StateFlow<Map<String, String?>> = _avatars
@@ -31,18 +40,12 @@ class EventViewModel @Inject constructor(
     fun createNewEvent() {
         _currentEvent.value = Event(
             eventId = UUID.randomUUID().toString(),
-            creatorId = currentUser.userId,
-            title = "",
-            description = "",
-            location = GeoPoint(0.0, 0.0),
-            time = "",
-            participants = listOf(currentUser.userId)
+            creatorId = currentUserId,
         )
         viewModelScope.launch {
-            userProfileRepository.getUserById(currentUser.userId)?.let { creator ->
+            userProfileRepository.getUserById(currentUserId)?.let { creator ->
                 _participants.value = listOf(creator)
             }
-            println("create new event ${_participants.value.size}")
         }
     }
 
@@ -61,16 +64,13 @@ class EventViewModel @Inject constructor(
     fun saveCurrentEvent() {
         viewModelScope.launch {
             try {
-                val event = _currentEvent.value ?: throw IllegalStateException("Event not created")
-                println("event id:${event.eventId}:")
+                val event = _currentEvent.value?.copy(
+                    invites = _participants.value
+                        .map { it.userId }
+                        .filter { it != currentUserId }
+                ) ?: throw IllegalStateException("Event not created")
+                println("event id:${event.eventId}: Event: $event")
                 eventRepository.createEvent(event)
-                _participants.value
-                    .filter { it.userId != event.creatorId }
-                    .forEach { user ->
-                        eventRepository.addParticipant(event.eventId, user.userId)
-                    }
-                loadParticipants(event.eventId)
-                userProfileRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error saving event: ${e.message}")
             } catch (e: IOException) {
@@ -84,10 +84,12 @@ class EventViewModel @Inject constructor(
     fun addParticipant(userId: String) {
         viewModelScope.launch {
             try {
-                val eventId = _currentEvent.value?.eventId
-                    ?: throw IllegalStateException("Сначала создайте событие")
-                eventRepository.addParticipant(eventId, userId)
-                loadParticipants(eventId)
+                val current = _participants.value.toMutableList()
+                val user = userProfileRepository.getUserById(userId)
+                if (user != null && current.none { it.userId == userId }) {
+                    current.add(user)
+                    _participants.value = current
+                }
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error adding participant: ${e.message}")
             } catch (e: IOException) {
@@ -96,28 +98,10 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    suspend fun loadParticipants(eventId: String) {
-        _participants.value = eventRepository.getParticipants(eventId)
-    }
-
-    fun loadEventsForUser(userId: String) {
-        viewModelScope.launch {
-            try {
-                _events.value = eventRepository.getEventsByUserId(userId)
-            } catch (e: FirebaseFirestoreException) {
-                println("Firestore error loading events: ${e.message}")
-                _events.value = emptyList()
-            } catch (e: IOException) {
-                println("Network error loading events: ${e.message}")
-                _events.value = emptyList()
-            }
-        }
-    }
-
     fun deleteEvent(eventId: String) {
         viewModelScope.launch {
             try {
-                eventRepository.deleteEvent(eventId)
+                eventRepository.deleteParticipant(eventId, currentUserId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error deleting event: ${e.message}")
             } catch (e: IOException) {
@@ -130,7 +114,6 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _currentEvent.value = eventRepository.getEventById(eventId)
-//                _avatars.value = result.filterValues { it != null } as Map<String, String>
                 _avatars.value = userProfileRepository.getUserAvatars(
                     _currentEvent.value?.participants
                         ?: emptyList()
@@ -140,6 +123,30 @@ class EventViewModel @Inject constructor(
             } catch (e: IOException) {
                 println("Network error loading event: ${e.message}")
             }
+        }
+    }
+
+    fun tryDeleteIncompleteEvent() {
+        val event = currentEvent.value ?: return
+        viewModelScope.launch {
+            if (event.title.isBlank() || event.time.isBlank()) {
+                event.eventId.let { eventId ->
+                    eventRepository.deleteEvent(eventId)
+                }
+                _currentEvent.value = null
+                Log.d("EventViewModel", "Incomplete event deleted")
+            }
+        }
+    }
+
+    fun getShortDays(events: List<Event>): Map<String, String> {
+        val year = LocalDate.now().year
+        return events.associate { event ->
+            val (datePart, _) = event.time.split(" ")
+            val (day, month) = datePart.split(".").map { it.toInt() }
+            val date = LocalDate.of(year, month, day)
+            val shortDay = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("ru")).take(2)
+            event.eventId to shortDay
         }
     }
 }

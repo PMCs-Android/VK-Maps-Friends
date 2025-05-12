@@ -1,16 +1,19 @@
 package com.example.mapsfriends
 
-import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import javax.inject.Inject
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import okio.IOException
 
-class FirebaseUserFriendsRepository : UserFriendsRepository {
+class FirebaseUserFriendsRepository @Inject constructor(
+    private val userProfileRepository: UserProfileRepository
+) : UserFriendsRepository {
     private val db = Firebase.firestore.collection("users")
 
     override suspend fun getFriendsList(userId: String): List<User>? {
@@ -21,10 +24,10 @@ class FirebaseUserFriendsRepository : UserFriendsRepository {
                 .await()
 
             if (document.exists()) {
-                val friendsId = document.get("friends") as? List<String>
-                friendsId?.let {
+                val friendsId = document.getStringList("friends")
+                friendsId.let {
                     friendsId.mapNotNull { friendId ->
-                        FirebaseUserProfileRepository().getUserById(friendId)
+                        userProfileRepository.getUserById(friendId)
                     }
                 }
             } else {
@@ -58,7 +61,7 @@ class FirebaseUserFriendsRepository : UserFriendsRepository {
                 throw NoSuchElementException("Friend with ID $friendId not found")
             }
 
-            val currentFriends = userDocument.get("friends") as? List<String> ?: emptyList()
+            val currentFriends = userDocument.getStringList("friends")
 
             if (currentFriends.contains(friendId)) {
                 throw IllegalStateException("User $userId already has friend $friendId")
@@ -72,27 +75,22 @@ class FirebaseUserFriendsRepository : UserFriendsRepository {
         }
     }
 
-    override suspend fun observeFriendsList(
-        userId: String,
-        callback: (List<User>) -> Unit
-    ) {
-        db.document(userId)
+    override fun observeFriendsList(userId: String): Flow<List<User>> = callbackFlow {
+        val listener = db.document(userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e("FriendObserver", "Ошибка: ${error.message}")
+                    close(error)
                     return@addSnapshotListener
                 }
-
-                val friendIds = snapshot?.get("friends")
-                    as? List<String> ?: return@addSnapshotListener
-
-                CoroutineScope(Dispatchers.IO).launch {
+                val friendIds = snapshot?.getStringList("friends") ?: return@addSnapshotListener
+                launch {
                     val friends = friendIds.mapNotNull { friendId ->
-                        FirebaseUserProfileRepository().getUserById(friendId)
+                        userProfileRepository.getUserById(friendId)
                     }
-                    callback(friends)
+                    trySend(friends).isSuccess
                 }
             }
+        awaitClose { listener.remove() }
     }
 
     override suspend fun setFriendsFromVk(userId: String, listFriendsFromVk: List<String>) {

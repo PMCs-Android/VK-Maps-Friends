@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 
@@ -100,12 +102,10 @@ fun MyEventsHeader(navController: NavHostController) {
 @Composable
 fun NotEmptyEvents(navController: NavHostController) {
     val viewModel = hiltViewModel<EventViewModel>()
-    val events = viewModel.events.collectAsState().value
+    val events by viewModel.eventsFlow.collectAsState()
     val refresh = remember { mutableStateOf(true) }
 
-    LaunchedEffect(refresh) {
-        viewModel.loadEventsForUser(currentUser.userId)
-    }
+    val eventShortDays = viewModel.getShortDays(events)
 
     Row(
         modifier = Modifier
@@ -129,7 +129,7 @@ fun NotEmptyEvents(navController: NavHostController) {
                     )
                 }
                 Text(
-                    text = "вт",
+                    text = eventShortDays[event.eventId]!!,
                     fontSize = 16.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Medium,
@@ -157,10 +157,14 @@ fun OneEvent(
     refresh: MutableState<Boolean>
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
-    val avatars = userViewModel.avatars.collectAsState().value
+    val avatars = userViewModel.avatarsPerEvent.collectAsState().value[event.eventId] ?: emptyMap()
+
     LaunchedEffect(event) {
-        userViewModel.loadAvatars(event.participants)
+        if (!userViewModel.avatarsPerEvent.value.containsKey(event.eventId)) {
+            userViewModel.loadAvatarsForEventCard(event.eventId, event.participants)
+        }
     }
+
     Row(modifier = Modifier.fillMaxWidth()) {
         Text(
             text = event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
@@ -243,7 +247,9 @@ fun BottomBar(navController: NavHostController) {
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         TextButton(
-            onClick = { navController.navigate("requests") },
+            onClick = {
+                navController.navigate("requests")
+            },
             modifier = Modifier
                 .height(64.dp)
                 .width(104.dp)

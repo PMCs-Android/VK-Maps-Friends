@@ -28,6 +28,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -57,7 +58,10 @@ import java.time.LocalDateTime
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateEventScreen(navController: NavHostController) {
+fun CreateEventScreen(
+    navController: NavHostController,
+    viewModel: EventViewModel = hiltViewModel()
+) {
     val date = remember { mutableStateOf("") }
     val time = remember { mutableStateOf("") }
     val showDatePicker = remember { mutableStateOf(false) }
@@ -68,19 +72,20 @@ fun CreateEventScreen(navController: NavHostController) {
         initialMinute = LocalDateTime.now().minute,
         is24Hour = true,
     )
-    val viewModel = hiltViewModel<EventViewModel>()
     val currentEvent by viewModel.currentEvent.collectAsState()
     val showAddFriend = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        if (currentEvent == null) {
-            viewModel.createNewEvent()
+        if (currentEvent == null) viewModel.createNewEvent()
+    }
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.tryDeleteIncompleteEvent()
         }
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(
@@ -104,13 +109,11 @@ fun CreateEventScreen(navController: NavHostController) {
         DateInput(showDatePicker, state, date)
         TimeInput(showTimePicker, timePickerState, time)
         viewModel.setEventTime(date.value + " " + time.value)
-
         CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel)
         CreateEventAddLocation()
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
                 .padding(Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -209,11 +212,11 @@ fun CreateEventAddParticipants(
     val participants by viewModel.participants.collectAsState()
     val createdEventId = viewModel.currentEvent.collectAsState().value?.eventId
 
-    LaunchedEffect(showAddFriend.value) {
-        if (!showAddFriend.value) {
-            viewModel.loadParticipants(createdEventId.toString())
-        }
-    }
+//    LaunchedEffect(showAddFriend.value) {
+//        if (!showAddFriend.value) {
+//            viewModel.loadParticipants(createdEventId.toString())
+//        }
+//    }
     Row(
         modifier = Modifier.fillMaxWidth(),
     ) {
@@ -238,7 +241,7 @@ fun CreateEventAddParticipants(
             IconButton(
                 onClick = {
                     showAddFriend.value = true
-                    viewModel.saveCurrentEvent()
+                    // viewModel.saveCurrentEvent()
                 },
             ) {
                 Icon(

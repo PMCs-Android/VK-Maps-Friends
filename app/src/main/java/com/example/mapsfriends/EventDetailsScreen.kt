@@ -51,6 +51,7 @@ fun EventDetailsScreen(
     }
     val event = viewModel.currentEvent.collectAsState().value
     val avatars = viewModel.avatars.collectAsState().value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -97,6 +98,7 @@ fun EventHeader(
     event: Event,
     avatars: Map<String, String>
 ) {
+    val eventDate = parseEventDate(event.time)
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -121,7 +123,7 @@ fun EventHeader(
             modifier = Modifier.weight(3f).align(Alignment.CenterVertically)
         )
         if (avatars.containsKey(event.creatorId)) {
-            Text(text = "!" + avatars[event.creatorId])
+            // Text(text = "!" + avatars[event.creatorId])
             AsyncImage(
                 model = avatars[event.creatorId],
                 contentDescription = "Creator Avatar",
@@ -140,13 +142,13 @@ fun EventHeader(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = event.time.slice(0..4),
+                text = eventDate["day"] + " " + monthList[eventDate["month"]!!.toInt() - 1],
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Text(
-                text = event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
+                text = eventDate["time"]!!,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White

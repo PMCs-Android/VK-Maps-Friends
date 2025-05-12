@@ -41,7 +41,7 @@ val mockUsers = listOf(
 )
 
 val currentUser = User(
-    userId = "111",
+    userId = "3",
     username = "test user",
     avatarUrl = "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818." +
         "jpeg/orig",
