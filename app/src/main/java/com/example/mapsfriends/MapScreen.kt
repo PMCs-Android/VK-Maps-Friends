@@ -86,8 +86,7 @@ fun MapScreen(
             }
 
             ZoomSlider(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.CenterEnd)
                     .padding(end = 8.dp),
                 onZoomChange = { newZoom ->
                     coroutineScope.launch {
