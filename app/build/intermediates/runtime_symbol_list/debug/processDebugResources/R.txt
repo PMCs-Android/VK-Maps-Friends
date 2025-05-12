@@ -539,6 +539,7 @@ int color foreground_material_dark 0x7f050043
 int color foreground_material_light 0x7f050044
 int color highlighted_text_material_dark 0x7f050045
 int color highlighted_text_material_light 0x7f050046
+int color light_purple 0x7f050089
 int color main_blue 0x7f050047
 int color main_pink 0x7f050048
 int color main_purple 0x7f050049
@@ -857,6 +858,7 @@ int drawable common_google_signin_btn_text_light_focused 0x7f07006f
 int drawable common_google_signin_btn_text_light_normal 0x7f070070
 int drawable common_google_signin_btn_text_light_normal_background 0x7f070071
 int drawable cross 0x7f070072
+int drawable delete_cross 0x7f0700ab
 int drawable event_calendar 0x7f070073
 int drawable event_chat 0x7f070074
 int drawable footstep_boot 0x7f070075

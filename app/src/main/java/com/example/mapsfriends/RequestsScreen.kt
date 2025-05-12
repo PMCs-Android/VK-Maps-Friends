@@ -3,6 +3,7 @@ package com.example.mapsfriends
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,20 +12,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -32,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 
 @Composable
 fun RequestsScreen(navController: NavHostController) {
@@ -65,9 +70,7 @@ fun RequestsHeader(navController: NavHostController) {
         modifier = Modifier.fillMaxWidth()
     ) {
         IconButton(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .border(4.dp, Color.White, RoundedCornerShape(12.dp))
+            onClick = { navController.popBackStack() }
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.back_arrow),
@@ -116,7 +119,7 @@ fun RequestButtons() {
                 )
         ) {
             Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.cross),
+                imageVector = ImageVector.vectorResource(R.drawable.delete_cross),
                 contentDescription = "Delete",
                 tint = colorResource(R.color.main_pink),
             )
@@ -127,25 +130,39 @@ fun RequestButtons() {
 @Composable
 fun OneRequest(navController: NavHostController, event: MockDataEvents) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
     ) {
-        Text(
-            text = event.time,
-            fontSize = 16.sp,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(10.dp)
-        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navController.navigate("requestDetails") }
+                .clickable { navController.navigate("requestDetails/${event.id}") }
                 .weight(1f)
                 .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Column(
+                modifier = Modifier
+                    .height(60.dp)
+                    .width(60.dp)
+                    .background(colorResource(R.color.light_purple), RoundedCornerShape(12.dp)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = event.day.toString(),
+                    fontWeight = FontWeight(800),
+                    fontSize = 24.sp,
+                    color = colorResource(R.color.main_purple)
+                )
+                Text(
+                    text = monthList[event.month - 1],
+                    fontWeight = FontWeight(500),
+                    fontSize = 16.sp,
+                    color = colorResource(R.color.main_purple)
+                )
+            }
+            Spacer(modifier = Modifier.width(20.dp))
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -157,27 +174,23 @@ fun OneRequest(navController: NavHostController, event: MockDataEvents) {
                 )
                 Row {
                     event.members.forEach { member ->
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "MemberIcon"
+                        AsyncImage(
+                            model = member.avatarUrl,
+                            contentDescription = "Friend Avatar",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.FillBounds
                         )
                     }
-                    Text(
-                        text = event.members.size.toString() + "/" + mockUsers.size.toString(),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(horizontal = 4.dp)
-                    )
                 }
                 Text(
-                    text = event.day.toString() + " " + monthList[event.month - 1],
+                    text = event.description,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 10.dp)
                 )
                 Text(
-                    text = "~" + event.time,
+                    text = getWeekdayFromDate(event.day, event.month) + ", " + event.time,
                     fontSize = 12.sp,
                 )
             }

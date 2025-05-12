@@ -540,6 +540,7 @@ color foreground_material_dark
 color foreground_material_light
 color highlighted_text_material_dark
 color highlighted_text_material_light
+color light_purple
 color main_blue
 color main_pink
 color main_purple
@@ -858,6 +859,7 @@ drawable common_google_signin_btn_text_light_focused
 drawable common_google_signin_btn_text_light_normal
 drawable common_google_signin_btn_text_light_normal_background
 drawable cross
+drawable delete_cross
 drawable event_calendar
 drawable event_chat
 drawable footstep_boot

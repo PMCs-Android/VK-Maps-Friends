@@ -3,6 +3,7 @@ local
 color bg_blue
 color bg_pink
 color black
+color light_purple
 color main_blue
 color main_pink
 color main_purple
@@ -26,6 +27,7 @@ drawable calendar
 drawable chat_main_page
 drawable clock
 drawable cross
+drawable delete_cross
 drawable event_calendar
 drawable event_chat
 drawable footstep_boot

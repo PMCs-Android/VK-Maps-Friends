@@ -1,13 +1,11 @@
 package com.example.mapsfriends
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
@@ -62,14 +60,7 @@ fun ProfileScreen(
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
         IconButton(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .border(
-                    4.dp,
-                    Color.White,
-                    RoundedCornerShape(16.dp)
-                )
-
+            onClick = { navController.popBackStack() }
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),

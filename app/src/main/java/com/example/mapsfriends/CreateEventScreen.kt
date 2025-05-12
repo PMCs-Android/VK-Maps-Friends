@@ -102,7 +102,7 @@ fun CreateEventScreen(
                 horizontal = Dimensions.SMALL_PADDING_1.dp
             )
     ) {
-        ExitButton(navController, viewModel, currentEvent?.eventId ?: "")
+        ExitButton(navController, viewModel, currentEvent?.eventId ?: "", creatorId)
         CreateEventTitleInput(viewModel, currentEvent)
         Row(modifier = Modifier.padding(top = Dimensions.SMALL_PADDING_1.dp)) {
             CreateEventDateInput(showDatePicker, date, dateError)
@@ -128,18 +128,17 @@ fun CreateEventScreen(
 }
 
 @Composable
-fun ExitButton(navController: NavHostController, eventViewModel: EventViewModel, eventId: String) {
+fun ExitButton(
+    navController: NavHostController,
+    eventViewModel: EventViewModel,
+    eventId: String,
+    creatorId: String
+) {
     IconButton(
         onClick = {
-            eventViewModel.deleteEvent(eventId)
+            eventViewModel.deleteEvent(eventId, creatorId)
             navController.popBackStack()
-        },
-        modifier = Modifier
-            .border(
-                Dimensions.BORDER_WIDTH.dp,
-                Color.White,
-                RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp)
-            )
+        }
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.cross),

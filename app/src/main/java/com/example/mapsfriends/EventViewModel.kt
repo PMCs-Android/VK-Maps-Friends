@@ -1,9 +1,7 @@
 package com.example.mapsfriends
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -23,21 +21,20 @@ class EventViewModel @Inject constructor(
 ) : ViewModel() {
     private val _currentEvent = MutableStateFlow<Event?>(null)
     private val _participants = MutableStateFlow<List<User>>(emptyList())
+    private val _allEvents = MutableStateFlow<List<Event>>(emptyList())
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     private val _avatars = MutableStateFlow<Map<String, String?>>(emptyMap())
     private val _titleError = mutableStateOf(false)
     private val _descriptionError = mutableStateOf(false)
-    private val _dateError = mutableStateOf(false)
-    private val _timeError = mutableStateOf(false)
+    private val _selectedMonth = MutableStateFlow<Int?>(null)
 
+    val selectedMonth: StateFlow<Int?> = _selectedMonth
     val events: StateFlow<List<Event>> = _events
     val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
     val avatars: StateFlow<Map<String, String?>> = _avatars
     val titleError: MutableState<Boolean> = _titleError
     val descriptionError: MutableState<Boolean> = _descriptionError
-    val dateError: MutableState<Boolean> = _dateError
-    val timeError: MutableState<Boolean> = _timeError
 
     fun validateFields(): Boolean {
         val isValid = !currentEvent.value?.title.isNullOrBlank() &&
@@ -47,6 +44,18 @@ class EventViewModel @Inject constructor(
         _descriptionError.value = currentEvent.value?.description.isNullOrBlank()
 
         return isValid
+    }
+
+    fun filterEventsByMonth(month: Int) {
+        _selectedMonth.value = month
+        _events.value = _allEvents.value.filter { event->
+            event.time.slice(3..4).toInt() == (month + 1)
+        }
+    }
+
+    fun resetMonthFilter() {
+        _selectedMonth.value = null
+        _events.value = _allEvents.value
     }
 
     fun createNewEvent(creatorId: String) {
@@ -83,7 +92,7 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val event = _currentEvent.value ?: throw IllegalStateException("Event not created")
-                println("event id:${event.eventId}:")
+                println("event id:${event.eventId}: user id:${event.creatorId}")
                 eventRepository.createEvent(event)
                 _participants.value
                     .filter { it.userId != event.creatorId }
@@ -124,7 +133,8 @@ class EventViewModel @Inject constructor(
     fun loadEventsForUser(userId: String) {
         viewModelScope.launch {
             try {
-                _events.value = eventRepository.getEventsByUserId(userId)
+                _allEvents.value = eventRepository.getEventsByUserId(userId)
+                _events.value = _allEvents.value
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error loading events: ${e.message}")
                 _events.value = emptyList()
@@ -135,10 +145,11 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    fun deleteEvent(eventId: String) {
+    fun deleteEvent(eventId: String, creatorId: String) {
         viewModelScope.launch {
             try {
                 eventRepository.deleteEvent(eventId)
+                loadEventsForUser(creatorId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error deleting event: ${e.message}")
             } catch (e: IOException) {

@@ -5,7 +5,13 @@ val monthList = listOf(
     "июл", "авг", "сен", "окт", "нояб", "дек"
 )
 
+val fullMonthList = listOf(
+    "январь", "февраль", "март", "апрель", "май", "июнь",
+    "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"
+)
+
 data class MockDataEvents(
+    val id: Int,
     val name: String,
     val day: Int,
     val month: Int,
@@ -17,13 +23,34 @@ data class MockDataEvents(
 
 val mockEvents = listOf(
     MockDataEvents(
+        1,
         "Баскетбол",
         27,
         2,
         "18:40",
-        "Описание",
+        "бла бла бла",
         "Новочеркасская, 9",
         listOf(mockUsers[0], mockUsers[1])
+    ),
+    MockDataEvents(
+        2,
+        "Шашлычки",
+        17,
+        5,
+        "12:00",
+        "шашлычок у прудика",
+        "Новочеркасская, 9",
+        listOf(mockUsers[2], mockUsers[3], mockUsers[0])
+    ),
+    MockDataEvents(
+        3,
+        "Аквапарк",
+        25,
+        5,
+        "13:30",
+        "бульк бульк",
+        "Новочеркасская, 9",
+        listOf(mockUsers[0], mockUsers[3])
     )
 )
 

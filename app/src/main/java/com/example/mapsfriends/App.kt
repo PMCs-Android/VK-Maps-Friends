@@ -3,15 +3,11 @@ package com.example.mapsfriends
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.mapsfriends.login.AuthViewModel
 import com.example.mapsfriends.ui.login.LoginScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -31,17 +27,7 @@ fun App(startDestination: String) {
         composable("main") { MainScreen(navController) }
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }
-        composable("requestDetails") { RequestDetailsScreen(navController) }
         composable("create") { CreateEventScreen(navController) }
-//        composable(
-//            route = "create/{creatorId}",
-//            arguments = listOf(navArgument("creatorId") { type = NavType.StringType })
-//        ) { backStackEntry ->
-//            CreateEventScreen(
-//                navController = navController,
-//                creatorId = backStackEntry.arguments?.getString("creatorId") ?: ""
-//            )
-//        }
         composable("profile") { ProfileScreen(navController) }
         composable(
             route = "eventDetails/{eventId}",
@@ -54,7 +40,16 @@ fun App(startDestination: String) {
         }
         composable("messenger") { MessengerScreen(navController) }
         composable("chats") { ChatsListScreen(navController) }
-        composable("requestDetails") { RequestDetailsScreen(navController) }
+//        composable("requestDetails") { RequestDetailsScreen(navController) }
+        composable(
+            route = "requestDetails/{requestId}",
+            arguments = listOf(navArgument("requestId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            RequestDetailsScreen(
+                navController = navController,
+                requestId = backStackEntry.arguments?.getString("requestId") ?: ""
+            )
+        }
         composable("map") {
             MapScreen(navController = navController)
         }

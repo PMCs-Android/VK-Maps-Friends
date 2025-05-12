@@ -1,7 +1,6 @@
 package com.example.mapsfriends
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,8 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -28,13 +25,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import java.nio.file.WatchEvent
 
 @Composable
 fun ChatsListScreen(navController: NavHostController) {
@@ -68,9 +63,7 @@ fun ChatsHeader(navController: NavHostController) {
         modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
     ) {
         IconButton(
-            onClick = { navController.navigate("main") },
-            modifier = Modifier
-                .border(4.dp, Color.White, RoundedCornerShape(12.dp))
+            onClick = { navController.navigate("main") }
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -106,7 +99,7 @@ fun OneChat(navController: NavHostController, event: MockDataEvents) {
             modifier = Modifier
                 .height(50.dp)
                 .width(50.dp)
-                .background(colorResource(R.color.main_pink), RoundedCornerShape(12.dp)),
+                .background(colorResource(R.color.main_purple), RoundedCornerShape(12.dp)),
         ) {
             Text(
                 text = event.name[0].toString(),
@@ -124,7 +117,7 @@ fun OneChat(navController: NavHostController, event: MockDataEvents) {
                 fontSize = 16.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
-            Row() {
+            Row {
                 Text(
                     text = event.members[0].name + ": ",
                     fontSize = 12.sp,

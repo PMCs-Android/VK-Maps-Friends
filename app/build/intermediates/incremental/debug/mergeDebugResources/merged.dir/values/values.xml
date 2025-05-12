@@ -66,6 +66,7 @@
     <color name="foreground_material_light">@android:color/black</color>
     <color name="highlighted_text_material_dark">#6680cbc4</color>
     <color name="highlighted_text_material_light">#66009688</color>
+    <color name="light_purple">#DFBAFF</color>
     <color name="main_blue">#0047FF</color>
     <color name="main_pink">#EB00FF</color>
     <color name="main_purple">#9419FF</color>

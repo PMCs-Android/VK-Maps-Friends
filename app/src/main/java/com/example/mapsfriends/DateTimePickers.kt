@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -46,7 +45,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.TextStyle
+import java.util.Locale
 
 object DateTimePickers {
     const val SMALL_PADDING = 6
@@ -300,3 +302,9 @@ fun TimePickerButtons(
         }
     ) { Text("OK") }
 }
+
+fun getWeekdayFromDate(day: Int, month: Int): String {
+    val date = LocalDate.of(LocalDate.now().year, month, day)
+    return date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("ru")).lowercase()
+}
+

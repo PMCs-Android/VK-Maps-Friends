@@ -12,6 +12,7 @@
     <color name="main_blue">#0047FF</color>
     <color name="bg_blue">#749AFF</color>
     <color name="bg_pink">#F68EFF</color>
+    <color name="light_purple">#DFBAFF</color>
     <color name="text_gray">#5D5C5C</color>
     <color name="marker_border">#ABBACA</color>
     <color name="marker_tail">#ABBACA</color>

@@ -37,7 +37,24 @@ val mockUsers = listOf(
                 "a05c99cc318e08a51_l-9065817-images-thumbs&n=13"
             ),
         location = LatLng(55.760000, 37.620000)
-    )
+    ),
+    MockDataUsers(
+        id = "4",
+        name = "Паша",
+        avatarUrl = (
+                "https://avatars.mds.yandex.net/get-entity_search/1969011/918366713/orig"
+                ),
+        location = LatLng(55.756589, 37.616584)
+    ),
+    MockDataUsers(
+        id = "5",
+        name = "Настя",
+        avatarUrl = (
+                "https://avatars.mds.yandex.net/i?id=cec8f250ccb137c3967117548aab15ff2ed043ef-" +
+                        "4303091-images-thumbs&n=13"
+                ),
+        location = LatLng(55.756589, 37.616584)
+    ),
 )
 
 //val currentUser = User(
