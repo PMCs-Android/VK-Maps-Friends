@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.example.mapsfriends.login.AuthViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +45,6 @@ fun AddParticipantsScreen(
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val friends by userViewModel.friends.collectAsState()
-    println("FRR ${creatorId}")
     LaunchedEffect(Unit) {
         userViewModel.loadFriends(creatorId)
     }

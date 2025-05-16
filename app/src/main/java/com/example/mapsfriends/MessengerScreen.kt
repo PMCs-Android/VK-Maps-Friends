@@ -124,7 +124,7 @@ fun MessageInput() {
 
 @Composable
 fun MessagesOutput(message: Messages) {
-    Row (
+    Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
@@ -211,7 +211,7 @@ fun MessengerHeader(navController: NavHostController) {
             Row(
                 modifier = Modifier.align(Alignment.End)
             ) {
-                mockEvents[0].members.forEach { member->
+                mockEvents[0].members.forEach { member ->
                     AsyncImage(
                         model = member.avatarUrl,
                         contentDescription = "friend avatar",

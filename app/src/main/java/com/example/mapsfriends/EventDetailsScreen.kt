@@ -221,7 +221,7 @@ fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: Na
                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
         ) {
             Text(
-                text = LocalContext.current.getString(R.string.dalete),
+                text = "Выйти",
                 fontSize = 20.sp,
                 color = colorResource(R.color.main_pink),
                 fontWeight = FontWeight.Bold,

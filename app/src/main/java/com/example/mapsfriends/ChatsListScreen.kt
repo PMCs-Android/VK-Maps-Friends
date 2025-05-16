@@ -1,6 +1,7 @@
 package com.example.mapsfriends
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -104,13 +105,13 @@ fun OneChat(navController: NavHostController, event: MockDataEvents) {
             Text(
                 text = event.name[0].toString(),
                 fontWeight = FontWeight(700),
-                fontSize =20.sp,
+                fontSize = 20.sp,
                 color = Color.White,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
         Spacer(modifier = Modifier.width(20.dp))
-        Column{
+        Column {
             Text(
                 text = event.name,
                 fontWeight = FontWeight(500),
@@ -131,4 +132,5 @@ fun OneChat(navController: NavHostController, event: MockDataEvents) {
             }
         }
     }
+    Spacer(modifier = Modifier.height(2.dp))
 }

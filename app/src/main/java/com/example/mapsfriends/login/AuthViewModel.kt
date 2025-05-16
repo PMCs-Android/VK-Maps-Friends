@@ -1,16 +1,14 @@
 package com.example.mapsfriends.login
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mapsfriends.FirebaseUserProfileRepository
 import com.example.mapsfriends.User
 import com.example.mapsfriends.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(

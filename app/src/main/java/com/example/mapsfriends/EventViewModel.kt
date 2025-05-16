@@ -8,12 +8,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
+import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @HiltViewModel
 class EventViewModel @Inject constructor(
@@ -39,7 +39,8 @@ class EventViewModel @Inject constructor(
 
     fun validateFields(): Boolean {
         val isValid =
-            !currentEvent.value?.title.isNullOrBlank() && !currentEvent.value?.description.isNullOrBlank()
+            !currentEvent.value?.title.isNullOrBlank() &&
+                    !currentEvent.value?.description.isNullOrBlank()
 
         _titleError.value = currentEvent.value?.title.isNullOrBlank()
         _descriptionError.value = currentEvent.value?.description.isNullOrBlank()
@@ -51,19 +52,24 @@ class EventViewModel @Inject constructor(
         _selectedMonth.value = month
         _events.value = _allEvents.value.filter { event ->
             event.time.slice(3..4).toInt() == (month + 1)
-        }.sortedWith(compareBy({
-            LocalDate.of(
-                LocalDate.now().year,
-                it.time.slice(3..4).toInt(),
-                it.time.slice(0..1).toInt()
+        }.sortedWith(
+            compareBy(
+                {
+                    LocalDate.of(
+                        LocalDate.now().year,
+                        it.time.slice(3..4).toInt(),
+                        it.time.slice(0..1).toInt()
+                    )
+                },
+                {
+                    LocalDate.of(
+                        LocalDate.now().year,
+                        it.time.slice(6..7).toInt(),
+                        it.time.slice(9..10).toInt()
+                    )
+                }
             )
-        }, {
-            LocalDate.of(
-                LocalDate.now().year,
-                it.time.slice(6..7).toInt(),
-                it.time.slice(9..10).toInt()
-            )
-        }))
+        )
     }
 
     fun resetMonthFilter() {
@@ -144,19 +150,24 @@ class EventViewModel @Inject constructor(
     fun loadEventsForUser(userId: String) {
         viewModelScope.launch {
             try {
-                _allEvents.value = eventRepository.getEventsByUserId(userId).sortedWith(compareBy({
-                    LocalDate.of(
-                        LocalDate.now().year,
-                        it.time.slice(3..4).toInt(),
-                        it.time.slice(0..1).toInt()
+                _allEvents.value = eventRepository.getEventsByUserId(userId).sortedWith(
+                    compareBy(
+                        {
+                            LocalDate.of(
+                                LocalDate.now().year,
+                                it.time.slice(3..4).toInt(),
+                                it.time.slice(0..1).toInt()
+                            )
+                        },
+                        {
+                            LocalDate.of(
+                                LocalDate.now().year,
+                                it.time.slice(6..7).toInt(),
+                                it.time.slice(9..10).toInt()
+                            )
+                        }
                     )
-                }, {
-                    LocalDate.of(
-                        LocalDate.now().year,
-                        it.time.slice(6..7).toInt(),
-                        it.time.slice(9..10).toInt()
-                    )
-                }))
+                )
                 _events.value = _allEvents.value
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error loading events: ${e.message}")

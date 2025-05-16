@@ -63,7 +63,7 @@ fun CreateEventDateInput(
     selectedDate: MutableState<String>,
     dateError: MutableState<Boolean>
 ) {
-    Column{
+    Column {
         Row(
             modifier = Modifier
                 .width(110.dp)
@@ -104,7 +104,7 @@ fun CreateEventTimeInput(
     selectedTime: MutableState<String>,
     timeError: MutableState<Boolean>
 ) {
-    Column{
+    Column {
         Row(
             modifier = Modifier
                 .width(110.dp)

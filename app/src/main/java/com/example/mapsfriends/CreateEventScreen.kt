@@ -42,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -327,7 +326,7 @@ fun CreateEventAddLocation(navController: NavHostController) {
         Box(
             modifier = Modifier.fillMaxWidth().padding(Dimensions.SMALL_PADDING_1.dp)
         ) {
-             MapScreen(navController)
+            MapScreen(navController)
         }
     }
 }
