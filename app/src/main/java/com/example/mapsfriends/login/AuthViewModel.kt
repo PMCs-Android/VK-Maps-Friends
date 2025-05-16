@@ -15,14 +15,14 @@ class AuthViewModel @Inject constructor(
     private val tokenManager: AuthTokenManager,
     private val userProfileRepository: UserProfileRepository
 ) : ViewModel() {
-    private val _currentUser = MutableStateFlow<User?>(null)
-    val currentUser: StateFlow<User?> = _currentUser
-
-    fun getUser(userId: String) {
-        viewModelScope.launch {
-            _currentUser.value = userProfileRepository.getUserById(userId)
-        }
-    }
+//    private val _currentUser = MutableStateFlow<User?>(null)
+//    val currentUser: StateFlow<User?> = _currentUser
+//
+//    fun getUser(userId: String) {
+//        viewModelScope.launch {
+//            _currentUser.value = userProfileRepository.getUserById(userId)
+//        }
+//    }
 
     fun getCurrentUserId(): String? {
         return tokenManager.getUserId()
