@@ -55,6 +55,24 @@ val mockUsers = listOf(
             ),
         location = LatLng(55.756589, 37.616584)
     ),
+    )
+)
+
+val currentUser = User(
+    userId = "3",
+    username = "test user",
+    avatarUrl = "https://avatars.mds.yandex.net/get-mpic/5346238/img_id1357746595382532818." +
+        "jpeg/orig",
+    friends = listOf("112", "113"),
+    location = GeoPoint(55.751244, 37.618423)
+)
+
+val friend1 = User(
+    userId = "112",
+    username = "test user2",
+    avatarUrl = "https://avatars.mds.yandex.net/get-entity_search/1969011/918366713/orig",
+    friends = listOf(),
+    location = GeoPoint(55.740000, 37.600000)
 )
 
 // val currentUser = User(

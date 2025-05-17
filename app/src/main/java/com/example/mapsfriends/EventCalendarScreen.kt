@@ -26,6 +26,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.mapsfriends.login.AuthViewModel
@@ -109,12 +113,13 @@ fun NotEmptyEvents(
     creatorId: String
 ) {
     val viewModel = hiltViewModel<EventViewModel>()
-    val events = viewModel.events.collectAsState().value
+    val events by viewModel.eventsFlow.collectAsState()
     val selectedMonth = viewModel.selectedMonth.collectAsState().value
 
-    LaunchedEffect(Unit) {
-        viewModel.loadEventsForUser(creatorId)
-    }
+//     LaunchedEffect(Unit) {
+//         viewModel.loadEventsForUser(creatorId)
+//     }
+ 
 
     LazyRow(
         modifier = Modifier
@@ -183,9 +188,12 @@ fun OneEvent(
     creatorId: String
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
-    val avatars = userViewModel.avatars.collectAsState().value
+    val avatars = userViewModel.avatarsPerEvent.collectAsState().value[event.eventId] ?: emptyMap()
+
     LaunchedEffect(event) {
-        userViewModel.loadAvatars(event.participants)
+        if (!userViewModel.avatarsPerEvent.value.containsKey(event.eventId)) {
+            userViewModel.loadAvatarsForEventCard(event.eventId, event.participants)
+        }
     }
     val day = event.time.slice(0..1).toInt()
     val month = event.time.slice(3..4).toInt()
@@ -292,7 +300,9 @@ fun BottomBar(navController: NavHostController) {
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         TextButton(
-            onClick = { navController.navigate("requests") },
+            onClick = {
+                navController.navigate("requests")
+            },
             modifier = Modifier
                 .height(64.dp)
                 .width(104.dp)

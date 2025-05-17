@@ -20,6 +20,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -31,12 +33,23 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 
 @Composable
-fun RequestDetailsScreen(navController: NavHostController, requestId: String) {
-    val request = mockEvents[requestId.toInt()]
+fun RequestDetailsScreen(
+    navController: NavHostController,
+    eventId: String,
+    userViewModel: UserViewModel = hiltViewModel(),
+    viewModel: EventViewModel = hiltViewModel()
+) {
+
+    val avatars = viewModel.avatars.collectAsState().value
+    LaunchedEffect(eventId) {
+        viewModel.getEvent(eventId)
+    }
+    val event = viewModel.currentEvent.collectAsState().value
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,18 +63,20 @@ fun RequestDetailsScreen(navController: NavHostController, requestId: String) {
             )
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
-        RequestDetailsHeader(navController, request)
-        RequestDetailsDescription(request)
-        RequestDetailsMembers(request)
-        EventLocation()
-        RequestAcceptRefuseButtons()
+        if (event != null) {
+            RequestDetailsHeader(navController, event)
+            RequestDetailsDescription(request)
+            RequestDetailsMembers(request)
+            EventLocation()
+            RequestAcceptRefuseButtons()
+        }
     }
 }
 
 @Composable
 fun RequestDetailsHeader(
     navController: NavHostController,
-    request: MockDataEvents
+    request: Event
 ) {
     Row(
         modifier = Modifier.fillMaxWidth()
@@ -79,7 +94,7 @@ fun RequestDetailsHeader(
         }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = request.name,
+            text = request.title,
             fontSize = 32.sp,
             color = Color.White,
             fontWeight = FontWeight.Bold,
@@ -89,13 +104,13 @@ fun RequestDetailsHeader(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = "%02d.%02d".format(request.day, request.month),
+                text = event.time.slice(0..4),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Text(
-                text = request.time,
+                text = event.time.slice(6..10),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White

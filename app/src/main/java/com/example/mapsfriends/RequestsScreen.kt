@@ -22,6 +22,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,11 +38,16 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 
 @Composable
-fun RequestsScreen(navController: NavHostController) {
+fun RequestsScreen(
+    navController: NavHostController,
+    viewModel: InvitesViewModel = hiltViewModel()
+) {
+    val invites by viewModel.invitesFlow.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -57,7 +65,7 @@ fun RequestsScreen(navController: NavHostController) {
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(mockEvents) { event ->
+            items(invites) { event ->
                 OneRequest(navController, event)
             }
         }
@@ -89,12 +97,17 @@ fun RequestsHeader(navController: NavHostController) {
 }
 
 @Composable
-fun RequestButtons() {
+fun RequestButtons(
+    eventId: String,
+    viewModel: InvitesViewModel = hiltViewModel()
+) {
     Column(
         modifier = Modifier
     ) {
         IconButton(
-            onClick = { /* Удаление ивента */ },
+            onClick = { /* Принятие приглашения */
+                viewModel.acceptInvite(eventId)
+            },
             modifier = Modifier
                 .border(
                     2.dp,
@@ -110,7 +123,9 @@ fun RequestButtons() {
         }
         Spacer(modifier = Modifier.height(4.dp))
         IconButton(
-            onClick = { /* Удаление ивента */ },
+            onClick = { /* Удаление приглашения */
+                viewModel.declineInvite(eventId)
+            },
             modifier = Modifier
                 .border(
                     2.dp,
@@ -128,7 +143,20 @@ fun RequestButtons() {
 }
 
 @Composable
-fun OneRequest(navController: NavHostController, event: MockDataEvents) {
+fun OneRequest(
+    navController: NavHostController,
+    event: Event,
+    userViewModel: UserViewModel = hiltViewModel(),
+) {
+
+    val eventDate = parseEventDate(event.time)
+
+    LaunchedEffect(event) {
+        if (!userViewModel.avatarsPerEvent.value.containsKey(event.eventId)) {
+            userViewModel.loadAvatarsForEventCard(event.eventId, event.participants)
+        }
+    }
+    val avatars = userViewModel.avatarsPerEvent.collectAsState().value[event.eventId] ?: emptyMap()
     Row(
         modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
     ) {
@@ -166,8 +194,9 @@ fun OneRequest(navController: NavHostController, event: MockDataEvents) {
             Column(
                 modifier = Modifier.weight(1f)
             ) {
+
                 Text(
-                    text = event.name,
+                    text = event.title,
                     fontSize = 20.sp,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
@@ -194,7 +223,30 @@ fun OneRequest(navController: NavHostController, event: MockDataEvents) {
                     fontSize = 12.sp,
                 )
             }
-            RequestButtons()
+            RequestButtons(event.eventId)
         }
+    }
+}
+
+@Composable
+fun EventAvatarsRow(avatars: Map<String, String>, total: Int, invited: Int) {
+    Row {
+        avatars.forEach { participantAvatar ->
+            AsyncImage(
+                model = participantAvatar.value,
+                contentDescription = "Friend Avatar",
+                modifier = Modifier.size(24.dp)
+                    .clip(CircleShape)
+            )
+        }
+
+        Text(
+            text = "$total/$invited",
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            modifier = Modifier.align(Alignment.CenterVertically).padding(
+                horizontal = 4.dp
+            )
+        )
     }
 }

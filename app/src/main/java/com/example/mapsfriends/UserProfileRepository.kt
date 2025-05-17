@@ -1,35 +1,18 @@
 package com.example.mapsfriends
 
 import com.google.firebase.firestore.GeoPoint
+import kotlinx.coroutines.flow.Flow
 
 data class User(
     val userId: String = "",
     val username: String = "",
     val avatarUrl: String = "",
     val friends: List<String> = emptyList(),
-    val location: GeoPoint = GeoPoint(0.0, 0.0)
-) {
-    companion object {
-        fun fromFirestore(map: Map<String, Any>): User {
-            return User(
-                userId = map["user_id"] as? String ?: "",
-                username = map["username"] as? String ?: "",
-                avatarUrl = map["avatar_url"] as? String ?: "",
-                friends = map["friends"] as? List<String> ?: emptyList(),
-                location = map["location"] as? GeoPoint ?: GeoPoint(0.0, 0.0)
-            )
-        }
-    }
-    fun toFirestore(): Map<String, Any> {
-        return mapOf(
-            "user_id" to userId,
-            "username" to username,
-            "avatar_url" to avatarUrl,
-            "friends" to friends,
-            "location" to location
-        )
-    }
-}
+    val allFriends: List<String> = emptyList(),
+    val location: GeoPoint = GeoPoint(0.0, 0.0),
+    val invites: List<String> = emptyList(),
+    val events: List<String> = emptyList()
+)
 
 interface UserProfileRepository {
     suspend fun getUserById(userId: String): User?
@@ -42,7 +25,10 @@ interface UserProfileRepository {
         friends: List<String>,
         location: GeoPoint
     )
-    suspend fun observeLocation(userId: String, callback: (GeoPoint) -> Unit)
+    suspend fun acceptInvite(userId: String, eventId: String)
+    suspend fun declineInvite(userId: String, eventId: String)
+    fun observeInvites(userId: String): Flow<List<Event>>
+    fun observeLocation(userId: String): Flow<GeoPoint>
     suspend fun addEventToUser(creatorID: String, eventId: String)
     suspend fun getUserAvatars(userIds: List<String>): Map<String, String?>
 }

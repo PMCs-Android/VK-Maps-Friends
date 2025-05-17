@@ -45,8 +45,10 @@ fun AddParticipantsScreen(
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val friends by userViewModel.friends.collectAsState()
+
     LaunchedEffect(Unit) {
-        userViewModel.loadFriends(creatorId)
+        userViewModel.startObservingUserFriends()
+
     }
     ModalBottomSheet(
         onDismissRequest = {

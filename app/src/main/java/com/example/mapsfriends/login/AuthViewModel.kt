@@ -9,20 +9,23 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.asStateFlow
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val tokenManager: AuthTokenManager,
     private val userProfileRepository: UserProfileRepository
 ) : ViewModel() {
-//    private val _currentUser = MutableStateFlow<User?>(null)
-//    val currentUser: StateFlow<User?> = _currentUser
-//
-//    fun getUser(userId: String) {
-//        viewModelScope.launch {
-//            _currentUser.value = userProfileRepository.getUserById(userId)
-//        }
-//    }
+   private val _currentUser = MutableStateFlow<User?>(null)
+   val currentUser: StateFlow<User?> = _currentUser
+
+   fun getUser(userId: String) {
+       viewModelScope.launch {
+           _currentUser.value = userProfileRepository.getUserById(userId)
+       }
+   }
+    private val _currentUserId = MutableStateFlow<String?>(getCurrentUserId())
+    val currentUserId: StateFlow<String?> = _currentUserId.asStateFlow()
 
     fun getCurrentUserId(): String? {
         return tokenManager.getUserId()
@@ -34,5 +37,6 @@ class AuthViewModel @Inject constructor(
 
     fun saveAuthData(token: String, userId: String) {
         tokenManager.saveAuthData(token, userId)
+        _currentUserId.value = userId
     }
 }

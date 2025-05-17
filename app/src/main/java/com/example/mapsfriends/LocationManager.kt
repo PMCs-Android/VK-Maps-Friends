@@ -12,8 +12,9 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.firestore
 
 class LocationManager(private val context: Context) {
 
@@ -131,9 +132,8 @@ class LocationManager(private val context: Context) {
         latitude: Double,
         longitude: Double
     ) {
-        val firestore = FirebaseFirestore.getInstance()
         val locationData = GeoPoint(latitude, longitude)
-        firestore.collection("users")
+        Firebase.firestore.collection("users")
             .document(userId)
             .update("location", locationData)
     }

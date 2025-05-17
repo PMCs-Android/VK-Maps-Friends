@@ -15,4 +15,5 @@ object Dimensions {
     const val LARGE_ELEMENT_2 = 300
     const val LARGE_ELEMENT_3 = 400
     const val LARGE_ELEMENT_4 = 800
+    const val PROFILE_ICON_SIZE = 150
 }

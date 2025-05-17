@@ -54,5 +54,14 @@ fun App(startDestination: String) {
         }
         composable("profile") { ProfileScreen(navController) }
         composable("stepStatistic") { PedometerScreen(navController) }
+        composable(
+            route = "profile/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            FriendProfileScreen(
+                navController,
+                userId = backStackEntry.arguments?.getString("userId") ?: "1"
+            )
+        }
     }
 }
