@@ -63,14 +63,7 @@ fun ProfileScreen(
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
         IconButton(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .border(
-                    4.dp,
-                    Color.White,
-                    RoundedCornerShape(16.dp)
-                )
-
+            onClick = { navController.popBackStack() }
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -157,7 +150,6 @@ fun FriendProfileScreen(
                     Color.White,
                     RoundedCornerShape(16.dp)
                 )
-
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),

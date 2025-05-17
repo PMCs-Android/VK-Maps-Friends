@@ -55,6 +55,7 @@ fun AddParticipantsScreen(
         sheetState = rememberModalBottomSheetState(),
         containerColor = Color.White
     ) {
+        println("FRIENDS ${friends.size}")
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()

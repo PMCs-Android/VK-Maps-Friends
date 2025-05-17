@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -30,7 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -66,13 +64,13 @@ fun EventDetailsScreen(
             .padding(vertical = 30.dp, horizontal = 10.dp)
     ) {
         if (event != null) {
-            EventHeader(navController, event, avatars as Map<String, String>)
+            EventHeader(navController, event)
             EventDescription(event)
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                EventMembers(avatars)
+                EventMembers(avatars as Map<String, String>)
                 Spacer(modifier = Modifier.width(16.dp))
                 IconButton(
                     onClick = { /* ереход в чат */ navController.navigate("messenger") },
@@ -95,8 +93,7 @@ fun EventDetailsScreen(
 @Composable
 fun EventHeader(
     navController: NavHostController,
-    event: Event,
-    avatars: Map<String, String>
+    event: Event
 ) {
     val eventDate = parseEventDate(event.time)
     Row(
@@ -106,7 +103,6 @@ fun EventHeader(
             onClick = { navController.popBackStack() },
             modifier = Modifier
                 .padding(0.dp)
-                .border(4.dp, Color.White, RoundedCornerShape(12.dp))
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.back_arrow),
@@ -122,22 +118,6 @@ fun EventHeader(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.weight(3f).align(Alignment.CenterVertically)
         )
-        if (avatars.containsKey(event.creatorId)) {
-            // Text(text = "!" + avatars[event.creatorId])
-            AsyncImage(
-                model = avatars[event.creatorId],
-                contentDescription = "Creator Avatar",
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-            )
-        } else {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = "Default Avatar",
-                tint = colorResource(R.color.bg_pink)
-            )
-        }
         Column(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
@@ -190,9 +170,10 @@ fun EventMembers(
                 model = member.value,
                 contentDescription = "Participant Avatar",
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(36.dp)
                     .align(Alignment.CenterVertically)
-                    .clip(CircleShape)
+                    .clip(CircleShape),
+                contentScale = ContentScale.FillBounds
             )
         }
     }
@@ -203,6 +184,7 @@ fun EventLocation() {
     Column(
         modifier = Modifier
             .padding(vertical = 10.dp)
+            .fillMaxWidth()
             .height(300.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
 
@@ -233,14 +215,14 @@ fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: Na
     ) {
         TextButton(
             onClick = { /* Удаление ивента */
-                viewModel.deleteEvent(event.eventId)
+                viewModel.deleteEvent(event.eventId, event.creatorId)
                 navController.navigate("events")
             },
             modifier = Modifier
                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(20.dp))
         ) {
             Text(
-                text = LocalContext.current.getString(R.string.dalete),
+                text = "Выйти",
                 fontSize = 20.sp,
                 color = colorResource(R.color.main_pink),
                 fontWeight = FontWeight.Bold,

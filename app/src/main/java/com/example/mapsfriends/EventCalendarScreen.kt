@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,17 +25,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -46,9 +45,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.mapsfriends.login.AuthViewModel
+import java.time.LocalDate
 
 @Composable
-fun EventCalendarScreen(navController: NavHostController) {
+fun EventCalendarScreen(
+    navController: NavHostController
+) {
+    val authViewModel = hiltViewModel<AuthViewModel>()
+    val creatorId = authViewModel.getCurrentUserId()!!
+    LaunchedEffect(creatorId) {
+        authViewModel.getUser(creatorId)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,7 +75,7 @@ fun EventCalendarScreen(navController: NavHostController) {
             modifier = Modifier
                 .weight(1f)
         ) {
-            NotEmptyEvents(navController)
+            NotEmptyEvents(navController, creatorId)
         }
         BottomBar(navController)
     }
@@ -79,9 +87,7 @@ fun MyEventsHeader(navController: NavHostController) {
         modifier = Modifier.fillMaxWidth()
     ) {
         IconButton(
-            onClick = { navController.navigate("main") },
-            modifier = Modifier
-                .border(4.dp, Color.White, RoundedCornerShape(12.dp))
+            onClick = { navController.navigate("main") }
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -100,52 +106,83 @@ fun MyEventsHeader(navController: NavHostController) {
 }
 
 @Composable
-fun NotEmptyEvents(navController: NavHostController) {
+fun NotEmptyEvents(
+    navController: NavHostController,
+    creatorId: String
+) {
     val viewModel = hiltViewModel<EventViewModel>()
-    val events by viewModel.eventsFlow.collectAsState()
-    val refresh = remember { mutableStateOf(true) }
+    val events = viewModel.events.collectAsState().value
+    val selectedMonth = viewModel.selectedMonth.collectAsState().value
 
-    val eventShortDays = viewModel.getShortDays(events)
+    LaunchedEffect(Unit) {
+        viewModel.loadEventsForUser(creatorId)
+    }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
+    LazyRow(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.Start,
     ) {
-        events.forEach { event ->
-            Column {
+        item {
+            AllMonthButton(viewModel, selectedMonth)
+            Spacer(modifier = Modifier.width(8.dp))
+            for (i in LocalDate.now().monthValue - 1..Dimensions.ELEVEN) {
                 TextButton(
-                    onClick = { /* Переход на день */ },
+                    onClick = {
+                        viewModel.filterEventsByMonth(i)
+                    },
                     modifier = Modifier
-                        .width(44.dp)
-                        .height(60.dp)
-                        .background(Color.White, RoundedCornerShape(8.dp))
+                        .height(Dimensions.MEDIUM_SPACING_4.dp)
+                        .background(
+                            color = if (selectedMonth == i)
+                                Color(
+                                    Dimensions.COLOR,
+                                    Dimensions.COLOR,
+                                    Dimensions.COLOR,
+                                    Dimensions.ALPHA
+                                )
+                            else Color(Dimensions.COLOR, Dimensions.COLOR, Dimensions.COLOR),
+                            shape = RoundedCornerShape(8.dp)
+                        )
                 ) {
                     Text(
-                        text = event.time.slice(0..1),
+                        text = fullMonthList[i],
                         fontSize = 16.sp,
                         color = Color.Black
                     )
                 }
-                Text(
-                    text = eventShortDays[event.eventId]!!,
-                    fontSize = 16.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(vertical = 4.dp)
-                )
+                Spacer(modifier = Modifier.width(8.dp))
             }
             Spacer(modifier = Modifier.width(10.dp))
         }
     }
     LazyColumn {
         items(events) { event ->
-            OneEvent(event, viewModel, navController, refresh)
-            Spacer(modifier = Modifier.height(10.dp))
+            if (event.time == "") {
+                viewModel.deleteEvent(event.eventId, creatorId)
+            } else {
+                OneEvent(event, viewModel, navController, creatorId)
+            }
         }
+    }
+}
+
+@Composable
+fun AllMonthButton(viewModel: EventViewModel, selectedMonth: Int?) {
+    TextButton(
+        onClick = { viewModel.resetMonthFilter() },
+        modifier = Modifier.height(Dimensions.MEDIUM_SPACING_4.dp)
+            .background(
+                color = if (selectedMonth == null)
+                    Color(Dimensions.COLOR, Dimensions.COLOR, Dimensions.COLOR, Dimensions.ALPHA)
+                else Color(Dimensions.COLOR, Dimensions.COLOR, Dimensions.COLOR),
+                shape = RoundedCornerShape(8.dp)
+            )
+    ) {
+        Text(
+            text = "Все",
+            color = Color.Black,
+            fontSize = 16.sp
+        )
     }
 }
 
@@ -154,7 +191,7 @@ fun OneEvent(
     event: Event,
     viewModel: EventViewModel,
     navController: NavHostController,
-    refresh: MutableState<Boolean>
+    creatorId: String
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val avatars = userViewModel.avatarsPerEvent.collectAsState().value[event.eventId] ?: emptyMap()
@@ -164,32 +201,29 @@ fun OneEvent(
             userViewModel.loadAvatarsForEventCard(event.eventId, event.participants)
         }
     }
-
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = event.time.slice(Dimensions.SIZE_SMALL..Dimensions.SMALL_PADDING_1),
-            fontSize = Dimensions.SMALL_PADDING_3.sp,
-            color = Color.White,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(10.dp)
-        )
+    val day = event.time.slice(0..1).toInt()
+    val month = event.time.slice(Dimensions.THREE..4).toInt()
+    val clockTime = event.time.slice(Dimensions.SIX..10)
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { navController.navigate("eventDetails/${event.eventId}") }
-                .weight(1f)
-                .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(16.dp),
+                .weight(1f).background(Color.White, RoundedCornerShape(20.dp)).padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f)) {
+            EventDateBox(day, month)
+            Spacer(modifier = Modifier.width(20.dp))
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
                 Text(
                     text = event.title,
                     fontSize = 20.sp,
                     color = Color.Black,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Row {
                     avatars.forEach { participantAvatar ->
@@ -198,7 +232,8 @@ fun OneEvent(
                             contentDescription = "Friend Avatar",
                             modifier = Modifier
                                 .size(24.dp)
-                                .clip(CircleShape)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.FillBounds
                         )
                     }
                 }
@@ -207,22 +242,46 @@ fun OneEvent(
                     fontSize = 12.sp,
                     modifier = Modifier.padding(top = 10.dp)
                 )
-//                Text(
-//                    text = "~${event.time}",
-//                    fontSize = 12.sp
-//                )
+                Text(
+                    text = getWeekdayFromDate(day, month) + ", " + clockTime,
+                    fontSize = 12.sp,
+                )
             }
-            DeleteButton(event, viewModel, refresh)
+            DeleteButton(event, viewModel, creatorId)
         }
     }
 }
 
 @Composable
-fun DeleteButton(event: Event, viewModel: EventViewModel, refresh: MutableState<Boolean>) {
+fun EventDateBox(day: Int, month: Int) {
+    Column(
+        modifier = Modifier
+            .height(60.dp)
+            .width(60.dp)
+            .background(colorResource(R.color.light_purple), RoundedCornerShape(12.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = day.toString(),
+            fontWeight = FontWeight(Dimensions.LARGE_ELEMENT_4),
+            fontSize = 24.sp,
+            color = colorResource(R.color.main_purple)
+        )
+        Text(
+            text = monthList[month - 1],
+            fontWeight = FontWeight(Dimensions.LARGE_ELEMENT_6),
+            fontSize = 16.sp,
+            color = colorResource(R.color.main_purple)
+        )
+    }
+}
+
+@Composable
+fun DeleteButton(event: Event, viewModel: EventViewModel, creatorId: String) {
     IconButton(
         onClick = { /* Удаление ивента */
-            viewModel.deleteEvent(event.eventId)
-            refresh.value = !(refresh.value)
+            viewModel.deleteEvent(event.eventId, creatorId)
         },
         modifier = Modifier
             .border(
@@ -232,7 +291,7 @@ fun DeleteButton(event: Event, viewModel: EventViewModel, refresh: MutableState<
             )
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.cross),
+            imageVector = ImageVector.vectorResource(R.drawable.delete_cross),
             contentDescription = "Delete",
             tint = colorResource(R.color.main_pink)
         )
