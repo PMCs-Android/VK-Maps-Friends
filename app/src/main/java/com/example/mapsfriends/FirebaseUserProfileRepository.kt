@@ -70,40 +70,44 @@ class FirebaseUserProfileRepository @Inject constructor (
     ) {
 
         val existingUser = db.document(userId).get().await()
-        if (existingUser.exists()) {
-            return
-        }
 
         val registeredFriends = friends.chunked(MAX_WHERE_IN_LIMIT).flatMap { chunk ->
-            val snapshots = db.whereIn("user_id", chunk).get().await()
-            snapshots.documents.mapNotNull { it.getString("user_id") }
+            val snapshots = db.whereIn("userId", chunk).get().await()
+            snapshots.documents.mapNotNull { it.getString("userId") }
         }
 
-        val user = User(
-            userId = userId,
-            username = username,
-            avatarUrl = avatarUrl,
-            friends = registeredFriends,
-            allFriends = friends,
-            location = location
-        )
-        db.document(userId)
-            .set(user)
-            .await()
+        if (existingUser.exists()) {
+            db.document(userId).update(
+                mapOf(
+                    "username" to username,
+                    "avatarUrl" to avatarUrl,
+                    "friends" to registeredFriends,
+                    "allFriends" to friends,
+                    "location" to location
+                )
+            ).await()
+        } else {
+            val user = User(
+                userId = userId,
+                username = username,
+                avatarUrl = avatarUrl,
+                friends = registeredFriends,
+                allFriends = friends,
+                location = location
+            )
+            db.document(userId).set(user).await()
+        }
+
         val userFriendsInFirestore = db
             .whereArrayContains("allFriends", userId)
             .get()
             .await()
         for (doc in userFriendsInFirestore) {
             val friendId = doc.get("userId") as? String ?: continue
-            val currentFriends = doc.getStringList("friends")
 
-            if (!currentFriends.contains(userId)) {
-                val updatedFriends = currentFriends + userId
-                db.document(friendId)
-                    .update("friends", updatedFriends)
-                    .await()
-            }
+            db.document(friendId)
+                .update("friends", FieldValue.arrayUnion(userId))
+                .await()
         }
     }
 

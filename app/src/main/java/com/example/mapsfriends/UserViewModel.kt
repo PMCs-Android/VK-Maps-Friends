@@ -1,9 +1,16 @@
 package com.example.mapsfriends
 
+import android.Manifest
+import android.app.Application
+import android.content.pm.PackageManager
+import android.location.Location
+import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
 import javax.inject.Inject
@@ -18,8 +25,9 @@ import kotlinx.coroutines.launch
 class UserViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
     private val userFriendsRepository: UserFriendsRepository,
-    private val tokenManager: AuthTokenManager
-) : ViewModel() {
+    private val tokenManager: AuthTokenManager,
+    private val appContext: Application
+) : ViewModel(), LocationManager.OnLocationUpdateListener {
     private val _friends = MutableStateFlow<List<User>>(emptyList())
     val friends: StateFlow<List<User>> = _friends.asStateFlow()
     private val _avatars = MutableStateFlow<Map<String, String>>(emptyMap())
@@ -30,13 +38,58 @@ class UserViewModel @Inject constructor(
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
 
+    private var locationManager: LocationManager? = null
+
     init {
+
         viewModelScope.launch {
             val userId = tokenManager.getUserId()
             if (userId != null) {
                 val user = userProfileRepository.getUserById(userId)
                 _currentUser.value = user
+                if (hasLocationPermissions()) {
+                    locationManager = LocationManager(appContext).apply {
+                        listener = this@UserViewModel
+                        setUserId(user!!.userId)
+                        startLocationUpdates()
+                    }
+                }
             }
+        }
+    }
+
+    override fun onLocationUpdated(location: Location) {
+        println(location)
+        viewModelScope.launch {
+            userProfileRepository.updateUserLocation(
+                _currentUser.value!!.userId,
+                GeoPoint(
+                    location.latitude,
+                    location.longitude
+                )
+            )
+        }
+    }
+
+    override fun onPermissionDenied() {
+        Log.w("UserViewModel", "Location permission denied")
+    }
+
+    override fun onLocationError(error: String) {
+        Log.e("UserViewModel", "Location error: $error")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        locationManager?.stopLocationUpdates()
+    }
+
+    private fun hasLocationPermissions(): Boolean {
+        return listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ).all {
+            ContextCompat.checkSelfPermission(appContext, it) == PackageManager.PERMISSION_GRANTED
         }
     }
 //    fun getUser(userId: String) {

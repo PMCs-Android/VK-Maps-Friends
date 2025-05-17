@@ -230,6 +230,8 @@ class FirebaseEventRepository @Inject constructor(
             eventRef
                 .update("participants", FieldValue.arrayRemove(userId))
                 .await()
+            val participants = eventRef.get().await().getStringList("participants")
+            if (participants.isEmpty()) deleteEvent(eventId)
         } catch (e: IOException) {
             println("Network error at participant $userId delete: $e")
         } catch (e: IllegalStateException) {
