@@ -44,11 +44,11 @@ fun ChatsListScreen(navController: NavHostController) {
                     )
                 )
             )
-            .padding(vertical = 30.dp)
+            .padding(vertical = Dimensions.MEDIUM_SPACING_2.dp)
     ) {
         ChatsHeader(navController)
         LazyColumn(
-            modifier = Modifier.weight(1f).padding(top = 10.dp)
+            modifier = Modifier.weight(1f).padding(top = Dimensions.SMALL_PADDING_1.dp)
         ) {
             items(mockEvents) { event ->
                 OneChat(navController, event)
@@ -60,7 +60,7 @@ fun ChatsListScreen(navController: NavHostController) {
 @Composable
 fun ChatsHeader(navController: NavHostController) {
     Box(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp)
+        modifier = Modifier.fillMaxWidth().padding(horizontal = Dimensions.SMALL_PADDING_1.dp)
     ) {
         IconButton(
             onClick = { navController.navigate("main") }
@@ -73,7 +73,7 @@ fun ChatsHeader(navController: NavHostController) {
         }
         Text(
             text = "Чаты",
-            fontSize = 24.sp,
+            fontSize = DateTimePickers.DEFAULT_PADDING.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.Center)
@@ -87,8 +87,8 @@ fun OneChat(navController: NavHostController, event: MockDataEvents) {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White)
-            .padding(horizontal = 10.dp)
-            .height(80.dp)
+            .padding(horizontal = Dimensions.SMALL_PADDING_1.dp)
+            .height(Dimensions.LARGE_ELEMENT_1.dp)
             .clickable {
                 navController.navigate("messenger")
             },
@@ -97,35 +97,38 @@ fun OneChat(navController: NavHostController, event: MockDataEvents) {
     ) {
         Box(
             modifier = Modifier
-                .height(50.dp)
-                .width(50.dp)
-                .background(colorResource(R.color.main_purple), RoundedCornerShape(12.dp)),
+                .height(Dimensions.MEDIUM_SPACING_4.dp)
+                .width(Dimensions.MEDIUM_SPACING_4.dp)
+                .background(
+                    colorResource(R.color.main_purple),
+                    RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp)
+                ),
         ) {
             Text(
                 text = event.name[0].toString(),
-                fontWeight = FontWeight(700),
-                fontSize = 20.sp,
+                fontWeight = FontWeight(Dimensions.LARGE_ELEMENT_5),
+                fontSize = Dimensions.MEDIUM_SPACING_1.sp,
                 color = Color.White,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
-        Spacer(modifier = Modifier.width(20.dp))
+        Spacer(modifier = Modifier.width(Dimensions.MEDIUM_SPACING_1.dp))
         Column {
             Text(
                 text = event.name,
-                fontWeight = FontWeight(500),
-                fontSize = 16.sp
+                fontWeight = FontWeight(Dimensions.LARGE_ELEMENT_3),
+                fontSize = Dimensions.SMALL_PADDING_3.sp
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(Dimensions.BORDER_WIDTH.dp))
             Row {
                 Text(
                     text = event.members[0].name + ": ",
-                    fontSize = 12.sp,
+                    fontSize = Dimensions.SMALL_PADDING_2.sp,
                     color = colorResource(R.color.main_purple)
                 )
                 Text(
                     text = mockMessages[0].text,
-                    fontSize = 12.sp,
+                    fontSize = Dimensions.SMALL_PADDING_2.sp,
                     color = colorResource(R.color.text_gray)
                 )
             }

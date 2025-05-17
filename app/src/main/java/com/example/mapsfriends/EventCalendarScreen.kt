@@ -123,33 +123,24 @@ fun NotEmptyEvents(
         horizontalArrangement = Arrangement.Start,
     ) {
         item {
-            TextButton(
-                onClick = { viewModel.resetMonthFilter() },
-                modifier = Modifier
-                    .height(45.dp)
-                    .background(
-                        color = if (selectedMonth == null) Color(255, 255, 255, 180)
-                        else Color(255, 255, 255),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-            ) {
-                Text(
-                    text = "Все",
-                    color = Color.Black,
-                    fontSize = 16.sp
-                )
-            }
+            AllMonthButton(viewModel, selectedMonth)
             Spacer(modifier = Modifier.width(8.dp))
-            for (i in LocalDate.now().monthValue - 1..11) {
+            for (i in LocalDate.now().monthValue - 1..Dimensions.ELEVEN) {
                 TextButton(
                     onClick = {
                         viewModel.filterEventsByMonth(i)
                     },
                     modifier = Modifier
-                        .height(45.dp)
+                        .height(Dimensions.MEDIUM_SPACING_4.dp)
                         .background(
-                            color = if (selectedMonth == i) Color(255, 255, 255, 180)
-                            else Color(255, 255, 255),
+                            color = if (selectedMonth == i)
+                                Color(
+                                    Dimensions.COLOR,
+                                    Dimensions.COLOR,
+                                    Dimensions.COLOR,
+                                    Dimensions.ALPHA
+                                )
+                            else Color(Dimensions.COLOR, Dimensions.COLOR, Dimensions.COLOR),
                             shape = RoundedCornerShape(8.dp)
                         )
                 ) {
@@ -176,6 +167,26 @@ fun NotEmptyEvents(
 }
 
 @Composable
+fun AllMonthButton(viewModel: EventViewModel, selectedMonth: Int?) {
+    TextButton(
+        onClick = { viewModel.resetMonthFilter() },
+        modifier = Modifier.height(Dimensions.MEDIUM_SPACING_4.dp)
+            .background(
+                color = if (selectedMonth == null)
+                    Color(Dimensions.COLOR, Dimensions.COLOR, Dimensions.COLOR, Dimensions.ALPHA)
+                else Color(Dimensions.COLOR, Dimensions.COLOR, Dimensions.COLOR),
+                shape = RoundedCornerShape(8.dp)
+            )
+    ) {
+        Text(
+            text = "Все",
+            color = Color.Black,
+            fontSize = 16.sp
+        )
+    }
+}
+
+@Composable
 fun OneEvent(
     event: Event,
     viewModel: EventViewModel,
@@ -191,8 +202,8 @@ fun OneEvent(
         }
     }
     val day = event.time.slice(0..1).toInt()
-    val month = event.time.slice(3..4).toInt()
-    val clockTime = event.time.slice(6..10)
+    val month = event.time.slice(Dimensions.THREE..4).toInt()
+    val clockTime = event.time.slice(Dimensions.SIX..10)
     Row(
         modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
     ) {
@@ -200,32 +211,10 @@ fun OneEvent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { navController.navigate("eventDetails/${event.eventId}") }
-                .weight(1f)
-                .background(Color.White, RoundedCornerShape(20.dp))
-                .padding(16.dp),
+                .weight(1f).background(Color.White, RoundedCornerShape(20.dp)).padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier
-                    .height(60.dp)
-                    .width(60.dp)
-                    .background(colorResource(R.color.light_purple), RoundedCornerShape(12.dp)),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = day.toString(),
-                    fontWeight = FontWeight(800),
-                    fontSize = 24.sp,
-                    color = colorResource(R.color.main_purple)
-                )
-                Text(
-                    text = monthList[month - 1],
-                    fontWeight = FontWeight(500),
-                    fontSize = 16.sp,
-                    color = colorResource(R.color.main_purple)
-                )
-            }
+            EventDateBox(day, month)
             Spacer(modifier = Modifier.width(20.dp))
             Column(
                 modifier = Modifier.weight(1f)
@@ -264,8 +253,32 @@ fun OneEvent(
 }
 
 @Composable
-fun DeleteButton(event: Event, viewModel: EventViewModel, creatorId: String) {
+fun EventDateBox(day: Int, month: Int) {
+    Column(
+        modifier = Modifier
+            .height(60.dp)
+            .width(60.dp)
+            .background(colorResource(R.color.light_purple), RoundedCornerShape(12.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = day.toString(),
+            fontWeight = FontWeight(Dimensions.LARGE_ELEMENT_4),
+            fontSize = 24.sp,
+            color = colorResource(R.color.main_purple)
+        )
+        Text(
+            text = monthList[month - 1],
+            fontWeight = FontWeight(Dimensions.LARGE_ELEMENT_6),
+            fontSize = 16.sp,
+            color = colorResource(R.color.main_purple)
+        )
+    }
+}
 
+@Composable
+fun DeleteButton(event: Event, viewModel: EventViewModel, creatorId: String) {
     IconButton(
         onClick = { /* Удаление ивента */
             viewModel.deleteEvent(event.eventId, creatorId)

@@ -131,7 +131,7 @@ fun MessagesOutput(message: Messages) {
             model = message.user.avatarUrl,
             contentDescription = "Participant Avatar",
             modifier = Modifier
-                .size(36.dp)
+                .size(Dimensions.MEDIUM_SPACING_3.dp)
                 .align(Alignment.CenterVertically)
                 .clip(CircleShape),
             contentScale = ContentScale.FillBounds
@@ -216,7 +216,7 @@ fun MessengerHeader(navController: NavHostController) {
                         model = member.avatarUrl,
                         contentDescription = "friend avatar",
                         modifier = Modifier
-                            .size(24.dp)
+                            .size(DateTimePickers.DEFAULT_PADDING.dp)
                             .align(Alignment.CenterVertically)
                             .clip(CircleShape),
                         contentScale = ContentScale.FillBounds

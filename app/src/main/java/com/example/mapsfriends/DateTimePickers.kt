@@ -54,7 +54,7 @@ object DateTimePickers {
     const val SMALL_PADDING = 6
     const val DEFAULT_PADDING = 24
     const val MEDIUM_FIELD = 40
-    const val LARGE_DIALOG = 100
+    const val LARGE_DIALOG = 110
 }
 
 @Composable
@@ -66,7 +66,7 @@ fun CreateEventDateInput(
     Column {
         Row(
             modifier = Modifier
-                .width(110.dp)
+                .width(DateTimePickers.LARGE_DIALOG.dp)
                 .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
                 .padding(start = Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -91,8 +91,8 @@ fun CreateEventDateInput(
             Text(
                 text = "Выберите дату",
                 color = Color.Red,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(start = 8.dp)
+                fontSize = Dimensions.SMALL_PADDING_2.sp,
+                modifier = Modifier.padding(start = Dimensions.SMALL_PADDING_1.dp)
             )
         }
     }
@@ -107,7 +107,7 @@ fun CreateEventTimeInput(
     Column {
         Row(
             modifier = Modifier
-                .width(110.dp)
+                .width(DateTimePickers.LARGE_DIALOG.dp)
                 .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
                 .padding(start = Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -132,8 +132,8 @@ fun CreateEventTimeInput(
             Text(
                 text = "Выберите время",
                 color = Color.Red,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(start = 8.dp)
+                fontSize = Dimensions.SMALL_PADDING_2.sp,
+                modifier = Modifier.padding(start = Dimensions.SMALL_PADDING_1.dp)
             )
         }
     }

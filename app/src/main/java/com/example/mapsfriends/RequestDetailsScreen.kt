@@ -110,7 +110,7 @@ fun RequestDetailsHeader(
                 color = Color.White
             )
             Text(
-                text = request.time.slice(6..10),
+                text = request.time.slice(Dimensions.SIX..10),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -143,7 +143,7 @@ fun RequestDetailsMembers(
 ) {
     Row(
         modifier = Modifier
-            .height(48.dp)
+            .height(Dimensions.MEDIUM_SPACING_4.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
             .padding(horizontal = 10.dp)
     ) {
@@ -167,14 +167,18 @@ fun RequestAcceptRefuseButtons() {
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.White, RoundedCornerShape(20.dp))
-            .padding(10.dp),
+            .padding(Dimensions.SMALL_PADDING_1.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(
             onClick = { /* Принять заявку */ },
             modifier = Modifier
                 .width(64.dp)
-                .border(2.dp, colorResource(R.color.main_blue), RoundedCornerShape(16.dp))
+                .border(
+                    Dimensions.TWO.dp,
+                    colorResource(R.color.main_blue),
+                    RoundedCornerShape(16.dp)
+                )
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.acception),

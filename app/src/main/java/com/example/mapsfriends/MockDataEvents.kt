@@ -35,22 +35,22 @@ val mockEvents = listOf(
     MockDataEvents(
         2,
         "Шашлычки",
-        17,
-        5,
+        Dimensions.SEVENTEEN,
+        Dimensions.SIZE_SMALL,
         "12:00",
         "шашлычок у прудика",
         "Новочеркасская, 9",
-        listOf(mockUsers[2], mockUsers[3], mockUsers[0])
+        listOf(mockUsers[2], mockUsers[Dimensions.THREE], mockUsers[0])
     ),
     MockDataEvents(
-        3,
+        Dimensions.THREE,
         "Аквапарк",
         25,
-        5,
+        Dimensions.SIZE_SMALL,
         "13:30",
         "бульк бульк",
         "Новочеркасская, 9",
-        listOf(mockUsers[0], mockUsers[3])
+        listOf(mockUsers[0], mockUsers[Dimensions.THREE])
     )
 )
 

@@ -44,7 +44,7 @@ val mockUsers = listOf(
         avatarUrl = (
             "https://avatars.mds.yandex.net/get-entity_search/1969011/918366713/orig"
             ),
-        location = LatLng(55.756589, 37.616584)
+        location = LatLng(Dimensions.GEO1, Dimensions.GEO2)
     ),
     MockDataUsers(
         id = "5",
@@ -53,7 +53,7 @@ val mockUsers = listOf(
             "https://avatars.mds.yandex.net/i?id=cec8f250ccb137c3967117548aab15ff2ed043ef-" +
                 "4303091-images-thumbs&n=13"
             ),
-        location = LatLng(55.756589, 37.616584)
+        location = LatLng(Dimensions.GEO3, Dimensions.GEO4)
     )
 )
 

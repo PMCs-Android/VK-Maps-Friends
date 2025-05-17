@@ -38,16 +38,16 @@ import androidx.navigation.NavHostController
 fun PedometerScreen(navController: NavHostController) {
     val data = remember {
         listOf(
-            "26.05" to 3965,
-            "27.05" to 7561,
-            "28.05" to 4965,
-            "29.05" to 5865,
-            "30.05" to 7965,
-            "01.06" to 0
+            "26.05" to Dimensions.STEPS_DAY_1,
+            "27.05" to Dimensions.STEPS_DAY_2,
+            "28.05" to Dimensions.STEPS_DAY_3,
+            "29.05" to Dimensions.STEPS_DAY_4,
+            "30.05" to Dimensions.STEPS_DAY_5,
+            "01.06" to Dimensions.NO_STEPS
         )
     }
 
-    val targetLevels = listOf(3000, 6000, 10000) // Три целевых уровня
+    val targetLevels = listOf(Dimensions.LEVEL_1, Dimensions.LEVEL_2, Dimensions.LEVEL_3)
 
     Column(
         modifier = Modifier
@@ -70,15 +70,15 @@ fun PedometerScreen(navController: NavHostController) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-                .background(Color.White, RoundedCornerShape(20.dp))
+                .height(Dimensions.LARGE_ELEMENT_2.dp)
+                .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
         ) {
             Histogram(
                 data = data,
                 levels = targetLevels,
-                maxHeight = 250.dp,
-                barWidth = 30.dp,
-                spacing = 8.dp
+                maxHeight = Dimensions.BAR_HEIGHT.dp,
+                barWidth = Dimensions.MEDIUM_SPACING_2.dp,
+                spacing = Dimensions.NINE.dp
             )
         }
     }
@@ -100,7 +100,7 @@ fun PedometerHeader(navController: NavHostController) {
         }
         Text(
             text = "Твои шаги",
-            fontSize = 24.sp,
+            fontSize = DateTimePickers.DEFAULT_PADDING.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.Center)
@@ -118,30 +118,7 @@ fun Histogram(
 ) {
     val maxValue = data.maxOfOrNull { it.second } ?: 1
 
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        levels.forEach { level ->
-            val yPos = size.height * (1 - level.toFloat() / maxValue)
-            drawLine(
-                color = Color.Gray,
-                start = Offset(0f, yPos),
-                end = Offset(size.width, yPos),
-                strokeWidth = 1.dp.toPx()
-            )
-
-            drawContext.canvas.nativeCanvas.apply {
-                drawText(
-                    level.toString(),
-                    size.width - 8.dp.toPx(),
-                    yPos - 8.dp.toPx(),
-                    android.graphics.Paint().apply {
-                        color = Color.Gray.toArgb()
-                        textSize = 12.sp.toPx()
-                        textAlign = android.graphics.Paint.Align.RIGHT
-                    }
-                )
-            }
-        }
-    }
+    CanvasDraw(levels, maxValue)
 
     Row(
         verticalAlignment = Alignment.Bottom,
@@ -158,22 +135,23 @@ fun Histogram(
                 if (heightRatio != 0f) {
                     Text(
                         text = value.toString(),
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 4.dp)
+                        fontSize = Dimensions.SMALL_PADDING_2.sp,
+                        modifier = Modifier.padding(top = Dimensions.BORDER_WIDTH.dp)
                     )
                     Box(
-                        modifier = Modifier
-                            .height(maxHeight * heightRatio)
-                            .width(barWidth)
+                        modifier = Modifier.height(maxHeight * heightRatio).width(barWidth)
                             .background(
                                 colorResource(R.color.main_purple),
-                                RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
+                                RoundedCornerShape(
+                                    topStart = Dimensions.BORDER_WIDTH.dp,
+                                    topEnd = Dimensions.BORDER_WIDTH.dp
+                                )
                             )
                     )
                 }
                 Text(
                     text = label,
-                    fontSize = 12.sp,
+                    fontSize = Dimensions.SMALL_PADDING_2.sp,
                     modifier = Modifier.width(barWidth + spacing),
                     textAlign = TextAlign.Center
                 )
@@ -181,73 +159,31 @@ fun Histogram(
         }
     }
 }
-// Подписи под столбцами
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = spacing),
-//                horizontalArrangement = Arrangement.SpaceBetween
-//            ) {
-//                data.forEach { (label, _) ->
-//                    Text(
-//                        text = label,
-//                        fontSize = 12.sp,
-//                        modifier = Modifier.width(barWidth),
-//                        textAlign = TextAlign.Center
-//                    )
-//                }
-//            }
 
-//    Box(modifier = modifier) {
-//        // Фон с линиями сетки
-//        Canvas(modifier = Modifier.matchParentSize()) {
-//            // Горизонтальные линии сетки
-//            for (i in 1..4) {
-//                val y = size.height * (1 - i * 0.2f)
-//                drawLine(
-//                    color = Color.LightGray.copy(alpha = 0.3f),
-//                    start = Offset(0f, y),
-//                    end = Offset(size.width, y),
-//                    strokeWidth = 1.dp.toPx()
-//                )
-//            }
-//        }
-//
-//        Column(modifier = modifier) {
-//            Row(
-//                verticalAlignment = Alignment.Bottom,
-//                horizontalArrangement = Arrangement.Center,
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                data.forEach { (label, value) ->
-//                    val heightRatio = value.toFloat() / maxValue.toFloat()
-//
-//                    Column(
-//                        horizontalAlignment = Alignment.CenterHorizontally,
-//                        modifier = Modifier.padding(horizontal = spacing / 2)
-//                    ) {
-//                        Text(
-//                            text = value.toString(),
-//                            fontSize = 12.sp,
-//                            modifier = Modifier.padding(top = 4.dp)
-//                        )
-//                        Box(
-//                            modifier = Modifier
-//                                .height(maxBarHeight * heightRatio)
-//                                .width(barWidth)
-//                                .background(
-//                                    barColor,
-//                                    RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
-//                                )
-//                        )
-//                        Text(
-//                            text = label,
-//                            fontSize = 12.sp,
-//                            modifier = Modifier.width(barWidth + spacing),
-//                            textAlign = TextAlign.Center
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    }
+@Composable
+fun CanvasDraw(levels: List<Int>, maxValue: Int) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        levels.forEach { level ->
+            val yPos = size.height * (1 - level.toFloat() / maxValue)
+            drawLine(
+                color = Color.Gray,
+                start = Offset(0f, yPos),
+                end = Offset(size.width, yPos),
+                strokeWidth = 1.dp.toPx()
+            )
+
+            drawContext.canvas.nativeCanvas.apply {
+                drawText(
+                    level.toString(),
+                    size.width - Dimensions.NINE.dp.toPx(),
+                    yPos - Dimensions.NINE.dp.toPx(),
+                    android.graphics.Paint().apply {
+                        color = Color.Gray.toArgb()
+                        textSize = Dimensions.SMALL_PADDING_2.sp.toPx()
+                        textAlign = android.graphics.Paint.Align.RIGHT
+                    }
+                )
+            }
+        }
+    }
+}

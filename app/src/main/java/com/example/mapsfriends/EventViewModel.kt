@@ -31,6 +31,9 @@ class EventViewModel @Inject constructor(
     private val _titleError = mutableStateOf(false)
     private val _descriptionError = mutableStateOf(false)
     private val _selectedMonth = MutableStateFlow<Int?>(null)
+    private val _dateError = mutableStateOf(false)
+    private val _timeError = mutableStateOf(false)
+
     private val currentUserId: String = tokenManager.getUserId() ?: ""
 
     val selectedMonth: StateFlow<Int?> = _selectedMonth
@@ -44,35 +47,43 @@ class EventViewModel @Inject constructor(
     val avatars: StateFlow<Map<String, String?>> = _avatars
     val titleError: MutableState<Boolean> = _titleError
     val descriptionError: MutableState<Boolean> = _descriptionError
+    val dateError: MutableState<Boolean> = _dateError
+    val timeError: MutableState<Boolean> = _timeError
 
     fun validateFields(): Boolean {
         val isValid =
-            !currentEvent.value?.title.isNullOrBlank() && !currentEvent.value?.description.isNullOrBlank()
+            !currentEvent.value?.title.isNullOrBlank() &&
+                !currentEvent.value?.description.isNullOrBlank() &&
+                currentEvent.value?.time?.length == Dimensions.ELEVEN
 
         _titleError.value = currentEvent.value?.title.isNullOrBlank()
         _descriptionError.value = currentEvent.value?.description.isNullOrBlank()
-
+        currentEvent.value?.time?.length?.let { _dateError.value = it <= Dimensions.BORDER_WIDTH }
+        currentEvent.value?.time?.length?.let {
+            _timeError.value = it <= Dimensions.SMALL_PADDING_1
+        }
+        println(dateError.value)
         return isValid
     }
 
     fun filterEventsByMonth(month: Int) {
         _selectedMonth.value = month
         _events.value = _allEvents.value.filter { event ->
-            event.time.slice(3..4).toInt() == (month + 1)
+            event.time.slice(Dimensions.THREE..Dimensions.BORDER_WIDTH).toInt() == (month + 1)
         }.sortedWith(
             compareBy(
                 {
                     LocalDate.of(
                         LocalDate.now().year,
-                        it.time.slice(3..4).toInt(),
+                        it.time.slice(Dimensions.THREE..Dimensions.BORDER_WIDTH).toInt(),
                         it.time.slice(0..1).toInt()
                     )
                 },
                 {
                     LocalDate.of(
                         LocalDate.now().year,
-                        it.time.slice(6..7).toInt(),
-                        it.time.slice(9..10).toInt()
+                        it.time.slice(Dimensions.SIX..Dimensions.SEVEN).toInt(),
+                        it.time.slice(Dimensions.NINE..Dimensions.SMALL_PADDING_1).toInt()
                     )
                 }
             )
@@ -122,7 +133,7 @@ class EventViewModel @Inject constructor(
                 _participants.value.filter { it.userId != event.creatorId }.forEach { user ->
                     eventRepository.addParticipant(event.eventId, user.userId)
                 }
-                loadParticipants(event.eventId)
+                _participants.value = eventRepository.getParticipants(event.eventId)
                 userProfileRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error saving event: ${e.message}")
@@ -151,9 +162,9 @@ class EventViewModel @Inject constructor(
         }
     }
 
-    suspend fun loadParticipants(eventId: String) {
-        _participants.value = eventRepository.getParticipants(eventId)
-    }
+//    suspend fun loadParticipants(eventId: String) {
+//        _participants.value = eventRepository.getParticipants(eventId)
+//    }
 
     fun loadEventsForUser(userId: String) {
         viewModelScope.launch {
@@ -178,14 +189,14 @@ class EventViewModel @Inject constructor(
                     compareBy<Event> {
                         LocalDate.of(
                             LocalDate.now().year,
-                            it.time.slice(3..4).toInt(),
+                            it.time.slice(Dimensions.THREE..Dimensions.BORDER_WIDTH).toInt(),
                             it.time.slice(0..1).toInt()
                         )
                     }.thenBy {
                         LocalDate.of(
                             LocalDate.now().year,
-                            it.time.slice(6..7).toInt(),
-                            it.time.slice(9..10).toInt()
+                            it.time.slice(Dimensions.SIX..Dimensions.SEVEN).toInt(),
+                            it.time.slice(Dimensions.NINE..Dimensions.SMALL_PADDING_1).toInt()
                         )
                     }
                 )

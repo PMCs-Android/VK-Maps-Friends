@@ -69,8 +69,8 @@ fun CreateEventScreen(
     val time = remember { mutableStateOf("") }
     val showDatePicker = remember { mutableStateOf(false) }
     val showTimePicker = remember { mutableStateOf(false) }
-    val dateError = remember { mutableStateOf(false) }
-    val timeError = remember { mutableStateOf(false) }
+    val dateError = viewModel.dateError
+    val timeError = viewModel.timeError
     val state = rememberDatePickerState()
     val timePickerState = rememberTimePickerState(
         initialHour = LocalDateTime.now().hour,
@@ -109,7 +109,6 @@ fun CreateEventScreen(
         }
         DateInput(showDatePicker, state, date)
         TimeInput(showTimePicker, timePickerState, time)
-//        viewModel.setEventTime(date.value + " " + time.value)
         CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel, creatorId)
         CreateEventAddLocation(navController)
@@ -119,13 +118,7 @@ fun CreateEventScreen(
                 .padding(Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            CreateEventDoneButton(
-                viewModel,
-                navController,
-                dateError,
-                timeError,
-                date.value + " " + time.value
-            )
+            CreateEventDoneButton(viewModel, navController, date.value + " " + time.value)
         }
     }
 }
@@ -154,7 +147,7 @@ fun CreateEventHeader(
         }
         Text(
             text = "Создание ивента",
-            fontSize = 24.sp,
+            fontSize = DateTimePickers.DEFAULT_PADDING.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
             modifier = Modifier.align(Alignment.Center)
@@ -337,16 +330,11 @@ fun CreateEventAddLocation(navController: NavHostController) {
 fun CreateEventDoneButton(
     viewModel: EventViewModel,
     navController: NavHostController,
-    dateError: MutableState<Boolean>,
-    timeError: MutableState<Boolean>,
     datetime: String
 ) {
     TextButton(
         onClick = {
-            println(datetime.length)
-            dateError.value = (if (datetime.length < 4) true else false)
-            timeError.value = (if (datetime.length <= 5) true else false)
-            if (viewModel.validateFields() && !dateError.value && !timeError.value) {
+            if (viewModel.validateFields()) {
                 viewModel.setEventTime(datetime)
                 viewModel.saveCurrentEvent()
                 navController.navigate("events")
