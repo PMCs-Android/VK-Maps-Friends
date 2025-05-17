@@ -19,9 +19,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -40,14 +40,14 @@ import coil.compose.AsyncImage
 @Composable
 fun RequestDetailsScreen(
     navController: NavHostController,
-    eventId: String,
+    requestId: String,
     userViewModel: UserViewModel = hiltViewModel(),
     viewModel: EventViewModel = hiltViewModel()
 ) {
 
     val avatars = viewModel.avatars.collectAsState().value
-    LaunchedEffect(eventId) {
-        viewModel.getEvent(eventId)
+    LaunchedEffect(requestId) {
+        viewModel.getEvent(requestId)
     }
     val event = viewModel.currentEvent.collectAsState().value
     Column(
@@ -65,8 +65,8 @@ fun RequestDetailsScreen(
     ) {
         if (event != null) {
             RequestDetailsHeader(navController, event)
-            RequestDetailsDescription(request)
-            RequestDetailsMembers(request)
+            RequestDetailsDescription(event)
+            RequestDetailsMembers(avatars as Map<String, String>)
             EventLocation()
             RequestAcceptRefuseButtons()
         }
@@ -104,13 +104,13 @@ fun RequestDetailsHeader(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = event.time.slice(0..4),
+                text = request.time.slice(0..4),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Text(
-                text = event.time.slice(6..10),
+                text = request.time.slice(6..10),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
@@ -120,7 +120,7 @@ fun RequestDetailsHeader(
 }
 
 @Composable
-fun RequestDetailsDescription(request: MockDataEvents) {
+fun RequestDetailsDescription(request: Event) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -138,16 +138,18 @@ fun RequestDetailsDescription(request: MockDataEvents) {
 }
 
 @Composable
-fun RequestDetailsMembers(request: MockDataEvents) {
+fun RequestDetailsMembers(
+    avatars: Map<String, String>
+) {
     Row(
         modifier = Modifier
             .height(48.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
             .padding(horizontal = 10.dp)
     ) {
-        request.members.forEach { member ->
+        avatars.forEach { member ->
             AsyncImage(
-                model = member.avatarUrl,
+                model = member.value,
                 contentDescription = "Participant Avatar",
                 modifier = Modifier
                     .size(36.dp)

@@ -62,7 +62,7 @@ import java.time.LocalDateTime
 @Composable
 fun CreateEventScreen(
     navController: NavHostController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
     viewModel: EventViewModel = hiltViewModel()
 ) {
     val date = remember { mutableStateOf("") }

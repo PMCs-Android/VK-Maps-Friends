@@ -307,4 +307,3 @@ fun getWeekdayFromDate(day: Int, month: Int): String {
     val date = LocalDate.of(LocalDate.now().year, month, day)
     return date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("ru")).lowercase()
 }
-

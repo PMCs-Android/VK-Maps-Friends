@@ -163,7 +163,7 @@ fun OneRequest(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navController.navigate("requestDetails/${event.id}") }
+                .clickable { navController.navigate("requestDetails/${event.eventId}") }
                 .weight(1f)
                 .background(Color.White, RoundedCornerShape(20.dp))
                 .padding(16.dp),
@@ -178,13 +178,13 @@ fun OneRequest(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = event.day.toString(),
+                    text = event.time.slice(0..1),
                     fontWeight = FontWeight(800),
                     fontSize = 24.sp,
                     color = colorResource(R.color.main_purple)
                 )
                 Text(
-                    text = monthList[event.month - 1],
+                    text = monthList[event.time.slice(3..4).toInt() - 1],
                     fontWeight = FontWeight(500),
                     fontSize = 16.sp,
                     color = colorResource(R.color.main_purple)
@@ -202,9 +202,9 @@ fun OneRequest(
                     fontWeight = FontWeight.Bold,
                 )
                 Row {
-                    event.members.forEach { member ->
+                    avatars.forEach { member ->
                         AsyncImage(
-                            model = member.avatarUrl,
+                            model = member.value,
                             contentDescription = "Friend Avatar",
                             modifier = Modifier
                                 .size(24.dp)
@@ -219,7 +219,11 @@ fun OneRequest(
                     modifier = Modifier.padding(top = 10.dp)
                 )
                 Text(
-                    text = getWeekdayFromDate(event.day, event.month) + ", " + event.time,
+                    text = getWeekdayFromDate(
+                        event.time.slice(0..1).toInt(),
+                        event.time.slice(3..4).toInt()
+                    ) +
+                        ", " + event.time.slice(6..10),
                     fontSize = 12.sp,
                 )
             }

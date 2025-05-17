@@ -54,7 +54,6 @@ val mockUsers = listOf(
                 "4303091-images-thumbs&n=13"
             ),
         location = LatLng(55.756589, 37.616584)
-    ),
     )
 )
 

@@ -40,15 +40,13 @@ import coil.compose.AsyncImage
 @OptIn(ExperimentalMaterial3Api::class)
 fun AddParticipantsScreen(
     eventViewModel: EventViewModel,
-    showAddFriend: MutableState<Boolean>,
-    creatorId: String
+    showAddFriend: MutableState<Boolean>
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val friends by userViewModel.friends.collectAsState()
 
     LaunchedEffect(Unit) {
         userViewModel.startObservingUserFriends()
-
     }
     ModalBottomSheet(
         onDismissRequest = {

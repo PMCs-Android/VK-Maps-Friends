@@ -1,8 +1,8 @@
 package com.example.mapsfriends
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mapsfriends.login.AuthTokenManager
@@ -15,9 +15,8 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -39,9 +38,8 @@ class EventViewModel @Inject constructor(
     val selectedMonth: StateFlow<Int?> = _selectedMonth
     val events: StateFlow<List<Event>> = _events
 
-    val eventsFlow: StateFlow<List<Event>> = eventRepository
-        .observeEventsByUserId(currentUserId)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+//    val eventsFlow: StateFlow<List<Event>> = eventRepository.observeEventsByUserId(currentUserId)
+//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
@@ -51,8 +49,7 @@ class EventViewModel @Inject constructor(
 
     fun validateFields(): Boolean {
         val isValid =
-            !currentEvent.value?.title.isNullOrBlank() &&
-                    !currentEvent.value?.description.isNullOrBlank()
+            !currentEvent.value?.title.isNullOrBlank() && !currentEvent.value?.description.isNullOrBlank()
 
         _titleError.value = currentEvent.value?.title.isNullOrBlank()
         _descriptionError.value = currentEvent.value?.description.isNullOrBlank()
@@ -89,7 +86,7 @@ class EventViewModel @Inject constructor(
         _events.value = _allEvents.value
     }
 
-    fun createNewEvent(creatorId: String) {
+    fun createNewEvent() {
         _currentEvent.value = Event(
             eventId = UUID.randomUUID().toString(),
             creatorId = currentUserId,
@@ -116,11 +113,12 @@ class EventViewModel @Inject constructor(
     fun saveCurrentEvent() {
         viewModelScope.launch {
             try {
-                val event = _currentEvent.value?.copy(
-                    invites = _participants.value
-                        .map { it.userId }
-                        .filter { it != currentUserId }
-                ) ?: throw IllegalStateException("Event not created")
+                val event =
+                    _currentEvent.value?.copy(
+                        invites = _participants.value.map { it.userId }
+                            .filter { it != currentUserId }
+                    )
+                        ?: throw IllegalStateException("Event not created")
                 println("event id:${event.eventId}: Event: $event")
                 eventRepository.createEvent(event)
                 _participants.value.filter { it.userId != event.creatorId }.forEach { user ->
@@ -155,45 +153,65 @@ class EventViewModel @Inject constructor(
         }
     }
 
-
     suspend fun loadParticipants(eventId: String) {
         _participants.value = eventRepository.getParticipants(eventId)
     }
 
     fun loadEventsForUser(userId: String) {
         viewModelScope.launch {
-            try {
-                _allEvents.value = eventRepository.getEventsByUserId(userId).sortedWith(
-                    compareBy(
-                        {
-                            LocalDate.of(
-                                LocalDate.now().year,
-                                it.time.slice(3..4).toInt(),
-                                it.time.slice(0..1).toInt()
-                            )
-                        },
-                        {
-                            LocalDate.of(
-                                LocalDate.now().year,
-                                it.time.slice(6..7).toInt(),
-                                it.time.slice(9..10).toInt()
-                            )
-                        }
-                    )
+            eventRepository.observeEventsByUserId(userId).catch { e ->
+                when (e) {
+                    is FirebaseFirestoreException -> {
+                        println("Firestore error loading events: ${e.message}")
+                    }
+
+                    is IOException -> {
+                        println("Network error loading events: ${e.message}")
+                    }
+
+                    else -> {
+                        println("Unknown error loading events: ${e.message}")
+                    }
+                }
+                _events.value = emptyList()
+                _allEvents.value = emptyList()
+            }.collect { events ->
+                val sortedEvents = events.sortedWith(
+                    compareBy<Event> {
+                        LocalDate.of(
+                            LocalDate.now().year,
+                            it.time.slice(3..4).toInt(),
+                            it.time.slice(0..1).toInt()
+                        )
+                    }.thenBy {
+                        LocalDate.of(
+                            LocalDate.now().year,
+                            it.time.slice(6..7).toInt(),
+                            it.time.slice(9..10).toInt()
+                        )
+                    }
                 )
-                _events.value = _allEvents.value
-            } catch (e: FirebaseFirestoreException) {
-                println("Firestore error loading events: ${e.message}")
-                _events.value = emptyList()
-            } catch (e: IOException) {
-                println("Network error loading events: ${e.message}")
-                _events.value = emptyList()
+                _allEvents.value = sortedEvents
+                _events.value = sortedEvents
             }
         }
     }
 
+//    fun loadEventsForUser(userId: String) {
+//        viewModelScope.launch {
+//            try {
+//                _events.value = eventRepository.getEventsByUserId(userId)
+//            } catch (e: FirebaseFirestoreException) {
+//                println("Firestore error loading events: ${e.message}")
+//                _events.value = emptyList()
+//            } catch (e: IOException) {
+//                println("Network error loading events: ${e.message}")
+//                _events.value = emptyList()
+//            }
+//        }
+//    }
 
-    fun deleteEvent(eventId: String) {
+    fun deleteEvent(eventId: String, creatorId: String) {
         viewModelScope.launch {
             try {
                 eventRepository.deleteParticipant(eventId, currentUserId)
