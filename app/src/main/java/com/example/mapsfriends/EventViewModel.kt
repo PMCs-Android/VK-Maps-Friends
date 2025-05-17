@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
 import java.time.LocalDate
@@ -59,6 +60,10 @@ class EventViewModel @Inject constructor(
 
     fun setEventTime(time: String) {
         _currentEvent.value = _currentEvent.value?.copy(time = time)
+    }
+
+    fun setEventLocation(location: GeoPoint) {
+        _currentEvent.value = _currentEvent.value?.copy(location = location)
     }
 
     fun saveCurrentEvent() {
