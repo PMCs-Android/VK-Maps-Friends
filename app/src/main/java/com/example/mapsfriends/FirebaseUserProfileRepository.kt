@@ -75,8 +75,8 @@ class FirebaseUserProfileRepository @Inject constructor (
         }
 
         val registeredFriends = friends.chunked(MAX_WHERE_IN_LIMIT).flatMap { chunk ->
-            val snapshots = db.whereIn("user_id", chunk).get().await()
-            snapshots.documents.mapNotNull { it.getString("user_id") }
+            val snapshots = db.whereIn("userId", chunk).get().await()
+            snapshots.documents.mapNotNull { it.getString("userId") }
         }
 
         val user = User(

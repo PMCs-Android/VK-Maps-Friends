@@ -2,7 +2,7 @@ package com.example.mapsfriends.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mapsfriends.FirebaseUserProfileRepository
+import com.example.mapsfriends.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,10 +11,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val tokenManager: AuthTokenManager
+    private val tokenManager: AuthTokenManager,
+    private val repository: UserProfileRepository
 ) : ViewModel() {
-    private val repository = FirebaseUserProfileRepository()
-
     private val _isUserRegistered = MutableStateFlow<Boolean?>(null)
     val isUserRegistered: StateFlow<Boolean?> = _isUserRegistered
 

@@ -165,7 +165,7 @@ fun MainScreen(
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         IconButton(
-                            onClick = { /* Показать друзей */ },
+                            onClick = { navController.navigate("friends") },
                             modifier = Modifier
                                 .background(Color.White, RoundedCornerShape(12.dp))
                                 .border(4.dp, colorResource(R.color.main_pink), RoundedCornerShape(12.dp))

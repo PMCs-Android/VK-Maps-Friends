@@ -142,15 +142,6 @@ fun ProfileScreen(
                 }
             }
         }
-//        Icon(
-//            imageVector = Icons.Default.AccountCircle,
-//            contentDescription = "Profile Icon",
-//            tint = Color.Cyan,
-//            modifier = Modifier
-//                .height(240.dp)
-//                .width(240.dp)
-//                .align(Alignment.CenterHorizontally)
-//        )
         AsyncImage(
             model = user.avatarUrl,
             contentDescription = "Friend Avatar",
