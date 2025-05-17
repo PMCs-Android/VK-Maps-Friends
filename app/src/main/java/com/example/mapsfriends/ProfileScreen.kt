@@ -142,30 +142,24 @@ fun ProfileScreen(
                 }
             }
         }
-
-        Icon(
-            imageVector = Icons.Default.AccountCircle,
-            contentDescription = "Profile Icon",
-            tint = Color.Cyan,
-            modifier = Modifier
-                .height(240.dp)
-                .width(240.dp)
-                .align(Alignment.CenterHorizontally)
-        )
-
-//        AsyncImage(
-//            model = user.avatarUrl, // URL вашего изображения
-//            contentDescription = "Profile Avatar", // Описание для доступности
+//        Icon(
+//            imageVector = Icons.Default.AccountCircle,
+//            contentDescription = "Profile Icon",
+//            tint = Color.Cyan,
 //            modifier = Modifier
 //                .height(240.dp)
 //                .width(240.dp)
 //                .align(Alignment.CenterHorizontally)
-//                .padding(top = 20.dp, bottom = 16.dp) // Добавим отступы
-//                .clip(CircleShape) // Делаем изображение круглым
-//                .border(2.dp, Color.White, CircleShape), // Белая рамка вокруг круга
-//            contentScale = ContentScale.Crop, // Обрезаем изображение, чтобы оно заполнило круг
 //        )
-
+        AsyncImage(
+            model = user.avatarUrl,
+            contentDescription = "Friend Avatar",
+            modifier = Modifier
+                .height(Dimensions.PROFILE_ICON_SIZE.dp)
+                .width(Dimensions.PROFILE_ICON_SIZE.dp)
+                .align(Alignment.CenterHorizontally)
+                .clip(CircleShape)
+        )
         Text(
             text = user.username,
             fontSize = 28.sp,
@@ -185,5 +179,71 @@ fun LoadingView() {
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Загрузка профиля...", color = Color.White)
+    }
+}
+
+@Composable
+fun FriendProfileScreen(
+    navController: NavHostController,
+    viewModel: MapViewModel = hiltViewModel(),
+    userId: String
+) {
+    val user = viewModel.selectedUser.collectAsState().value
+
+    androidx.compose.runtime.LaunchedEffect(userId) {
+        viewModel.getUser(userId)
+    }
+
+    if (user == null) {
+        LoadingView()
+        viewModel.getUser(userId)
+        return
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        colorResource(R.color.bg_blue),
+                        colorResource(R.color.bg_pink)
+                    )
+                )
+            )
+            .padding(vertical = 30.dp, horizontal = 10.dp)
+    ) {
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .border(
+                    4.dp,
+                    Color.White,
+                    RoundedCornerShape(16.dp)
+                )
+
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.cross),
+                contentDescription = "Delete",
+                tint = Color.White,
+            )
+        }
+        AsyncImage(
+            model = user.avatarUrl,
+            contentDescription = "Friend Avatar",
+            modifier = Modifier
+                .height(Dimensions.PROFILE_ICON_SIZE.dp)
+                .width(Dimensions.PROFILE_ICON_SIZE.dp)
+                .align(Alignment.CenterHorizontally)
+                .clip(CircleShape)
+        )
+        Text(
+            text = user.username,
+            fontSize = 28.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
     }
 }

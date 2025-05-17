@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.mapsfriends.UserViewModel
 import com.example.mapsfriends.login.AuthViewModel
 import com.example.mapsfriends.login.vk.VkAuthViewModel
 import com.vk.id.VKIDAuthFail
@@ -22,7 +23,8 @@ import com.vk.id.onetap.compose.onetap.OneTapTitleScenario
 fun VKIDButton(
     onLoginSuccess: () -> Unit,
     tokenManager: AuthViewModel = hiltViewModel(),
-    vkAuthViewModel: VkAuthViewModel = hiltViewModel()
+    vkAuthViewModel: VkAuthViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
@@ -32,7 +34,7 @@ fun VKIDButton(
                 token = accessToken.token,
                 userId = accessToken.userID.toString()
             )
-
+//            userViewModel.getUser(accessToken.userID.toString())
             vkAuthViewModel.signUp(onSuccess = onLoginSuccess)
         },
         onFail = { _, fail ->

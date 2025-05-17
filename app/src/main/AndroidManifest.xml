@@ -22,11 +22,11 @@
         tools:targetApi="31">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB4SoTT_aBfOjPsoej8T-B6R7XOX-pQLhE" />
+            android:value="${MAPS_API_KEY}" />
 
         <meta-data
             android:name="com.vk.sdk.VKApplicationId"
-            android:value="53221768" />
+            android:value="${VK_APP_ID}" />
 
         <activity
             android:name=".MainActivity"

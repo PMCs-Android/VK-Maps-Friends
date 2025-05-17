@@ -1,8 +1,8 @@
 package com.example.mapsfriends.login.firebase
 
 import androidx.lifecycle.ViewModel
-import com.example.mapsfriends.FirebaseUserProfileRepository
 import com.example.mapsfriends.User
+import com.example.mapsfriends.UserProfileRepository
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -15,9 +15,9 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class FirebaseAuthViewModel @Inject constructor(
-    private val tokenManager: AuthTokenManager
+    private val tokenManager: AuthTokenManager,
+    private val repository: UserProfileRepository
 ) : ViewModel() {
-    private val repository = FirebaseUserProfileRepository()
     private val auth = Firebase.auth
 
     fun signUp(
