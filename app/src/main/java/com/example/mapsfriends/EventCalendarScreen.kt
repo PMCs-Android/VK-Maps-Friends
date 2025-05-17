@@ -119,9 +119,7 @@ fun NotEmptyEvents(
     }
 
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 16.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.Start,
     ) {
         item {
@@ -196,9 +194,7 @@ fun OneEvent(
     val month = event.time.slice(3..4).toInt()
     val clockTime = event.time.slice(6..10)
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp)
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
     ) {
         Row(
             modifier = Modifier

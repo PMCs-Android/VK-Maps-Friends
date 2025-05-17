@@ -76,8 +76,6 @@ fun PedometerScreen(navController: NavHostController) {
             Histogram(
                 data = data,
                 levels = targetLevels,
-                barColor = colorResource(R.color.main_purple),
-                levelColor = Color.Gray,
                 maxHeight = 250.dp,
                 barWidth = 30.dp,
                 spacing = 8.dp
@@ -114,8 +112,6 @@ fun PedometerHeader(navController: NavHostController) {
 fun Histogram(
     data: List<Pair<String, Int>>,
     levels: List<Int>,
-    barColor: Color,
-    levelColor: Color,
     maxHeight: Dp,
     barWidth: Dp,
     spacing: Dp
@@ -126,7 +122,7 @@ fun Histogram(
         levels.forEach { level ->
             val yPos = size.height * (1 - level.toFloat() / maxValue)
             drawLine(
-                color = levelColor,
+                color = Color.Gray,
                 start = Offset(0f, yPos),
                 end = Offset(size.width, yPos),
                 strokeWidth = 1.dp.toPx()
@@ -138,7 +134,7 @@ fun Histogram(
                     size.width - 8.dp.toPx(),
                     yPos - 8.dp.toPx(),
                     android.graphics.Paint().apply {
-                        color = levelColor.toArgb()
+                        color = Color.Gray.toArgb()
                         textSize = 12.sp.toPx()
                         textAlign = android.graphics.Paint.Align.RIGHT
                     }
@@ -170,7 +166,7 @@ fun Histogram(
                             .height(maxHeight * heightRatio)
                             .width(barWidth)
                             .background(
-                                barColor,
+                                colorResource(R.color.main_purple),
                                 RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
                             )
                     )

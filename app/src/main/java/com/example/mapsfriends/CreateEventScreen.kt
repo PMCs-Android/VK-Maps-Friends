@@ -85,19 +85,14 @@ fun CreateEventScreen(
         if (currentEvent == null) viewModel.createNewEvent()
     }
     DisposableEffect(Unit) {
-        onDispose {
-            viewModel.tryDeleteIncompleteEvent()
-        }
+        onDispose { viewModel.tryDeleteIncompleteEvent() }
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
             .background(
                 brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        colorResource(R.color.bg_blue),
-                        colorResource(R.color.bg_pink)
-                    )
+                    colors = listOf(colorResource(R.color.bg_blue), colorResource(R.color.bg_pink))
                 )
             )
             .padding(
@@ -114,7 +109,7 @@ fun CreateEventScreen(
         }
         DateInput(showDatePicker, state, date)
         TimeInput(showTimePicker, timePickerState, time)
-        viewModel.setEventTime(date.value + " " + time.value)
+//        viewModel.setEventTime(date.value + " " + time.value)
         CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel, creatorId)
         CreateEventAddLocation(navController)
@@ -124,7 +119,13 @@ fun CreateEventScreen(
                 .padding(Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            CreateEventDoneButton(viewModel, navController, dateError, timeError, date, time)
+            CreateEventDoneButton(
+                viewModel,
+                navController,
+                dateError,
+                timeError,
+                date.value + " " + time.value
+            )
         }
     }
 }
@@ -300,8 +301,7 @@ fun CreateEventAddParticipants(
     if (showAddFriend.value) {
         AddParticipantsScreen(
             viewModel,
-            showAddFriend,
-            creatorId
+            showAddFriend
         )
     }
 }
@@ -339,16 +339,15 @@ fun CreateEventDoneButton(
     navController: NavHostController,
     dateError: MutableState<Boolean>,
     timeError: MutableState<Boolean>,
-    date: MutableState<String>,
-    time: MutableState<String>
+    datetime: String
 ) {
     TextButton(
         onClick = {
-            dateError.value = date.value.isBlank()
-            timeError.value = time.value.isBlank()
-
+            println(datetime.length)
+            dateError.value = (if (datetime.length < 4) true else false)
+            timeError.value = (if (datetime.length <= 5) true else false)
             if (viewModel.validateFields() && !dateError.value && !timeError.value) {
-                viewModel.setEventTime(date.value + " " + time.value)
+                viewModel.setEventTime(datetime)
                 viewModel.saveCurrentEvent()
                 navController.navigate("events")
             }

@@ -10,8 +10,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
 import java.time.LocalDate
-import java.time.format.TextStyle
-import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -197,20 +195,6 @@ class EventViewModel @Inject constructor(
         }
     }
 
-//    fun loadEventsForUser(userId: String) {
-//        viewModelScope.launch {
-//            try {
-//                _events.value = eventRepository.getEventsByUserId(userId)
-//            } catch (e: FirebaseFirestoreException) {
-//                println("Firestore error loading events: ${e.message}")
-//                _events.value = emptyList()
-//            } catch (e: IOException) {
-//                println("Network error loading events: ${e.message}")
-//                _events.value = emptyList()
-//            }
-//        }
-//    }
-
     fun deleteEvent(eventId: String, creatorId: String) {
         viewModelScope.launch {
             try {
@@ -249,17 +233,6 @@ class EventViewModel @Inject constructor(
                 _currentEvent.value = null
                 Log.d("EventViewModel", "Incomplete event deleted")
             }
-        }
-    }
-
-    fun getShortDays(events: List<Event>): Map<String, String> {
-        val year = LocalDate.now().year
-        return events.associate { event ->
-            val (datePart, _) = event.time.split(" ")
-            val (day, month) = datePart.split(".").map { it.toInt() }
-            val date = LocalDate.of(year, month, day)
-            val shortDay = date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale("ru")).take(2)
-            event.eventId to shortDay
         }
     }
 }

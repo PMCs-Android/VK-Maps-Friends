@@ -148,9 +148,6 @@ fun OneRequest(
     event: Event,
     userViewModel: UserViewModel = hiltViewModel(),
 ) {
-
-    val eventDate = parseEventDate(event.time)
-
     LaunchedEffect(event) {
         if (!userViewModel.avatarsPerEvent.value.containsKey(event.eventId)) {
             userViewModel.loadAvatarsForEventCard(event.eventId, event.participants)
@@ -194,7 +191,6 @@ fun OneRequest(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-
                 Text(
                     text = event.title,
                     fontSize = 20.sp,
@@ -206,9 +202,7 @@ fun OneRequest(
                         AsyncImage(
                             model = member.value,
                             contentDescription = "Friend Avatar",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clip(CircleShape),
+                            modifier = Modifier.size(24.dp).clip(CircleShape),
                             contentScale = ContentScale.FillBounds
                         )
                     }
