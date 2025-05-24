@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mapsfriends.R
 import com.example.mapsfriends.login.firebase.FirebaseAuthViewModel
-import com.example.mapsfriends.ui.theme.MainGradient
 
 @Composable
 fun LoginScreen(

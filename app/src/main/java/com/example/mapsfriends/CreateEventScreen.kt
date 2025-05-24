@@ -21,7 +21,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -318,22 +317,6 @@ fun CreateEventAddLocation(
             .height(Dimensions.LARGE_ELEMENT_2.dp)
             .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
     ) {
-//        Text(
-//            text = mockEvents[0].location,
-//            fontSize = Dimensions.SMALL_PADDING_3.sp,
-//            fontWeight = FontWeight.Bold,
-//            modifier = Modifier
-//                .padding(
-//                    start = Dimensions.SMALL_PADDING_1.dp,
-//                    top = Dimensions.SMALL_PADDING_1.dp
-//                )
-//        )
-//        Box(
-//            modifier = Modifier.padding(Dimensions.SMALL_PADDING_1.dp)
-//        ) {
-//            // MapScreen()
-//        }
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()

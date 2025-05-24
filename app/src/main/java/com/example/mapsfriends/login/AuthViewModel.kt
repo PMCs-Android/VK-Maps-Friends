@@ -5,12 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.mapsfriends.User
 import com.example.mapsfriends.UserProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okio.IOException
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
@@ -54,7 +54,7 @@ class AuthViewModel @Inject constructor(
             try {
                 val userProfile = userProfileRepository.getUserById(userId)
                 _isUserRegistered.value = (userProfile != null)
-            } catch (e: Exception) {
+            } catch (e: IOException) {
                 _isUserRegistered.value = false
             }
         }
