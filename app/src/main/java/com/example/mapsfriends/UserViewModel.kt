@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -61,7 +63,7 @@ class UserViewModel @Inject constructor(
 
     fun startObservingUserFriends() {
         viewModelScope.launch {
-            val userId = _currentUser.value?.userId ?: return@launch
+            val userId = currentUser.filterNotNull().first().userId
             userFriendsRepository.observeFriendsList(userId)
                 .catch { e ->
                     println("Error observing events: ${e.message}")

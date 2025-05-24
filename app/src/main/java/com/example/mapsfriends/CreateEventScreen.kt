@@ -55,6 +55,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.mapsfriends.login.AuthViewModel
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.firestore.GeoPoint
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.rememberCameraPositionState
 import java.time.LocalDateTime
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -111,7 +116,7 @@ fun CreateEventScreen(
         TimeInput(showTimePicker, timePickerState, time)
         CreateEventDescriptionInput(viewModel, currentEvent)
         CreateEventAddParticipants(showAddFriend, viewModel, creatorId)
-        CreateEventAddLocation(navController)
+        CreateEventAddLocation(viewModel)
         Row(
             modifier = Modifier.fillMaxWidth()
                 .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
@@ -300,29 +305,43 @@ fun CreateEventAddParticipants(
 }
 
 @Composable
-fun CreateEventAddLocation(navController: NavHostController) {
+fun CreateEventAddLocation(
+    viewModel: EventViewModel
+) {
+    val currentEvent by viewModel.currentEvent.collectAsState()
+    val selectedLocation = remember { mutableStateOf<GeoPoint?>(null) }
+
     Column(
         modifier = Modifier
             .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
             .height(Dimensions.LARGE_ELEMENT_2.dp)
             .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
-
     ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            GoogleMap(
+                modifier = Modifier.fillMaxSize(),
+                cameraPositionState = rememberCameraPositionState {
+                    position = CameraPosition.fromLatLngZoom(
+                        LatLng(55.7558, 37.6173),
+                        10f
+                    )
+                },
+                onMapClick = { latLng ->
+                    selectedLocation.value = GeoPoint(latLng.latitude, latLng.longitude)
+                    viewModel.setEventLocation(selectedLocation.value ?: GeoPoint(0.0, 0.0))
+                }
+            )
+        }
         Text(
-            text = mockEvents[0].location,
+            text = currentEvent?.location.toString() ?: "Место не выбрано",
             fontSize = Dimensions.SMALL_PADDING_3.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .padding(
-                    start = Dimensions.SMALL_PADDING_1.dp,
-                    top = Dimensions.SMALL_PADDING_1.dp
-                )
+            modifier = Modifier.padding(all = Dimensions.SMALL_PADDING_1.dp)
         )
-        Box(
-            modifier = Modifier.fillMaxWidth().padding(Dimensions.SMALL_PADDING_1.dp)
-        ) {
-            MapScreen(navController)
-        }
     }
 }
 

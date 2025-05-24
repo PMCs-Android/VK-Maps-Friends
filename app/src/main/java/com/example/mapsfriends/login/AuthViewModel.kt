@@ -10,12 +10,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okio.IOException
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val tokenManager: AuthTokenManager,
     private val userProfileRepository: UserProfileRepository
 ) : ViewModel() {
+    private val _isUserRegistered = MutableStateFlow<Boolean?>(null)
+    val isUserRegistered: StateFlow<Boolean?> = _isUserRegistered
+
     private val _currentUser = MutableStateFlow<User?>(null)
     val currentUser: StateFlow<User?> = _currentUser
 
@@ -37,6 +41,26 @@ class AuthViewModel @Inject constructor(
 
     fun saveAuthData(token: String, userId: String) {
         tokenManager.saveAuthData(token, userId)
-        _currentUserId.value = userId
+    }
+
+    fun checkUserInFirebase() {
+        val userId = getCurrentUserId()
+        if (userId == null) {
+            _isUserRegistered.value = false
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val userProfile = userProfileRepository.getUserById(userId)
+                _isUserRegistered.value = (userProfile != null)
+            } catch (e: IOException) {
+                _isUserRegistered.value = false
+            }
+        }
+    }
+
+    fun logout() {
+        tokenManager.clear()
     }
 }

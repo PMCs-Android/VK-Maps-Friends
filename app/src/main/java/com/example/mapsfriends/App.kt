@@ -63,5 +63,6 @@ fun App(startDestination: String) {
                 userId = backStackEntry.arguments?.getString("userId") ?: "1"
             )
         }
+        composable("friends") { FriendsScreen(navController) }
     }
 }
