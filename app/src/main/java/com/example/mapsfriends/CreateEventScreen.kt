@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.mapsfriends.login.AuthViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
@@ -66,12 +68,15 @@ import java.time.LocalDateTime
 @Composable
 fun CreateEventScreen(
     navController: NavHostController,
+    authViewModel: AuthViewModel = hiltViewModel(),
     viewModel: EventViewModel = hiltViewModel()
 ) {
     val date = remember { mutableStateOf("") }
     val time = remember { mutableStateOf("") }
     val showDatePicker = remember { mutableStateOf(false) }
     val showTimePicker = remember { mutableStateOf(false) }
+    val dateError = viewModel.dateError
+    val timeError = viewModel.timeError
     val state = rememberDatePickerState()
     val timePickerState = rememberTimePickerState(
         initialHour = LocalDateTime.now().hour,
@@ -80,24 +85,20 @@ fun CreateEventScreen(
     )
     val currentEvent by viewModel.currentEvent.collectAsState()
     val showAddFriend = remember { mutableStateOf(false) }
+    val creatorId = authViewModel.getCurrentUserId()!!
 
     LaunchedEffect(Unit) {
         if (currentEvent == null) viewModel.createNewEvent()
     }
     DisposableEffect(Unit) {
-        onDispose {
-            viewModel.tryDeleteIncompleteEvent()
-        }
+        onDispose { viewModel.tryDeleteIncompleteEvent() }
     }
 
     Column(
         modifier = Modifier.fillMaxSize()
             .background(
                 brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        colorResource(R.color.bg_blue),
-                        colorResource(R.color.bg_pink)
-                    )
+                    colors = listOf(colorResource(R.color.bg_blue), colorResource(R.color.bg_pink))
                 )
             )
             .padding(
@@ -105,18 +106,17 @@ fun CreateEventScreen(
                 horizontal = Dimensions.SMALL_PADDING_1.dp
             )
     ) {
-        ExitButton(navController)
+        CreateEventHeader(navController, viewModel, currentEvent?.eventId ?: "", creatorId)
         CreateEventTitleInput(viewModel, currentEvent)
         Row(modifier = Modifier.padding(top = Dimensions.SMALL_PADDING_1.dp)) {
-            CreateEventDateInput(showDatePicker, date)
+            CreateEventDateInput(showDatePicker, date, dateError)
             Spacer(modifier = Modifier.width(Dimensions.SMALL_PADDING_1.dp))
-            CreateEventTimeInput(showTimePicker, time)
+            CreateEventTimeInput(showTimePicker, time, timeError)
         }
         DateInput(showDatePicker, state, date)
         TimeInput(showTimePicker, timePickerState, time)
-        viewModel.setEventTime(date.value + " " + time.value)
         CreateEventDescriptionInput(viewModel, currentEvent)
-        CreateEventAddParticipants(showAddFriend, viewModel)
+        CreateEventAddParticipants(showAddFriend, viewModel, creatorId)
         CreateEventAddLocation(viewModel)
         Row(
             modifier = Modifier.fillMaxWidth()
@@ -124,32 +124,46 @@ fun CreateEventScreen(
                 .padding(Dimensions.SMALL_PADDING_1.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            CreateEventDoneButton(viewModel, navController)
+            CreateEventDoneButton(viewModel, navController, date.value + " " + time.value)
         }
     }
 }
 
 @Composable
-fun ExitButton(navController: NavHostController) {
-    IconButton(
-        onClick = { navController.popBackStack() },
-        modifier = Modifier
-            .border(
-                Dimensions.BORDER_WIDTH.dp,
-                Color.White,
-                RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp)
-            )
+fun CreateEventHeader(
+    navController: NavHostController,
+    eventViewModel: EventViewModel,
+    eventId: String,
+    creatorId: String
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.cross),
-            contentDescription = "Back",
-            tint = Color.White
+        IconButton(
+            onClick = {
+                eventViewModel.deleteEvent(eventId, creatorId)
+                navController.popBackStack()
+            }
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.cross),
+                contentDescription = "Back",
+                tint = Color.White
+            )
+        }
+        Text(
+            text = "Создание ивента",
+            fontSize = DateTimePickers.DEFAULT_PADDING.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
 
 @Composable
 fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
+    val isError = viewModel.titleError.value
     TextField(
         value = event?.title ?: "",
         onValueChange = { viewModel.setEventTitle(it) },
@@ -157,13 +171,15 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
         shape = RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(Dimensions.MEDIUM_SPACING_5.dp)
+            .height(Dimensions.LARGE_ELEMENT_1.dp)
             .padding(top = Dimensions.SMALL_PADDING_1.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent
+            focusedIndicatorColor = Color.Transparent,
+            errorContainerColor = Color.White,
+            errorIndicatorColor = Color.Transparent
         ),
         placeholder = {
             Text(
@@ -171,6 +187,15 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
                 fontSize = Dimensions.SMALL_PADDING_3.sp,
                 color = Color.Gray
             )
+        },
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(
+                    "Это поле обязательно для заполнения",
+                    color = Color.Red
+                )
+            }
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -181,6 +206,7 @@ fun CreateEventTitleInput(viewModel: EventViewModel, event: Event?) {
 
 @Composable
 fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
+    val isError = viewModel.descriptionError.value
     TextField(
         value = event?.description ?: "",
         onValueChange = { viewModel.setEventDescription(it) },
@@ -194,7 +220,9 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
             unfocusedIndicatorColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent
+            focusedIndicatorColor = Color.Transparent,
+            errorContainerColor = Color.White,
+            errorIndicatorColor = Color.Transparent
         ),
         placeholder = {
             Text(
@@ -202,6 +230,15 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
                 fontSize = Dimensions.SMALL_PADDING_3.sp,
                 color = Color.Gray
             )
+        },
+        isError = isError,
+        supportingText = {
+            if (isError) {
+                Text(
+                    "Это поле обязательно для заполнения",
+                    color = Color.Red
+                )
+            }
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
@@ -213,7 +250,8 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
 @Composable
 fun CreateEventAddParticipants(
     showAddFriend: MutableState<Boolean>,
-    viewModel: EventViewModel
+    viewModel: EventViewModel,
+    creatorId: String
 ) {
     val participants by viewModel.participants.collectAsState()
     val createdEventId = viewModel.currentEvent.collectAsState().value?.eventId
@@ -241,7 +279,8 @@ fun CreateEventAddParticipants(
                     contentDescription = "Friend Avatar",
                     modifier = Modifier
                         .size(Dimensions.MEDIUM_SPACING_3.dp)
-                        .clip(CircleShape)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.FillBounds
                 )
             }
             IconButton(
@@ -324,11 +363,18 @@ fun CreateEventAddLocation(
 }
 
 @Composable
-fun CreateEventDoneButton(viewModel: EventViewModel, navController: NavHostController) {
+fun CreateEventDoneButton(
+    viewModel: EventViewModel,
+    navController: NavHostController,
+    datetime: String
+) {
     TextButton(
         onClick = {
-            viewModel.saveCurrentEvent()
-            navController.navigate("events")
+            if (viewModel.validateFields()) {
+                viewModel.setEventTime(datetime)
+                viewModel.saveCurrentEvent()
+                navController.navigate("events")
+            }
         },
         modifier = Modifier.border(
             Dimensions.BORDER_WIDTH.dp,

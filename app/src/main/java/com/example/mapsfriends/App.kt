@@ -27,15 +27,6 @@ fun App(startDestination: String) {
         composable("main") { MainScreen(navController) }
         composable("events") { EventCalendarScreen(navController) }
         composable("requests") { RequestsScreen(navController) }
-        composable(
-            route = "requestDetails/{eventId}",
-            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            RequestDetailsScreen(
-                navController = navController,
-                eventId = backStackEntry.arguments?.getString("eventId") ?: ""
-            )
-        }
         composable("create") { CreateEventScreen(navController) }
         composable("profile") { ProfileScreen(navController) }
         composable(
@@ -48,9 +39,21 @@ fun App(startDestination: String) {
             )
         }
         composable("messenger") { MessengerScreen(navController) }
+        composable("chats") { ChatsListScreen(navController) }
+        composable(
+            route = "requestDetails/{requestId}",
+            arguments = listOf(navArgument("requestId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            RequestDetailsScreen(
+                navController = navController,
+                requestId = backStackEntry.arguments?.getString("requestId") ?: ""
+            )
+        }
         composable("map") {
             MapScreen(navController = navController)
         }
+        composable("profile") { ProfileScreen(navController) }
+        composable("stepStatistic") { PedometerScreen(navController) }
         composable(
             route = "profile/{userId}",
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
