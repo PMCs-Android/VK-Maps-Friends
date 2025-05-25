@@ -113,13 +113,7 @@ fun PopBackStack(
     navController: NavHostController
 ) {
     IconButton(
-        onClick = { navController.popBackStack() },
-        modifier = Modifier
-            .border(
-                4.dp,
-                Color.White,
-                RoundedCornerShape(16.dp)
-            )
+        onClick = { navController.popBackStack() }
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.cross),

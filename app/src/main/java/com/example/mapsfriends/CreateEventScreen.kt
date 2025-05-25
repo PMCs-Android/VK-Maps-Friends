@@ -345,6 +345,7 @@ fun CreateEventAddLocation(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(Dimensions.SMALL_PADDING_1.dp)
                     .weight(1f)
             ) {
                 GoogleMap(
@@ -401,10 +402,10 @@ fun CreateEventDoneButton(
     navController: NavHostController,
     datetime: String
 ) {
+    viewModel.setEventTime(datetime)
     TextButton(
         onClick = {
             if (viewModel.validateFields()) {
-                viewModel.setEventTime(datetime)
                 viewModel.saveCurrentEvent()
                 navController.navigate("events")
             }
