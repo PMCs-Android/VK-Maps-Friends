@@ -9,11 +9,14 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.net.HttpURLConnection
+import java.net.URL
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
@@ -141,5 +144,19 @@ class MapViewModel @Inject constructor(
                 markers.add(newMarker)
             }
         }
+    }
+    suspend fun getOSMAddress(lat: Double, lon: Double): String? {
+        val url = "https://nominatim.openstreetmap.org/" +
+            "reverse?format=json&lat=$lat&lon=$lon&accept-language=ru"
+
+        val connection = URL(url).openConnection() as HttpURLConnection
+
+        connection.requestMethod = "GET"
+        connection.setRequestProperty("User-Agent", "YourAppName") // Важно для OSM
+
+        val json = connection.inputStream.bufferedReader().use { it.readText() }
+        val jsonObject = JSONObject(json)
+
+        return jsonObject.optString("display_name").takeIf { it.isNotEmpty() }
     }
 }
