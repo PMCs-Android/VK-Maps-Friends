@@ -117,6 +117,10 @@ class MapViewModel @Inject constructor(
         return LatLng(point.latitude, point.longitude)
     }
 
+    fun convertToGeoPoint(point: LatLng): GeoPoint {
+        return GeoPoint(point.latitude, point.longitude)
+    }
+
     override fun onCleared() {
         super.onCleared()
         locationJobs.values.forEach { it.cancel() }

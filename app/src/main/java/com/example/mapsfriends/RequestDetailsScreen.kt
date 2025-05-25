@@ -67,7 +67,7 @@ fun RequestDetailsScreen(
             RequestDetailsHeader(navController, event)
             RequestDetailsDescription(event)
             RequestDetailsMembers(avatars as Map<String, String>)
-            EventLocation()
+            EventLocation(event = event)
             RequestAcceptRefuseButtons()
         }
     }

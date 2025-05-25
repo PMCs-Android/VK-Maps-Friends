@@ -34,7 +34,6 @@ class EventViewModel @Inject constructor(
     private val _selectedMonth = MutableStateFlow<Int?>(null)
     private val _dateError = mutableStateOf(false)
     private val _timeError = mutableStateOf(false)
-
     private val currentUserId: String = tokenManager.getUserId() ?: ""
 
     val selectedMonth: StateFlow<Int?> = _selectedMonth
@@ -131,11 +130,6 @@ class EventViewModel @Inject constructor(
                         ?: throw IllegalStateException("Event not created")
                 println("event id:${event.eventId}: Event: $event")
                 eventRepository.createEvent(event)
-                _participants.value.filter { it.userId != event.creatorId }.forEach { user ->
-                    eventRepository.addParticipant(event.eventId, user.userId)
-                }
-                _participants.value = eventRepository.getParticipants(event.eventId)
-                userProfileRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error saving event: ${e.message}")
             } catch (e: IOException) {

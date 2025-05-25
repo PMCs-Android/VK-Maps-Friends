@@ -345,6 +345,7 @@ fun CreateEventAddLocation(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(Dimensions.SMALL_PADDING_1.dp)
                     .weight(1f)
             ) {
                 GoogleMap(
