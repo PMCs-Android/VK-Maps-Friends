@@ -80,9 +80,7 @@ fun FriendsScreenHeader(navController: NavHostController) {
         modifier = Modifier.fillMaxWidth()
     ) {
         IconButton(
-            onClick = { navController.navigate("main") },
-            modifier = Modifier
-                .border(4.dp, Color.White, RoundedCornerShape(12.dp))
+            onClick = { navController.navigate("main") }
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.cross),
@@ -108,7 +106,7 @@ fun FriendRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(Dimensions.LARGE_ELEMENT_1.dp)
+            .height(110.dp)
             .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
             .background(
                 Color.White,

@@ -148,86 +148,60 @@ fun OneRequest(
     event: Event,
     userViewModel: UserViewModel = hiltViewModel()
 ) {
+    val avatars = userViewModel.avatarsPerEvent.collectAsState().value[event.eventId] ?: emptyMap()
+
     LaunchedEffect(event) {
         if (!userViewModel.avatarsPerEvent.value.containsKey(event.eventId)) {
             userViewModel.loadAvatarsForEventCard(event.eventId, event.participants)
         }
     }
-    val avatars = userViewModel.avatarsPerEvent.collectAsState().value[event.eventId] ?: emptyMap()
+    val day = event.time.slice(0..1).toInt()
+    val month = event.time.slice(Dimensions.THREE..4).toInt()
+    val clockTime = event.time.slice(Dimensions.SIX..10)
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { navController.navigate("requestDetails/${event.eventId}") }
-            .background(Color.White, RoundedCornerShape(20.dp)).padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .height(Dimensions.DATE_BOX.dp)
-                .width(Dimensions.DATE_BOX.dp)
-                .background(colorResource(R.color.light_purple), RoundedCornerShape(12.dp)),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .fillMaxWidth()
+                .clickable { navController.navigate("requestDetails/${event.eventId}") }
+                .weight(1f).background(Color.White, RoundedCornerShape(20.dp)).padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = event.time.slice(0..1),
-                fontWeight = FontWeight(Dimensions.LARGE_ELEMENT_4),
-                fontSize = 24.sp,
-                color = colorResource(R.color.main_purple)
-            )
-            Text(
-                text = monthList[event.time.slice(Dimensions.THREE..4).toInt() - 1],
-                fontWeight = FontWeight(Dimensions.LARGE_ELEMENT_6),
-                fontSize = 16.sp,
-                color = colorResource(R.color.main_purple)
-            )
-        }
-        Spacer(modifier = Modifier.width(20.dp))
-        RequestInformation(event, avatars)
-        RequestButtons(event.eventId)
-    }
-    Spacer(modifier = Modifier.width(10.dp))
-}
-
-@Composable
-fun RequestInformation(event: Event, avatars: Map<String, String>) {
-    Row(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = event.title,
-                fontSize = 20.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-            )
-            Row {
-                avatars.forEach { member ->
-                    AsyncImage(
-                        model = member.value,
-                        contentDescription = "Friend Avatar",
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.FillBounds
-                    )
+            EventDateBox(day, month)
+            Spacer(modifier = Modifier.width(20.dp))
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = event.title,
+                    fontSize = 20.sp,
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                )
+                Row {
+                    avatars.forEach { participantAvatar ->
+                        AsyncImage(
+                            model = participantAvatar.value,
+                            contentDescription = "Friend Avatar",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.FillBounds
+                        )
+                    }
                 }
+                Text(
+                    text = event.description,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+                Text(
+                    text = getWeekdayFromDate(day, month) + ", " + clockTime,
+                    fontSize = 12.sp,
+                )
             }
-            Text(
-                text = event.description,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(top = 10.dp)
-            )
-            Text(
-                text = getWeekdayFromDate(
-                    event.time.slice(0..1).toInt(),
-                    event.time.slice(Dimensions.THREE..4).toInt()
-                ) +
-                    ", " + event.time.slice(Dimensions.SIX..10),
-                fontSize = 12.sp,
-            )
+            RequestButtons(event.eventId)
         }
     }
 }

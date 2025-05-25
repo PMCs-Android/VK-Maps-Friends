@@ -128,7 +128,9 @@ fun StepStatisticsButton(
     navController: NavHostController
 ) {
     IconButton(
-        onClick = { /* Показать статистику шагов */ },
+        onClick = { /* Показать статистику шагов */
+            navController.navigate("stepStatistic")
+        },
         modifier = Modifier
             .background(Color.White, RoundedCornerShape(12.dp))
             .border(
@@ -188,7 +190,7 @@ fun CenteringGeoPositionButton() {
 @Composable
 fun ChatButton(navController: NavHostController) {
     IconButton(
-        onClick = { navController.navigate("messenger") },
+        onClick = { navController.navigate("chats") },
         modifier = Modifier
             .background(Color.White, RoundedCornerShape(12.dp))
             .border(

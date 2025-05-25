@@ -40,9 +40,6 @@ class EventViewModel @Inject constructor(
     val selectedMonth: StateFlow<Int?> = _selectedMonth
     val events: StateFlow<List<Event>> = _events
 
-//    val eventsFlow: StateFlow<List<Event>> = eventRepository.observeEventsByUserId(currentUserId)
-//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
-
     val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
     val avatars: StateFlow<Map<String, String?>> = _avatars
@@ -63,7 +60,6 @@ class EventViewModel @Inject constructor(
         currentEvent.value?.time?.length?.let {
             _timeError.value = it <= Dimensions.SMALL_PADDING_1
         }
-        println(dateError.value)
         return isValid
     }
 

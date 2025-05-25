@@ -351,10 +351,10 @@ fun CreateEventDoneButton(
     navController: NavHostController,
     datetime: String
 ) {
+    viewModel.setEventTime(datetime)
     TextButton(
         onClick = {
             if (viewModel.validateFields()) {
-                viewModel.setEventTime(datetime)
                 viewModel.saveCurrentEvent()
                 navController.navigate("events")
             }
