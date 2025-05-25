@@ -3,6 +3,8 @@ package com.example.mapsfriends
 import android.app.Application
 import android.content.Context
 import com.example.mapsfriends.login.AuthTokenManager
+import com.example.mapsfriends.messenger.FirebaseMessengerRepository
+import com.example.mapsfriends.messenger.MessengerRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,6 +39,12 @@ object AppModule {
     @Singleton
     fun provideEventRepository(userRepository: UserProfileRepository): EventRepository {
         return FirebaseEventRepository(userRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessengerRepository(userRepository: UserProfileRepository): MessengerRepository {
+        return FirebaseMessengerRepository(userRepository)
     }
 
     @Provides

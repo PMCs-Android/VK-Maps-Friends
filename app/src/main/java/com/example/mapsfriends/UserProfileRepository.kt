@@ -1,5 +1,7 @@
 package com.example.mapsfriends
 
+import com.example.mapsfriends.messenger.Chat
+import com.example.mapsfriends.messenger.Message
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.flow.Flow
 
@@ -11,7 +13,8 @@ data class User(
     val allFriends: List<String> = emptyList(),
     val location: GeoPoint = GeoPoint(0.0, 0.0),
     val invites: List<String> = emptyList(),
-    val events: List<String> = emptyList()
+    val events: List<String> = emptyList(),
+    val chats: List<String> = emptyList()
 )
 
 interface UserProfileRepository {

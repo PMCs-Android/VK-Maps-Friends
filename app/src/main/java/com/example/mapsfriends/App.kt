@@ -9,6 +9,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.mapsfriends.ui.login.LoginScreen
+import com.example.mapsfriends.ui.messenger.ChatScreen
+import com.example.mapsfriends.ui.messenger.ChatsListScreen
+import com.example.mapsfriends.ui.messenger.NewChatScreen
+import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -38,8 +42,42 @@ fun App(startDestination: String) {
                 eventId = backStackEntry.arguments?.getString("eventId") ?: ""
             )
         }
-        composable("messenger") { MessengerScreen(navController) }
-        composable("chats") { ChatsListScreen(navController) }
+//        composable("messenger") { MessengerScreen(navController) }
+//        composable("chats") { ChatsListScreen(navController) }
+        composable("chat_list") {
+            ChatsListScreen(
+                onChatClick = { chatId ->
+                    navController.navigate("chat/$chatId")
+                },
+                onNewChatClick = {
+                    navController.navigate("new_chat")
+                }
+            )
+        }
+        composable(
+            route = "chat/{chatId}",
+            arguments = listOf(navArgument("chatId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            ChatScreen(
+                chatId = chatId,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable("new_chat") {
+            NewChatScreen(
+                onChatCreated = { chatId ->
+                    navController.navigate("chat/$chatId") {
+                        popUpTo("new_chat") { inclusive = true }
+                    }
+                },
+                onError = { message ->
+
+                },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
+
         composable(
             route = "requestDetails/{requestId}",
             arguments = listOf(navArgument("requestId") { type = NavType.StringType })
