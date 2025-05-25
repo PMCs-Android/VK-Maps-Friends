@@ -216,7 +216,7 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
-            .height(Dimensions.LARGE_ELEMENT_1.dp),
+            .height(Dimensions.PROFILE_ICON_SIZE.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
