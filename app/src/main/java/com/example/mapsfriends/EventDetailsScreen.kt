@@ -22,6 +22,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +31,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +40,18 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.maps.android.compose.CameraPositionState
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun EventDetailsScreen(
@@ -84,7 +99,7 @@ fun EventDetailsScreen(
                     )
                 }
             }
-            EventLocation()
+            EventLocation(event = event)
             EventDeleteButton(viewModel, event, navController)
         }
     }
@@ -180,7 +195,27 @@ fun EventMembers(
 }
 
 @Composable
-fun EventLocation() {
+fun EventLocation(
+    mapViewModel: MapViewModel = hiltViewModel(),
+    event: Event
+) {
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(
+            mapViewModel.convertToLatLng(event.location),
+            Dimensions.ZOOM
+        )
+    }
+    val addressText = remember { mutableStateOf("") }
+
+    LaunchedEffect(event.location) {
+        addressText.value = withContext(Dispatchers.IO) {
+            mapViewModel.getOSMAddress(
+                event.location.latitude,
+                event.location.longitude
+            )
+        } ?: ""
+    }
     Column(
         modifier = Modifier
             .padding(vertical = 10.dp)
@@ -190,20 +225,54 @@ fun EventLocation() {
 
     ) {
         Text(
-            text = mockEvents[0].location,
+            text = addressText.value,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = 10.dp, top = 10.dp)
         )
         Box(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(10.dp)
         ) {
-            // MapScreen()
+            Map(event, cameraPositionState)
         }
     }
 }
 
+@Composable
+fun Map(
+    event: Event,
+    cameraPositionState: CameraPositionState
+) {
+    val context = LocalContext.current
+    GoogleMap(
+        properties = MapProperties(
+            mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
+                context,
+                R.raw.map_style
+            )
+        ),
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState,
+        uiSettings = MapUiSettings(
+            zoomControlsEnabled = false,
+            myLocationButtonEnabled = false,
+            compassEnabled = false
+        ),
+        onMapClick = {
+        }
+    ) {
+        event.location.let { location ->
+            Marker(
+                state = MarkerState(
+                    position = LatLng(location.latitude, location.longitude)
+                ),
+                title = "Место события"
+            )
+        }
+    }
+}
 @Composable
 fun EventDeleteButton(viewModel: EventViewModel, event: Event, navController: NavHostController) {
     Row(
