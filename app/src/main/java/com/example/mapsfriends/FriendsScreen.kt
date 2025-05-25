@@ -106,7 +106,7 @@ fun FriendRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(110.dp)
+            .height(DateTimePickers.LARGE_DIALOG.dp)
             .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
             .background(
                 Color.White,
