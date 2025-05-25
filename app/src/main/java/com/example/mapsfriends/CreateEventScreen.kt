@@ -214,7 +214,7 @@ fun CreateEventDescriptionInput(viewModel: EventViewModel, event: Event?) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
-            .height(Dimensions.LARGE_ELEMENT_1.dp),
+            .height(Dimensions.PROFILE_ICON_SIZE.dp),
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White,
@@ -313,9 +313,10 @@ fun CreateEventAddLocation(
 
     Column(
         modifier = Modifier
-            .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
             .height(Dimensions.LARGE_ELEMENT_2.dp)
             .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
+            .padding(Dimensions.SMALL_PADDING_1.dp)
+
     ) {
         Box(
             modifier = Modifier
@@ -336,12 +337,12 @@ fun CreateEventAddLocation(
                 }
             )
         }
-        Text(
-            text = currentEvent?.location.toString() ?: "Место не выбрано",
-            fontSize = Dimensions.SMALL_PADDING_3.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(all = Dimensions.SMALL_PADDING_1.dp)
-        )
+//        Text(
+//            text = currentEvent?.location.toString() ?: "Место не выбрано",
+//            fontSize = Dimensions.SMALL_PADDING_3.sp,
+//            fontWeight = FontWeight.Bold,
+//            modifier = Modifier.padding(all = Dimensions.SMALL_PADDING_1.dp)
+//        )
     }
 }
 
