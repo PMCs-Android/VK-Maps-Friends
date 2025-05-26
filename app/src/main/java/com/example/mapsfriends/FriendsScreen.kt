@@ -38,10 +38,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun FriendsScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: FriendsViewModel = hiltViewModel()
 ) {
     val userViewModel = hiltViewModel<UserViewModel>()
     val friends by userViewModel.friends.collectAsState()
@@ -68,7 +72,7 @@ fun FriendsScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(friends) { friend ->
-                FriendRow(navController, friend)
+                FriendRow(navController, friend, viewModel)
             }
         }
     }
@@ -101,7 +105,8 @@ fun FriendsScreenHeader(navController: NavHostController) {
 @Composable
 fun FriendRow(
     navController: NavHostController,
-    friend: User
+    friend: User,
+    viewModel: FriendsViewModel
 ) {
     Row(
         modifier = Modifier
@@ -134,7 +139,12 @@ fun FriendRow(
         )
         Spacer(modifier = Modifier.weight(1f))
         IconButton(
-            onClick = { navController.navigate("messenger") },
+            onClick = {
+                CoroutineScope(Dispatchers.Main).launch {
+                    val chatId = viewModel.getOrCreateChat(friend.userId)
+                    navController.navigate("chat/$chatId")
+                }
+            },
             modifier = Modifier
                 .background(Color.White, RoundedCornerShape(12.dp))
                 .border(4.dp, colorResource(R.color.main_blue), RoundedCornerShape(12.dp))

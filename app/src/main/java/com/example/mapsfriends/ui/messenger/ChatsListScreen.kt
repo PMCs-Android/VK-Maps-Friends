@@ -46,8 +46,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.mapsfriends.DateTimePickers
+import com.example.mapsfriends.Event
 import com.example.mapsfriends.MockDataEvents
 import com.example.mapsfriends.R
+import com.example.mapsfriends.User
+import com.example.mapsfriends.messenger.Chat
 import com.example.mapsfriends.mockMessages
 
 @Composable
@@ -57,6 +60,7 @@ fun ChatsListScreen(
 ) {
     val chats by viewModel.chats.collectAsState()
     val users by viewModel.users.collectAsState()
+    val events by viewModel.events.collectAsState()
 
     Column(
         modifier = Modifier
@@ -84,11 +88,10 @@ fun ChatsListScreen(
                 val otherUserId = chat.participants.firstOrNull { it != viewModel.currentUserId }
                 val user = otherUserId?.let { users[it] }
                 OneChat(
-                    name = user?.username ?: "Unknown",
-                    avatar = user?.avatarUrl ?: "",
-                    lastMessage = chat.lastMessage,
-                    lastMessageTime = SimpleDateFormat("HH:mm, dd MMM", Locale.getDefault())
-                        .format(chat.lastMessageTime.toDate()),
+                    chat = chat,
+                    users = users,
+                    events = events,
+                    currentUserId = viewModel.currentUserId,
                     onClick = { navController.navigate("chat/${chat.chatId}") }
                 )
             }
@@ -132,10 +135,10 @@ fun ChatsHeader(navController: NavHostController) {
 
 @Composable
 fun OneChat(
-    name: String,
-    avatar: String,
-    lastMessage: String,
-    lastMessageTime: String,
+    chat: Chat,
+    users: Map<String, User>,
+    events: Map<String, Event>,
+    currentUserId: String,
     onClick: () -> Unit
 ) {
     Row(
@@ -151,27 +154,67 @@ fun OneChat(
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(
-            modifier = Modifier
-                .height(Dimensions.MEDIUM_SPACING_4.dp)
-                .width(Dimensions.MEDIUM_SPACING_4.dp)
-        ) {
-            AsyncImage(
-                model = avatar,
-                contentDescription = "Avatar",
+//        Box(
+//            modifier = Modifier
+//                .height(Dimensions.MEDIUM_SPACING_4.dp)
+//                .width(Dimensions.MEDIUM_SPACING_4.dp)
+//        ) {
+//            AsyncImage(
+//                model = avatar,
+//                contentDescription = "Avatar",
+//                modifier = Modifier
+//                    .size(Dimensions.MEDIUM_SPACING_4.dp)
+//                    .clip(CircleShape)
+//            )
+//        }
+        if (chat.isGroupChat) {
+            val event = events[chat.eventId ?: ""]
+            val firstLetter = event?.title?.take(1)?.uppercase() ?: "?"
+            Box(
                 modifier = Modifier
                     .size(Dimensions.MEDIUM_SPACING_4.dp)
                     .clip(CircleShape)
-            )
+                    .background(colorResource(R.color.main_purple)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = firstLetter,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+        } else {
+            // Для личного чата показываем аватарку
+            val otherUserId = chat.participants.firstOrNull { it != currentUserId }
+            val user = otherUserId?.let { users[it] }
+            AsyncImage(
+                model = user?.avatarUrl,
+                contentDescription = "Avatar",
+                modifier = Modifier
+                    .size(Dimensions.MEDIUM_SPACING_4.dp)
+                    .clip(CircleShape),)
         }
         Column(modifier = Modifier.padding(start = 16.dp)) {
-            Text(text = name, style = MaterialTheme.typography.titleMedium)
+//            Text(text = name, style = MaterialTheme.typography.titleMedium)
             Text(
-                text = lastMessage.takeIf { it.isNotBlank() } ?: "No messages yet",
+                text = if (chat.isGroupChat) {
+                    events[chat.eventId ?: ""]?.title ?: "Групповой чат"
+                } else {
+                    val otherUserId = chat.participants.firstOrNull { it != currentUserId }
+                    users[otherUserId]?.username ?: "Неизвестный"
+                },
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = chat.lastMessage.takeIf { it.isNotBlank() } ?: "",
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = lastMessageTime,
+                text = if (chat.lastMessage.isBlank()) "" else SimpleDateFormat(
+                    "HH:mm, dd MMM",
+                    Locale.getDefault()
+                ).format(chat.lastMessageTime.toDate()),
                 style = MaterialTheme.typography.bodySmall,
                 color = colorResource(R.color.main_purple)
             )

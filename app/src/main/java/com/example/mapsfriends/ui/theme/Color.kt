@@ -11,9 +11,10 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-val MainGradient =
-    Brush.verticalGradient(
-        colors = listOf(Color(0xFF6A11CB), Color(0xFF2575FC)),
-    )
+
+val BgBlue = Color(0x749AFF)
+val BgPink = Color(0xF68EFF)
+
+val MessageColor = Color(255, 255, 255, 200)
 
 val VKbutton = Color(0xFF0077FF)

@@ -37,8 +37,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideEventRepository(userRepository: UserProfileRepository): EventRepository {
-        return FirebaseEventRepository(userRepository)
+    fun provideEventRepository(
+        userRepository: UserProfileRepository,
+        messengerRepository: MessengerRepository
+    ): EventRepository {
+        return FirebaseEventRepository(userRepository, messengerRepository)
     }
 
     @Provides

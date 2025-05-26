@@ -1,5 +1,6 @@
 package com.example.mapsfriends
 
+import com.example.mapsfriends.messenger.MessengerRepository
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -17,7 +18,8 @@ import kotlinx.coroutines.tasks.await
 import okio.IOException
 
 class FirebaseEventRepository @Inject constructor(
-    private val userRepository: UserProfileRepository
+    private val userRepository: UserProfileRepository,
+    private val messengerRepository: MessengerRepository
 ) : EventRepository {
     private val events = Firebase.firestore.collection("events")
     private val database = Firebase.firestore
@@ -26,6 +28,8 @@ class FirebaseEventRepository @Inject constructor(
         events.document(event.eventId)
             .set(event)
             .await()
+
+        messengerRepository.createGroupChat(event.participants, event.eventId)
 
         database.collection("users")
             .document(event.creatorId)
@@ -77,6 +81,9 @@ class FirebaseEventRepository @Inject constructor(
                 .await()
 
             userRef.update("events", FieldValue.arrayUnion(eventId))
+
+            val chatId = "group_$eventId"
+            messengerRepository.addParticipantToChat(chatId, userId)
         } catch (e: FirebaseFirestoreException) {
             println("Firestore error while adding participant: ${e.message}")
         } catch (e: IOException) {
@@ -138,6 +145,11 @@ class FirebaseEventRepository @Inject constructor(
                     }.awaitAll()
                 }
             }
+
+            val chatId = "group_$eventId"
+            messengerRepository.deleteChat(chatId)
+
+            events.document(eventId).delete().await()
         } catch (e: IOException) {
             println("Network error: $e")
         } catch (e: IllegalStateException) {
@@ -230,6 +242,9 @@ class FirebaseEventRepository @Inject constructor(
             eventRef
                 .update("participants", FieldValue.arrayRemove(userId))
                 .await()
+
+            val chatId = "group_$eventId"
+            messengerRepository.removeParticipantFromChat(chatId, userId)
         } catch (e: IOException) {
             println("Network error at participant $userId delete: $e")
         } catch (e: IllegalStateException) {

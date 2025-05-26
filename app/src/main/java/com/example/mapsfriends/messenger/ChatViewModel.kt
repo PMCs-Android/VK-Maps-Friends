@@ -34,9 +34,6 @@ class ChatViewModel @Inject constructor(
     fun loadChat(chatId: String) {
         viewModelScope.launch {
             try {
-                Log.d(TAG, "Loading with chatId: $chatId")
-
-                // Запускаем наблюдение за чатами
                 launch {
                     messengerRepository.observeChats(currentUserId)
                         .catch { e ->
@@ -55,30 +52,23 @@ class ChatViewModel @Inject constructor(
                             _otherUser.value = null
                         }
                         .collect { chats ->
-                            Log.d(TAG, "Chats size ${chats.size}")
                             val chat = chats.find { it.chatId == chatId }
                             _currentChat.value = chat
                             if (chat != null) {
-                                Log.d(TAG, "Found chat $chat")
                                 val otherUserId = chat.participants.firstOrNull { it != currentUserId }
                                 if (otherUserId != null) {
                                     val user = userRepository.getUserById(otherUserId)
-                                    Log.d(TAG, "Other user: $user")
                                     _otherUser.value = user
                                 } else {
-                                    Log.d(TAG, "No other user found")
                                     _otherUser.value = null
                                 }
                             } else {
-                                Log.d(TAG, "Chat not found")
                                 _otherUser.value = null
                             }
                         }
                 }
 
-                // Запускаем наблюдение за сообщениями
                 launch {
-                    Log.d(TAG, "Starting observeMessages for chatId: $chatId")
                     messengerRepository.observeMessages(chatId)
                         .catch { e ->
                             when (e) {
@@ -95,7 +85,6 @@ class ChatViewModel @Inject constructor(
                             _messages.value = emptyList()
                         }
                         .collect { messageList ->
-                            Log.d(TAG, "Found ${messageList.size} messages: $messageList")
                             val sortedMessages = messageList.sortedBy { it.timestamp.toDate() }
                             _messages.value = sortedMessages
                         }
@@ -110,9 +99,7 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 if (text.isNotBlank()) {
-                    Log.d(TAG, "Sending message to chatId: $chatId, text: $text")
                     messengerRepository.sendMessage(chatId, currentUserId, text)
-                    Log.d(TAG, "Message sent successfully")
                 }
             } catch (e: FirebaseFirestoreException) {
                 Log.e(TAG, "Firestore error sending message: ${e.message}", e)

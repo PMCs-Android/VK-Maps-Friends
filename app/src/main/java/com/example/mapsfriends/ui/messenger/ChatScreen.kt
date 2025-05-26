@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,9 +23,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.mapsfriends.messenger.ChatViewModel
 import com.example.mapsfriends.messenger.Message
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.clip
 import java.text.SimpleDateFormat
 import java.util.Locale
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -36,9 +37,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.mapsfriends.DateTimePickers
 import com.example.mapsfriends.Dimensions
 import com.example.mapsfriends.R
+import com.example.mapsfriends.ui.theme.MessageColor
 
 @Composable
 fun ChatScreen(
@@ -49,9 +52,16 @@ fun ChatScreen(
     val messages by viewModel.messages.collectAsState()
     val otherUser by viewModel.otherUser.collectAsState()
     var messageText by remember { mutableStateOf("") }
+    val listState = rememberLazyListState()
 
     LaunchedEffect(chatId) {
         viewModel.loadChat(chatId)
+    }
+
+    LaunchedEffect(messages) {
+        if (messages.isNotEmpty()) {
+            listState.scrollToItem(messages.size - 1)
+        }
     }
 
     Column(
@@ -76,12 +86,14 @@ fun ChatScreen(
         ) {
             ChatHeader(
                 navController = navController,
-                chatName = otherUser?.username ?: "Chat"
+                chatName = otherUser?.username ?: "Chat",
+                avatarUrl = otherUser?.avatarUrl ?: ""
             )
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(),
+                state = listState,
                 contentPadding = PaddingValues(bottom = 8.dp)
             ) {
                 items(messages) { message ->
@@ -108,7 +120,8 @@ fun ChatScreen(
 @Composable
 fun ChatHeader(
     navController: NavHostController,
-    chatName: String
+    chatName: String,
+    avatarUrl: String
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -131,6 +144,14 @@ fun ChatHeader(
             color = Color.White,
             modifier = Modifier.align(Alignment.Center)
         )
+        AsyncImage(
+            model = avatarUrl,
+            contentDescription = "Friend Avatar",
+            modifier = Modifier
+                .size(Dimensions.MEDIUM_SPACING_2.dp)
+                .clip(CircleShape)
+                .align(Alignment.CenterEnd)
+        )
     }
 }
 
@@ -147,7 +168,7 @@ fun MessageItem(
     ) {
         Card(
             colors = CardDefaults.cardColors(
-                containerColor = if (isOwnMessage) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant
+                containerColor = if (isOwnMessage) MessageColor else Color.White
             )
         ) {
             Column(
@@ -155,7 +176,7 @@ fun MessageItem(
             ) {
                 Text(text = message.text, style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    text = SimpleDateFormat("HH:mm", Locale.getDefault()).format(message.timestamp.toDate()),
+                    text = SimpleDateFormat("dd.MM HH:mm", Locale.getDefault()).format(message.timestamp.toDate()),
                     style = MaterialTheme.typography.bodySmall
                 )
             }

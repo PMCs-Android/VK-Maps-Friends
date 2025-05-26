@@ -7,7 +7,6 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
@@ -142,29 +141,23 @@ class FirebaseMessengerRepository @Inject constructor(
     }
 
     override fun observeMessages(chatId: String): Flow<List<Message>> = callbackFlow {
-        Log.d("MessengerRepository", "Observing messages for chatId: $chatId")
         try {
             val listener = chats.document(chatId)
                 .collection("messages")
                 .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.ASCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
-                        Log.e("MessengerRepository", "Firestore error observing messages: ${error.message}", error)
                         close(error)
                         return@addSnapshotListener
                     }
-                    Log.d("MessengerRepository", "Received snapshot with ${snapshot?.documents?.size ?: 0} documents")
                     val messageList = snapshot?.documents?.mapNotNull { doc ->
                         try {
                             val message = doc.toObject(Message::class.java)
-                            Log.d("MessengerRepository", "Parsed message: $message")
                             message
                         } catch (e: Exception) {
-                            Log.e("MessengerRepository", "Data conversion error for message ${doc.id}: ${e.message}", e)
                             null
                         }
                     } ?: emptyList()
-                    Log.d("MessengerRepository", "Emitting ${messageList.size} messages: $messageList")
                     trySend(messageList)
                 }
             awaitClose { listener.remove() }
@@ -174,6 +167,116 @@ class FirebaseMessengerRepository @Inject constructor(
         } catch (e: FirebaseFirestoreException) {
             Log.e("MessengerRepository", "Firestore error setting up message observation: ${e.code} - ${e.message}", e)
             close(e)
+        }
+    }
+
+    override suspend fun createGroupChat(participants: List<String>, eventId: String): String {
+        try {
+            val chatId = "group_${eventId}"
+            val chat = Chat(
+                chatId = chatId,
+                participants = participants,
+                isGroupChat = true,
+                eventId = eventId
+            )
+
+            val chatSnapshot = chats.document(chatId).get().await()
+            if (!chatSnapshot.exists()) {
+                val validParticipants = coroutineScope {
+                    participants.map { userId ->
+                        async { userRepository.getUserById(userId) }
+                    }.awaitAll().filterNotNull()
+                }
+                if (validParticipants.size != participants.size) {
+                    throw NoSuchElementException("One or more participants do not exist")
+                }
+
+                chats.document(chatId).set(chat).await()
+
+                coroutineScope {
+                    participants.map { userId ->
+                        async {
+                            database.collection("users")
+                                .document(userId)
+                                .update("chats", FieldValue.arrayUnion(chatId))
+                                .await()
+                        }
+                    }.awaitAll()
+                }
+            }
+            return chatId
+        } catch (e: IOException) {
+            println("Network error while creating group chat: ${e.message}")
+            throw e
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error while creating group chat: ${e.code} - ${e.message}")
+            throw e
+        }
+    }
+
+    override suspend fun addParticipantToChat(chatId: String, userId: String) {
+        try {
+            val user = userRepository.getUserById(userId)
+            if (user == null) {
+                throw NoSuchElementException("User $userId does not exist")
+            }
+            chats.document(chatId)
+                .update("participants", FieldValue.arrayUnion(userId))
+                .await()
+            database.collection("users")
+                .document(userId)
+                .update("chats", FieldValue.arrayUnion(chatId))
+                .await()
+        } catch (e: IOException) {
+            println("Network error while adding participant to chat: ${e.message}")
+            throw e
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error while adding participant to chat: ${e.code} - ${e.message}")
+            throw e
+        }
+    }
+
+    override suspend fun removeParticipantFromChat(chatId: String, userId: String) {
+        try {
+            chats.document(chatId)
+                .update("participants", FieldValue.arrayRemove(userId))
+                .await()
+            database.collection("users")
+                .document(userId)
+                .update("chats", FieldValue.arrayRemove(chatId))
+                .await()
+        } catch (e: IOException) {
+            println("Network error while removing participant from chat: ${e.message}")
+            throw e
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error while removing participant from chat: ${e.code} - ${e.message}")
+            throw e
+        }
+    }
+
+    override suspend fun deleteChat(chatId: String) {
+        try {
+            val chatSnapshot = chats.document(chatId).get().await()
+            if (chatSnapshot.exists()) {
+                val participants = chatSnapshot.get("participants") as? List<String> ?: emptyList()
+                coroutineScope {
+                    participants.map { userId ->
+                        async {
+                            database.collection("users")
+                                .document(userId)
+                                .update("chats", FieldValue.arrayRemove(chatId))
+                                .await()
+                        }
+                    }.awaitAll()
+                }
+                chats.document(chatId).delete().await()
+            }
+        } catch (e: IOException) {
+            println("Network error while deleting chat: ${e.message}")
+            throw e
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error while deleting chat: ${e.code} - ${e.message}")
+            throw e
         }
     }
 }

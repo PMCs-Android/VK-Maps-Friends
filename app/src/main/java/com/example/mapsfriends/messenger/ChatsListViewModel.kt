@@ -2,6 +2,8 @@ package com.example.mapsfriends.messenger
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mapsfriends.Event
+import com.example.mapsfriends.EventRepository
 import com.example.mapsfriends.User
 import com.example.mapsfriends.UserProfileRepository
 import com.example.mapsfriends.login.AuthTokenManager
@@ -21,15 +23,18 @@ import javax.inject.Inject
 class ChatsListViewModel @Inject constructor(
     private val messengerRepository: MessengerRepository,
     private val userRepository: UserProfileRepository,
+    private val eventRepository: EventRepository,
     private val tokenManager: AuthTokenManager
 ) : ViewModel() {
     private val _chats = MutableStateFlow<List<Chat>>(emptyList())
     private val _users = MutableStateFlow<Map<String, User>>(emptyMap())
+    private val _events = MutableStateFlow<Map<String, Event>>(emptyMap())
 
     val currentUserId: String = tokenManager.getUserId() ?: ""
 
     val chats: StateFlow<List<Chat>> = _chats
     val users: StateFlow<Map<String, User>> = _users
+    val events: StateFlow<Map<String, Event>> = _events
 
     init {
         loadChatsForUser(currentUserId)
@@ -58,6 +63,7 @@ class ChatsListViewModel @Inject constructor(
                     }
                     _chats.value = sortedChats
                     updateUsersForChats(sortedChats)
+                    updateEventsForChats(sortedChats)
                 }
         }
     }
@@ -81,6 +87,30 @@ class ChatsListViewModel @Inject constructor(
         } catch (e: Exception) {
             println("Unexpected error fetching users: ${e.message}")
             _users.value = emptyMap()
+        }
+    }
+
+    private suspend fun updateEventsForChats(chats: List<Chat>) {
+        try {
+            val groupChatEventIds = chats.filter { it.isGroupChat }
+                .mapNotNull { it.eventId }
+                .distinct()
+            coroutineScope {
+                val eventList = groupChatEventIds.mapNotNull { eventId ->
+                    async { eventRepository.getEventById(eventId) }
+                }.awaitAll()
+                _events.value = eventList.associateBy { it?.eventId ?: "" }
+                    .filterValues { it != null } as Map<String, Event>
+            }
+        } catch (e: FirebaseFirestoreException) {
+            println("Firestore error fetching events: ${e.message}")
+            _events.value = emptyMap()
+        } catch (e: IOException) {
+            println("Network error fetching events: ${e.message}")
+            _events.value = emptyMap()
+        } catch (e: Exception) {
+            println("Unexpected error fetching events: ${e.message}")
+            _events.value = emptyMap()
         }
     }
 }

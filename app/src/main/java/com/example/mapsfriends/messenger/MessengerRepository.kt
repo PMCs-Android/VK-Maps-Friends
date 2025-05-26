@@ -16,7 +16,9 @@ data class Chat(
     val chatId: String = "",
     val participants: List<String> = emptyList(),
     val lastMessage: String = "",
-    val lastMessageTime: Timestamp = Timestamp.now()
+    val lastMessageTime: Timestamp = Timestamp.now(),
+    val isGroupChat: Boolean = false,
+    val eventId: String? = null
 )
 
 interface MessengerRepository {
@@ -24,5 +26,9 @@ interface MessengerRepository {
     suspend fun sendMessage(chatId: String, senderId: String, text: String)
     fun observeChats(userId: String): Flow<List<Chat>>
     fun observeMessages(chatId: String): Flow<List<Message>>
+    suspend fun createGroupChat(participants: List<String>, eventId: String): String
+    suspend fun addParticipantToChat(chatId: String, userId: String)
+    suspend fun removeParticipantFromChat(chatId: String, userId: String)
+    suspend fun deleteChat(chatId: String)
 }
 
