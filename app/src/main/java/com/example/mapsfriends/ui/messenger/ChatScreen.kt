@@ -51,6 +51,9 @@ fun ChatScreen(
 ) {
     val messages by viewModel.messages.collectAsState()
     val otherUser by viewModel.otherUser.collectAsState()
+    val event by viewModel.event.collectAsState()
+    val currentChat by viewModel.currentChat.collectAsState()
+    val users by viewModel.users.collectAsState()
     var messageText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
 
@@ -86,8 +89,10 @@ fun ChatScreen(
         ) {
             ChatHeader(
                 navController = navController,
-                chatName = otherUser?.username ?: "Chat",
-                avatarUrl = otherUser?.avatarUrl ?: ""
+                chatName = if (currentChat?.isGroupChat == true) event?.title ?: "Chat"
+                           else otherUser?.username ?: "Chat",
+                avatarUrl = if (currentChat?.isGroupChat == true) null else otherUser?.avatarUrl,
+                isGroupChat = currentChat?.isGroupChat ?: false
             )
             LazyColumn(
                 modifier = Modifier
@@ -99,7 +104,9 @@ fun ChatScreen(
                 items(messages) { message ->
                     MessageItem(
                         message = message,
-                        isOwnMessage = message.senderId == viewModel.currentUserId
+                        isOwnMessage = message.senderId == viewModel.currentUserId,
+                        isGroupChat = currentChat?.isGroupChat ?: false,
+                        senderAvatarUrl = if (currentChat?.isGroupChat == true) users[message.senderId]?.avatarUrl else null
                     )
                 }
             }
@@ -121,7 +128,8 @@ fun ChatScreen(
 fun ChatHeader(
     navController: NavHostController,
     chatName: String,
-    avatarUrl: String
+    avatarUrl: String?,
+    isGroupChat: Boolean
 ) {
     Box(
         modifier = Modifier.fillMaxWidth()
@@ -144,21 +152,25 @@ fun ChatHeader(
             color = Color.White,
             modifier = Modifier.align(Alignment.Center)
         )
-        AsyncImage(
-            model = avatarUrl,
-            contentDescription = "Friend Avatar",
-            modifier = Modifier
-                .size(Dimensions.MEDIUM_SPACING_2.dp)
-                .clip(CircleShape)
-                .align(Alignment.CenterEnd)
-        )
+        if (!isGroupChat && avatarUrl != null) {
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = "Friend Avatar",
+                modifier = Modifier
+                    .size(Dimensions.MEDIUM_SPACING_2.dp)
+                    .clip(CircleShape)
+                    .align(Alignment.CenterEnd)
+            )
+        }
     }
 }
 
 @Composable
 fun MessageItem(
     message: Message,
-    isOwnMessage: Boolean
+    isOwnMessage: Boolean,
+    isGroupChat: Boolean,
+    senderAvatarUrl: String?
 ) {
     Row(
         modifier = Modifier
@@ -166,6 +178,16 @@ fun MessageItem(
             .padding(8.dp),
         horizontalArrangement = if (isOwnMessage) Arrangement.End else Arrangement.Start
     ) {
+        if (isGroupChat && !isOwnMessage && senderAvatarUrl != null) {
+            AsyncImage(
+                model = senderAvatarUrl,
+                contentDescription = "Sender Avatar",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(CircleShape)
+                    .padding(end = 8.dp),
+            )
+        }
         Card(
             colors = CardDefaults.cardColors(
                 containerColor = if (isOwnMessage) MessageColor else Color.White

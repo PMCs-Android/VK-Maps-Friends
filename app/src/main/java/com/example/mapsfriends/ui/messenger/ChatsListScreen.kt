@@ -1,5 +1,6 @@
 package com.example.mapsfriends.ui.messenger
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -154,55 +156,77 @@ fun OneChat(
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-//        Box(
-//            modifier = Modifier
-//                .height(Dimensions.MEDIUM_SPACING_4.dp)
-//                .width(Dimensions.MEDIUM_SPACING_4.dp)
-//        ) {
-//            AsyncImage(
-//                model = avatar,
-//                contentDescription = "Avatar",
+//        if (chat.isGroupChat) {
+//            val event = events[chat.eventId ?: ""]
+//            val firstLetter = event?.title?.take(1)?.uppercase() ?: "?"
+//            Box(
 //                modifier = Modifier
 //                    .size(Dimensions.MEDIUM_SPACING_4.dp)
 //                    .clip(CircleShape)
-//            )
+//                    .background(colorResource(R.color.main_purple)),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text(
+//                    text = firstLetter,
+//                    color = Color.White,
+//                    fontWeight = FontWeight.Bold,
+//                    fontSize = 18.sp
+//                )
+//            }
+//        } else {
+//            val otherUserId = chat.participants.firstOrNull { it != currentUserId }
+//            val user = otherUserId?.let { users[it] }
+//            AsyncImage(
+//                model = user?.avatarUrl,
+//                contentDescription = "Avatar",
+//                modifier = Modifier
+//                    .size(Dimensions.MEDIUM_SPACING_4.dp)
+//                    .clip(CircleShape),)
 //        }
+
         if (chat.isGroupChat) {
             val event = events[chat.eventId ?: ""]
-            val firstLetter = event?.title?.take(1)?.uppercase() ?: "?"
-            Box(
-                modifier = Modifier
-                    .size(Dimensions.MEDIUM_SPACING_4.dp)
-                    .clip(CircleShape)
-                    .background(colorResource(R.color.main_purple)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = firstLetter,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
+            if (event == null) {
+                LoadingChats()
+            } else {
+                val firstLetter = event.title.take(1).uppercase() ?: "?"
+                Box(
+                    modifier = Modifier
+                        .size(Dimensions.MEDIUM_SPACING_4.dp)
+                        .clip(CircleShape)
+                        .background(colorResource(R.color.main_purple)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = firstLetter,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }
             }
         } else {
-            // Для личного чата показываем аватарку
             val otherUserId = chat.participants.firstOrNull { it != currentUserId }
             val user = otherUserId?.let { users[it] }
-            AsyncImage(
-                model = user?.avatarUrl,
-                contentDescription = "Avatar",
-                modifier = Modifier
-                    .size(Dimensions.MEDIUM_SPACING_4.dp)
-                    .clip(CircleShape),)
+            if (user == null) {
+                LoadingChats()
+            } else {
+                AsyncImage(
+                    model = user.avatarUrl,
+                    contentDescription = "Avatar",
+                    modifier = Modifier
+                        .size(Dimensions.MEDIUM_SPACING_4.dp)
+                        .clip(CircleShape),
+                )
+            }
         }
         Column(modifier = Modifier.padding(start = 16.dp)) {
-//            Text(text = name, style = MaterialTheme.typography.titleMedium)
             Text(
                 text = if (chat.isGroupChat) {
-                    events[chat.eventId ?: ""]?.title ?: "Групповой чат"
+                    events[chat.eventId ?: ""]?.title ?: ""
                 } else {
                     val otherUserId = chat.participants.firstOrNull { it != currentUserId }
-                    users[otherUserId]?.username ?: "Неизвестный"
+                    users[otherUserId]?.username ?: ""
                 },
                 style = MaterialTheme.typography.titleMedium
             )
@@ -221,4 +245,21 @@ fun OneChat(
         }
     }
     Spacer(modifier = Modifier.height(2.dp))
+}
+
+@Composable
+fun LoadingChats() {
+    Box(
+        modifier = Modifier
+            .size(Dimensions.MEDIUM_SPACING_4.dp)
+            .clip(CircleShape)
+            .background(Color.Gray.copy(alpha = 0.2f)),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(24.dp),
+            color = colorResource(R.color.main_purple),
+            strokeWidth = 2.dp
+        )
+    }
 }

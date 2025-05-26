@@ -7,6 +7,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
@@ -23,6 +24,16 @@ class FirebaseMessengerRepository @Inject constructor(
 ) : MessengerRepository {
     private val chats = Firebase.firestore.collection("chats")
     private val database = Firebase.firestore
+
+    override suspend fun getChatById(chatId: String): Chat? {
+        return try {
+            val snapshot = chats.document(chatId).get().await()
+            snapshot.toObject<Chat>()
+        } catch (e: Exception) {
+            Log.e("MessengerRepository", "Error getting chat $chatId: ${e.message}", e)
+            null
+        }
+    }
 
     override suspend fun createChat(userId1: String, userId2: String): String {
         try {
@@ -64,6 +75,36 @@ class FirebaseMessengerRepository @Inject constructor(
             throw e
         } catch (e: IllegalStateException) {
             println("Data conversion error while creating chat: ${e.message}")
+            throw e
+        }
+    }
+
+    override suspend fun updateChatParticipants(chatId: String, participants: List<String>) {
+        try {
+            val validParticipants = coroutineScope {
+                participants.map { userId ->
+                    async { userRepository.getUserById(userId) }
+                }.awaitAll().filterNotNull()
+            }
+            if (validParticipants.size != participants.size) {
+                throw NoSuchElementException("One or more participants do not exist")
+            }
+
+            chats.document(chatId).update("participants", participants).await()
+
+            coroutineScope {
+                participants.map { userId ->
+                    async {
+                        database.collection("users")
+                            .document(userId)
+                            .update("chats", FieldValue.arrayUnion(chatId))
+                            .await()
+                    }
+                }.awaitAll()
+            }
+            Log.d("MessengerRepository", "Updated participants for chat: $chatId")
+        } catch (e: Exception) {
+            Log.e("MessengerRepository", "Error updating chat participants: ${e.message}", e)
             throw e
         }
     }

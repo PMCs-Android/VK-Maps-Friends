@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mapsfriends.login.AuthTokenManager
+import com.example.mapsfriends.messenger.MessengerRepository
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.GeoPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
     private val userProfileRepository: UserProfileRepository,
+    private val messengerRepository: MessengerRepository,
     private val tokenManager: AuthTokenManager
 ) : ViewModel() {
     private val _currentEvent = MutableStateFlow<Event?>(null)
@@ -285,6 +287,28 @@ class EventViewModel @Inject constructor(
             } catch (e: IOException) {
                 println("Network error loading event: ${e.message}")
             }
+        }
+    }
+
+    suspend fun getOrCreateGroupChat(event: Event): String {
+        try {
+            val chatId = "group_${event.eventId}"
+            val existingChat = messengerRepository.getChatById(chatId)
+            if (existingChat != null) {
+                if (existingChat.participants != event.participants) {
+                    messengerRepository.updateChatParticipants(chatId, event.participants)
+                    Log.d("EventViewModel", "Updated participants for chat: $chatId")
+                }
+                Log.d("EventViewModel", "Found existing group chat: $chatId")
+                return chatId
+            }
+            // Создаем новый чат
+            val newChatId = messengerRepository.createGroupChat(event.participants, event.eventId)
+            Log.d("EventViewModel", "Created new group chat: $newChatId")
+            return newChatId
+        } catch (e: Exception) {
+            Log.e("EventViewModel", "Error getting/creating group chat: ${e.message}", e)
+            return ""
         }
     }
 }
