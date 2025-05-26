@@ -8,7 +8,6 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class InvitesViewModel @Inject constructor(
@@ -20,15 +19,11 @@ class InvitesViewModel @Inject constructor(
         .observeInvites(currentUserId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    fun acceptInvite(eventId: String) {
-        viewModelScope.launch {
-            userProfileRepository.acceptInvite(currentUserId, eventId)
-        }
+    suspend fun acceptInvite(eventId: String) {
+        userProfileRepository.acceptInvite(currentUserId, eventId)
     }
 
-    fun declineInvite(eventId: String) {
-        viewModelScope.launch {
-            userProfileRepository.declineInvite(currentUserId, eventId)
-        }
+    suspend fun declineInvite(eventId: String) {
+        userProfileRepository.declineInvite(currentUserId, eventId)
     }
 }

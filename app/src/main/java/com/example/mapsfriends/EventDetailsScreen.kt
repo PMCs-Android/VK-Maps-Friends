@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.mapsfriends.components.EventParticipantsBottomSheet
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -85,7 +86,7 @@ fun EventDetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                EventMembers(avatars as Map<String, String>)
+                EventMembers(avatars as Map<String, String>, viewModel)
                 Spacer(modifier = Modifier.width(16.dp))
                 IconButton(
                     onClick = { /* ереход в чат */ navController.navigate("messenger") },
@@ -172,13 +173,19 @@ fun EventDescription(event: Event) {
 
 @Composable
 fun EventMembers(
-    avatars: Map<String, String>
+    avatars: Map<String, String>,
+    eventViewModel: EventViewModel = hiltViewModel()
 ) {
+    val showAddParticipants = remember { mutableStateOf(false) }
+    val currentEvent = eventViewModel.currentEvent.collectAsState().value
+
     Row(
         modifier = Modifier
             .height(48.dp)
             .background(Color.White, RoundedCornerShape(20.dp))
-            .padding(horizontal = 10.dp)
+            .padding(horizontal = 10.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         avatars.forEach { member ->
             AsyncImage(
@@ -191,6 +198,25 @@ fun EventMembers(
                 contentScale = ContentScale.FillBounds
             )
         }
+
+        IconButton(
+            onClick = { showAddParticipants.value = true },
+            modifier = Modifier.align(Alignment.CenterVertically)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.add_plus),
+                contentDescription = "Add participants",
+                tint = colorResource(R.color.main_purple)
+            )
+        }
+    }
+
+    if (showAddParticipants.value && currentEvent != null) {
+        EventParticipantsBottomSheet(
+            showSheet = showAddParticipants,
+            eventViewModel = eventViewModel,
+            currentEvent = currentEvent
+        )
     }
 }
 
