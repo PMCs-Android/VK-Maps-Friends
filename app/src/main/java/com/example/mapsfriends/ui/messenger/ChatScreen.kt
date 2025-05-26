@@ -30,12 +30,30 @@ fun ChatScreen(
     chatId: String,
     onBackClick: () -> Unit
 ) {
+//    val messages by viewModel.messages.collectAsState()
+//    val otherUser by viewModel.otherUser.collectAsState()
+//    var messageText by remember { mutableStateOf("") }
+//
+//    LaunchedEffect(chatId) {
+//        viewModel.loadChat(chatId)
+//    }
+
     val messages by viewModel.messages.collectAsState()
     val otherUser by viewModel.otherUser.collectAsState()
     var messageText by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(chatId) {
-        viewModel.loadChat(chatId)
+        isLoading = true
+        errorMessage = null
+        try {
+            viewModel.loadChat(chatId)
+        } catch (e: Exception) {
+            errorMessage = "Ошибка загрузки чата: ${e.message}"
+        } finally {
+            isLoading = false
+        }
     }
 
     Column {
