@@ -45,14 +45,7 @@ fun App(startDestination: String) {
 //        composable("messenger") { MessengerScreen(navController) }
 //        composable("chats") { ChatsListScreen(navController) }
         composable("chat_list") {
-            ChatsListScreen(
-                onChatClick = { chatId ->
-                    navController.navigate("chat/$chatId")
-                },
-                onNewChatClick = {
-                    navController.navigate("new_chat")
-                }
-            )
+            ChatsListScreen(navController = navController)
         }
         composable(
             route = "chat/{chatId}",
@@ -61,7 +54,7 @@ fun App(startDestination: String) {
             val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
             ChatScreen(
                 chatId = chatId,
-                onBackClick = { navController.popBackStack() }
+                navController = navController
             )
         }
         composable("new_chat") {
@@ -71,10 +64,7 @@ fun App(startDestination: String) {
                         popUpTo("new_chat") { inclusive = true }
                     }
                 },
-                onError = { message ->
-
-                },
-                onBackClick = { navController.popBackStack() }
+                navController = navController
             )
         }
 

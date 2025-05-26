@@ -1,5 +1,6 @@
 package com.example.mapsfriends.messenger
 
+import android.util.Log
 import com.example.mapsfriends.UserProfileRepository
 import com.google.firebase.Firebase
 import com.google.firebase.Timestamp
@@ -141,32 +142,37 @@ class FirebaseMessengerRepository @Inject constructor(
     }
 
     override fun observeMessages(chatId: String): Flow<List<Message>> = callbackFlow {
+        Log.d("MessengerRepository", "Observing messages for chatId: $chatId")
         try {
             val listener = chats.document(chatId)
                 .collection("messages")
                 .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.ASCENDING)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
-                        println("Firestore error while observing messages: ${error.message}")
+                        Log.e("MessengerRepository", "Firestore error observing messages: ${error.message}", error)
                         close(error)
                         return@addSnapshotListener
                     }
+                    Log.d("MessengerRepository", "Received snapshot with ${snapshot?.documents?.size ?: 0} documents")
                     val messageList = snapshot?.documents?.mapNotNull { doc ->
                         try {
-                            doc.toObject(Message::class.java)
-                        } catch (e: IllegalStateException) {
-                            println("Data conversion error for message ${doc.id}: ${e.message}")
+                            val message = doc.toObject(Message::class.java)
+                            Log.d("MessengerRepository", "Parsed message: $message")
+                            message
+                        } catch (e: Exception) {
+                            Log.e("MessengerRepository", "Data conversion error for message ${doc.id}: ${e.message}", e)
                             null
                         }
                     } ?: emptyList()
+                    Log.d("MessengerRepository", "Emitting ${messageList.size} messages: $messageList")
                     trySend(messageList)
                 }
             awaitClose { listener.remove() }
         } catch (e: IOException) {
-            println("Network error while setting up message observation: ${e.message}")
+            Log.e("MessengerRepository", "Network error setting up message observation: ${e.message}", e)
             close(e)
         } catch (e: FirebaseFirestoreException) {
-            println("Firestore error while setting up message observation: ${e.code} - ${e.message}")
+            Log.e("MessengerRepository", "Firestore error setting up message observation: ${e.code} - ${e.message}", e)
             close(e)
         }
     }

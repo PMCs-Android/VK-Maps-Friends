@@ -57,20 +57,17 @@ class NewChatViewModel @Inject constructor(
         }
     }
 
-    fun createChat(friendId: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+    fun createChat(friendId: String, onSuccess: (String) -> Unit) {
         viewModelScope.launch {
             try {
                 val chatId = messengerRepository.createChat(currentUserId, friendId)
                 onSuccess(chatId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error creating chat: ${e.message}")
-                onError("Firestore error: ${e.message}")
             } catch (e: IOException) {
                 println("Network error creating chat: ${e.message}")
-                onError("Network error: ${e.message}")
             } catch (e: Exception) {
                 println("Unexpected error creating chat: ${e.message}")
-                onError("Error: ${e.message}")
             }
         }
     }
