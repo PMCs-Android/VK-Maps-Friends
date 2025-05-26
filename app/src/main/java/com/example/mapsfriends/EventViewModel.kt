@@ -34,6 +34,7 @@ class EventViewModel @Inject constructor(
     private val _selectedMonth = MutableStateFlow<Int?>(null)
     private val _dateError = mutableStateOf(false)
     private val _timeError = mutableStateOf(false)
+    private val _availableFriends = MutableStateFlow<List<User>>(emptyList())
     private val currentUserId: String = tokenManager.getUserId() ?: ""
 
     val selectedMonth: StateFlow<Int?> = _selectedMonth
@@ -46,6 +47,7 @@ class EventViewModel @Inject constructor(
     val descriptionError: MutableState<Boolean> = _descriptionError
     val dateError: MutableState<Boolean> = _dateError
     val timeError: MutableState<Boolean> = _timeError
+    val availableFriends: StateFlow<List<User>> = _availableFriends
 
     fun validateFields(): Boolean {
         val isValid =
@@ -180,7 +182,7 @@ class EventViewModel @Inject constructor(
                 _events.value = emptyList()
                 _allEvents.value = emptyList()
             }.collect { events ->
-                val sortedEvents = events.sortedWith(
+                    val sortedEvents = events.sortedWith(
                     compareBy<Event> {
                         LocalDate.of(
                             LocalDate.now().year,
@@ -238,6 +240,44 @@ class EventViewModel @Inject constructor(
                 }
                 _currentEvent.value = null
                 Log.d("EventViewModel", "Incomplete event deleted")
+            }
+        }
+    }
+
+    fun loadAvailableFriends() {
+        viewModelScope.launch {
+            try {
+                val currentEvent = _currentEvent.value ?: return@launch
+                val userFriends = userProfileRepository.getUserById(currentUserId)?.friends ?: emptyList()
+                
+                val availableFriendsList = userFriends.mapNotNull { friendId ->
+                    userProfileRepository.getUserById(friendId)
+                }.filter { friend ->
+                    !currentEvent.participants.contains(friend.userId) && 
+                    !currentEvent.invites.contains(friend.userId)
+                }
+                
+                _availableFriends.value = availableFriendsList
+            } catch (e: Exception) {
+                println("Error loading available friends: ${e.message}")
+                _availableFriends.value = emptyList()
+            }
+        }
+    }
+
+    fun inviteFriendToEvent(friendId: String) {
+        viewModelScope.launch {
+            try {
+                val event = _currentEvent.value ?: return@launch
+                eventRepository.sendInvite(event.eventId, friendId)
+                
+                // Update available friends list
+                _availableFriends.value = _availableFriends.value.filter { it.userId != friendId }
+                
+                // Refresh event data
+                getEvent(event.eventId)
+            } catch (e: Exception) {
+                println("Error inviting friend: ${e.message}")
             }
         }
     }

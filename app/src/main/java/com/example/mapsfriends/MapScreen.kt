@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.mapsfriends.components.BottomMenu
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -41,7 +42,7 @@ fun MapScreen(
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(
                 viewModel.convertToLatLng(currentUser!!.location),
-                18f
+                14f
             )
         }
 
@@ -91,6 +92,21 @@ fun MapScreen(
                     }
                 },
                 initialZoom = cameraPositionState.position.zoom
+            )
+
+            BottomMenu(
+                navController = navController,
+                onCenterLocation = {
+                    coroutineScope.launch {
+                        currentUser?.location?.let { location ->
+                            val target = viewModel.convertToLatLng(location)
+                            cameraPositionState.animate(
+                                CameraUpdateFactory.newLatLngZoom(target, 14f),
+                                150
+                            )
+                        }
+                    }
+                }
             )
         }
     }

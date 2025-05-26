@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,12 +37,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 
 @Composable
 fun RequestDetailsScreen(
     navController: NavHostController,
     requestId: String,
-    userViewModel: UserViewModel = hiltViewModel(),
     viewModel: EventViewModel = hiltViewModel()
 ) {
 
@@ -68,7 +69,8 @@ fun RequestDetailsScreen(
             RequestDetailsDescription(event)
             RequestDetailsMembers(avatars as Map<String, String>)
             EventLocation(event = event)
-            RequestAcceptRefuseButtons()
+            RequestAcceptRefuseButtons(event = event,
+                navController = navController)
         }
     }
 }
@@ -162,7 +164,13 @@ fun RequestDetailsMembers(
 }
 
 @Composable
-fun RequestAcceptRefuseButtons() {
+fun RequestAcceptRefuseButtons(
+    viewModel: InvitesViewModel = hiltViewModel(),
+    event: Event,
+    navController: NavHostController
+) {
+    val coroutineScope = rememberCoroutineScope()
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -171,7 +179,12 @@ fun RequestAcceptRefuseButtons() {
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         IconButton(
-            onClick = { /* Принять заявку */ },
+            onClick = {
+                coroutineScope.launch {
+                    viewModel.acceptInvite(event.eventId)
+                    navController.popBackStack()
+                }
+            },
             modifier = Modifier
                 .width(64.dp)
                 .border(
@@ -187,7 +200,12 @@ fun RequestAcceptRefuseButtons() {
             )
         }
         IconButton(
-            onClick = { /* Отклонить заявку */ },
+            onClick = {
+                coroutineScope.launch {
+                    viewModel.declineInvite(event.eventId)
+                    navController.popBackStack()
+                }
+            },
             modifier = Modifier
                 .width(64.dp)
                 .border(2.dp, colorResource(R.color.main_pink), RoundedCornerShape(16.dp))

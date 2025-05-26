@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import kotlinx.coroutines.launch
 
 @Composable
 fun RequestsScreen(
@@ -100,12 +102,16 @@ fun RequestButtons(
     eventId: String,
     viewModel: InvitesViewModel = hiltViewModel()
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    
     Column(
         modifier = Modifier
     ) {
         IconButton(
-            onClick = { /* Принятие приглашения */
-                viewModel.acceptInvite(eventId)
+            onClick = { 
+                coroutineScope.launch {
+                    viewModel.acceptInvite(eventId)
+                }
             },
             modifier = Modifier
                 .border(
@@ -122,8 +128,10 @@ fun RequestButtons(
         }
         Spacer(modifier = Modifier.height(4.dp))
         IconButton(
-            onClick = { /* Удаление приглашения */
-                viewModel.declineInvite(eventId)
+            onClick = { 
+                coroutineScope.launch {
+                    viewModel.declineInvite(eventId)
+                }
             },
             modifier = Modifier
                 .border(

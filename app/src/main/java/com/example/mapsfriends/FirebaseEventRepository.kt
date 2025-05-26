@@ -68,6 +68,7 @@ class FirebaseEventRepository @Inject constructor(
 
     override suspend fun addParticipant(eventId: String, userId: String) {
         try {
+            println("Trying to add participant")
             val userRef = Firebase.firestore.collection("users").document(userId)
             if (!userRef.get().await().exists()) {
                 return
@@ -225,11 +226,23 @@ class FirebaseEventRepository @Inject constructor(
                 println("Event with Id: $eventId  or User: $userId doesn't exists")
                 return
             }
+
+            // Удаляем пользователя из события
             userRef.update("events", FieldValue.arrayRemove(eventId))
                 .await()
             eventRef
                 .update("participants", FieldValue.arrayRemove(userId))
                 .await()
+
+            // Проверяем количество оставшихся участников
+            val updatedEventDoc = eventRef.get().await()
+            val remainingParticipants = updatedEventDoc.getStringList("participants")
+            
+            // Если участников не осталось, удаляем событие
+            if (remainingParticipants.isEmpty()) {
+                deleteEvent(eventId)
+                println("Event $eventId deleted because no participants left")
+            }
         } catch (e: IOException) {
             println("Network error at participant $userId delete: $e")
         } catch (e: IllegalStateException) {
