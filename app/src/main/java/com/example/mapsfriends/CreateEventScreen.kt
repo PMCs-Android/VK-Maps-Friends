@@ -35,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +43,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
@@ -57,10 +59,18 @@ import coil.compose.AsyncImage
 import com.example.mapsfriends.login.AuthViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.firebase.firestore.GeoPoint
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.time.LocalDateTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -304,44 +314,85 @@ fun CreateEventAddParticipants(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 fun CreateEventAddLocation(
-    viewModel: EventViewModel
+    viewModel: EventViewModel,
+    mapViewModel: MapViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
-    val currentEvent by viewModel.currentEvent.collectAsState()
     val selectedLocation = remember { mutableStateOf<GeoPoint?>(null) }
+    val addressText = remember { mutableStateOf<String?>(null) } // Состояние для адреса
+    val context = LocalContext.current
+    val defaultGeo = GeoPoint(Dimensions.GEO5, Dimensions.GEO6)
+    val currentUser = userViewModel.currentUser.collectAsState().value
+    val coroutineScope = rememberCoroutineScope() // Для вызова suspend функций
 
-    Column(
-        modifier = Modifier
-            .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
-            .height(Dimensions.LARGE_ELEMENT_2.dp)
-            .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                cameraPositionState = rememberCameraPositionState {
-                    position = CameraPosition.fromLatLngZoom(
-                        LatLng(55.7558, 37.6173),
-                        10f
-                    )
-                },
-                onMapClick = { latLng ->
-                    selectedLocation.value = GeoPoint(latLng.latitude, latLng.longitude)
-                    viewModel.setEventLocation(selectedLocation.value ?: GeoPoint(0.0, 0.0))
-                }
+    if (isValidUser(currentUser)) {
+        val cameraPositionState = rememberCameraPositionState {
+            position = CameraPosition.fromLatLngZoom(
+                mapViewModel.convertToLatLng(currentUser!!.location),
+                Dimensions.ZOOM
             )
         }
-        Text(
-            text = currentEvent?.location.toString() ?: "Место не выбрано",
-            fontSize = Dimensions.SMALL_PADDING_3.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(all = Dimensions.SMALL_PADDING_1.dp)
-        )
+
+        Column(
+            modifier = Modifier
+                .padding(vertical = Dimensions.SMALL_PADDING_1.dp)
+                .height(Dimensions.LARGE_ELEMENT_2.dp)
+                .background(Color.White, RoundedCornerShape(Dimensions.MEDIUM_SPACING_1.dp))
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimensions.SMALL_PADDING_1.dp)
+                    .weight(1f)
+            ) {
+                GoogleMap(
+                    properties = MapProperties(
+                        mapStyleOptions = MapStyleOptions.loadRawResourceStyle(
+                            context,
+                            R.raw.map_style
+                        )
+                    ),
+                    modifier = Modifier.fillMaxSize(),
+                    cameraPositionState = cameraPositionState,
+                    uiSettings = MapUiSettings(
+                        zoomControlsEnabled = false,
+                        myLocationButtonEnabled = false,
+                        compassEnabled = false
+                    ),
+                    onMapClick = { latLng ->
+                        selectedLocation.value = GeoPoint(latLng.latitude, latLng.longitude)
+                        viewModel.setEventLocation(selectedLocation.value ?: defaultGeo)
+
+                        coroutineScope.launch {
+                            withContext(Dispatchers.IO) {
+                                addressText.value = mapViewModel.getOSMAddress(
+                                    latLng.latitude,
+                                    latLng.longitude
+                                )
+                            }
+                        }
+                    }
+                ) {
+                    selectedLocation.value?.let { location ->
+                        Marker(
+                            state = MarkerState(
+                                position = LatLng(location.latitude, location.longitude)
+                            ),
+                            title = "Место события"
+                        )
+                    }
+                }
+            }
+            Text(
+                text = addressText.value ?: "Нажмите на карту для выбора места",
+                fontSize = Dimensions.SMALL_PADDING_3.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(all = Dimensions.SMALL_PADDING_1.dp)
+            )
+        }
     }
 }
 
@@ -351,10 +402,10 @@ fun CreateEventDoneButton(
     navController: NavHostController,
     datetime: String
 ) {
+    viewModel.setEventTime(datetime)
     TextButton(
         onClick = {
             if (viewModel.validateFields()) {
-                viewModel.setEventTime(datetime)
                 viewModel.saveCurrentEvent()
                 navController.navigate("events")
             }
@@ -372,4 +423,10 @@ fun CreateEventDoneButton(
             fontWeight = FontWeight.Bold,
         )
     }
+}
+
+private fun isValidUser(currentUser: User?): Boolean {
+    return currentUser != null &&
+        currentUser.location.latitude != 0.0 &&
+        currentUser.location.longitude != 0.0
 }

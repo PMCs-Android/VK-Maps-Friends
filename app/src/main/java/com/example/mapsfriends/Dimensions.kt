@@ -16,6 +16,7 @@ object Dimensions {
     const val MEDIUM_SPACING_2 = 30
     const val MEDIUM_SPACING_3 = 36
     const val MEDIUM_SPACING_4 = 48
+    const val MAIN_BUTTON = 58
     const val DATE_BOX = 60
     const val MEDIUM_SPACING_5 = 68
     const val LARGE_ELEMENT_1 = 80
@@ -32,6 +33,9 @@ object Dimensions {
     const val GEO2 = 37.616584
     const val GEO3 = 55.756589
     const val GEO4 = 37.616584
+    const val GEO5 = 55.7559353641
+    const val GEO6 = 37.61837
+    const val ZOOM = 14f
     const val STEPS_DAY_1 = 3965
     const val STEPS_DAY_2 = 7561
     const val STEPS_DAY_3 = 4965

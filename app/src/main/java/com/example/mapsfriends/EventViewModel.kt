@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
@@ -34,14 +35,11 @@ class EventViewModel @Inject constructor(
     private val _selectedMonth = MutableStateFlow<Int?>(null)
     private val _dateError = mutableStateOf(false)
     private val _timeError = mutableStateOf(false)
-
+    private val _availableFriends = MutableStateFlow<List<User>>(emptyList())
     private val currentUserId: String = tokenManager.getUserId() ?: ""
 
     val selectedMonth: StateFlow<Int?> = _selectedMonth
     val events: StateFlow<List<Event>> = _events
-
-//    val eventsFlow: StateFlow<List<Event>> = eventRepository.observeEventsByUserId(currentUserId)
-//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     val currentEvent: StateFlow<Event?> = _currentEvent
     val participants: StateFlow<List<User>> = _participants
@@ -50,6 +48,7 @@ class EventViewModel @Inject constructor(
     val descriptionError: MutableState<Boolean> = _descriptionError
     val dateError: MutableState<Boolean> = _dateError
     val timeError: MutableState<Boolean> = _timeError
+    val availableFriends: StateFlow<List<User>> = _availableFriends
 
     fun validateFields(): Boolean {
         val isValid =
@@ -63,7 +62,6 @@ class EventViewModel @Inject constructor(
         currentEvent.value?.time?.length?.let {
             _timeError.value = it <= Dimensions.SMALL_PADDING_1
         }
-        println(dateError.value)
         return isValid
     }
 
@@ -135,11 +133,6 @@ class EventViewModel @Inject constructor(
                         ?: throw IllegalStateException("Event not created")
                 println("event id:${event.eventId}: Event: $event")
                 eventRepository.createEvent(event)
-                _participants.value.filter { it.userId != event.creatorId }.forEach { user ->
-                    eventRepository.addParticipant(event.eventId, user.userId)
-                }
-                _participants.value = eventRepository.getParticipants(event.eventId)
-                userProfileRepository.addEventToUser(event.creatorId, event.eventId)
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error saving event: ${e.message}")
             } catch (e: IOException) {
@@ -248,6 +241,49 @@ class EventViewModel @Inject constructor(
                 }
                 _currentEvent.value = null
                 Log.d("EventViewModel", "Incomplete event deleted")
+            }
+        }
+    }
+
+    fun loadAvailableFriends() {
+        viewModelScope.launch {
+            try {
+                val currentEvent = _currentEvent.value ?: return@launch
+                val userFriends = userProfileRepository
+                    .getUserById(currentUserId)?.friends ?: emptyList()
+
+                val availableFriendsList = userFriends.mapNotNull { friendId ->
+                    userProfileRepository.getUserById(friendId)
+                }.filter { friend ->
+                    val isNotParticipant = !currentEvent.participants.contains(friend.userId)
+                    val isNotInvited = !currentEvent.invites.contains(friend.userId)
+                    isNotParticipant && isNotInvited
+                }
+
+                _availableFriends.value = availableFriendsList
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error loading event: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error loading event: ${e.message}")
+            }
+        }
+    }
+
+    fun inviteFriendToEvent(friendId: String) {
+        viewModelScope.launch {
+            try {
+                val event = _currentEvent.value ?: return@launch
+                eventRepository.sendInvite(event.eventId, friendId)
+
+                // Update available friends list
+                _availableFriends.value = _availableFriends.value.filter { it.userId != friendId }
+
+                // Refresh event data
+                getEvent(event.eventId)
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error loading event: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error loading event: ${e.message}")
             }
         }
     }

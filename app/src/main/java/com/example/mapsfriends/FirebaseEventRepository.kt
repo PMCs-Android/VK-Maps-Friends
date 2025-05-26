@@ -245,6 +245,16 @@ class FirebaseEventRepository @Inject constructor(
 
             val chatId = "group_$eventId"
             messengerRepository.removeParticipantFromChat(chatId, userId)
+
+            // Проверяем количество оставшихся участников
+            val updatedEventDoc = eventRef.get().await()
+            val remainingParticipants = updatedEventDoc.getStringList("participants")
+
+            // Если участников не осталось, удаляем событие
+            if (remainingParticipants.isEmpty()) {
+                deleteEvent(eventId)
+                println("Event $eventId deleted because no participants left")
+            }
         } catch (e: IOException) {
             println("Network error at participant $userId delete: $e")
         } catch (e: IllegalStateException) {
