@@ -73,7 +73,6 @@ fun RequestDetailsScreen(
                 event = event,
                 navController = navController
             )
-
         }
     }
 }
