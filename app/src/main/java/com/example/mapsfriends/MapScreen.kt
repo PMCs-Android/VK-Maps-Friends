@@ -29,6 +29,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@Suppress("LongMethod")
 @Composable
 fun MapScreen(
     navController: NavHostController,
@@ -42,7 +43,7 @@ fun MapScreen(
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(
                 viewModel.convertToLatLng(currentUser!!.location),
-                14f
+                Dimensions.ZOOM
             )
         }
 
@@ -101,7 +102,7 @@ fun MapScreen(
                         currentUser?.location?.let { location ->
                             val target = viewModel.convertToLatLng(location)
                             cameraPositionState.animate(
-                                CameraUpdateFactory.newLatLngZoom(target, 14f),
+                                CameraUpdateFactory.newLatLngZoom(target, Dimensions.ZOOM),
                                 150
                             )
                         }

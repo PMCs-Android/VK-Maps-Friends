@@ -198,7 +198,7 @@ fun EventMembers(
                 contentScale = ContentScale.FillBounds
             )
         }
-        
+
         IconButton(
             onClick = { showAddParticipants.value = true },
             modifier = Modifier.align(Alignment.CenterVertically)

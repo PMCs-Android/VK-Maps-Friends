@@ -2,7 +2,16 @@ package com.example.mapsfriends.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -15,6 +24,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.mapsfriends.Dimensions
 import com.example.mapsfriends.R
 
 @Composable
@@ -28,11 +38,11 @@ fun BottomMenu(
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 30.dp),
+                .padding(bottom = Dimensions.MEDIUM_SPACING_2.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CenteringGeoPositionButton(onCenter = onCenterLocation)
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(Dimensions.SMALL_PADDING_1.dp))
             BottomMenuButtons(navController)
         }
     }
@@ -45,11 +55,11 @@ fun CenteringGeoPositionButton(
     IconButton(
         onClick = onCenter,
         modifier = Modifier
-            .background(Color.White, RoundedCornerShape(16.dp))
+            .background(Color.White, RoundedCornerShape(Dimensions.SMALL_PADDING_3.dp))
             .border(
-                4.dp,
+                Dimensions.BORDER_WIDTH.dp,
                 colorResource(R.color.main_purple),
-                RoundedCornerShape(16.dp)
+                RoundedCornerShape(Dimensions.SMALL_PADDING_3.dp)
             )
     ) {
         Icon(
@@ -65,11 +75,11 @@ fun ChatButton(navController: NavHostController) {
     IconButton(
         onClick = { navController.navigate("chats") },
         modifier = Modifier
-            .background(Color.White, RoundedCornerShape(12.dp))
+            .background(Color.White, RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp))
             .border(
-                4.dp,
+                Dimensions.BORDER_WIDTH.dp,
                 colorResource(R.color.main_blue),
-                RoundedCornerShape(12.dp)
+                RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp)
             )
     ) {
         Icon(
@@ -85,11 +95,11 @@ fun FriendsButton(navController: NavHostController) {
     IconButton(
         onClick = { navController.navigate("friends") },
         modifier = Modifier
-            .background(Color.White, RoundedCornerShape(12.dp))
+            .background(Color.White, RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp))
             .border(
-                4.dp,
+                Dimensions.BORDER_WIDTH.dp,
                 colorResource(R.color.main_pink),
-                RoundedCornerShape(12.dp)
+                RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp)
             )
     ) {
         Icon(
@@ -109,9 +119,9 @@ fun BottomMenuButtons(navController: NavHostController) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         ChatButton(navController)
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(Dimensions.SMALL_PADDING_1.dp))
         EventButton(navController)
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(Dimensions.SMALL_PADDING_1.dp))
         FriendsButton(navController)
     }
 }
@@ -124,14 +134,17 @@ fun EventButton(
         onClick = { navController.navigate("events") },
         modifier = Modifier
             .border(
-                4.dp,
+                Dimensions.BORDER_WIDTH.dp,
                 colorResource(R.color.main_purple),
-                RoundedCornerShape(12.dp)
+                RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp)
             )
-            .background(Color.White, RoundedCornerShape(12.dp))
-            .padding(horizontal = 10.dp, vertical = 16.dp)
-            .height(56.dp)
-            .width(56.dp)
+            .background(Color.White, RoundedCornerShape(Dimensions.SMALL_PADDING_2.dp))
+            .padding(
+                horizontal = Dimensions.SMALL_PADDING_1.dp,
+                vertical = Dimensions.SMALL_PADDING_3.dp
+            )
+            .height(Dimensions.MAIN_BUTTON.dp)
+            .width(Dimensions.MAIN_BUTTON.dp)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.event_calendar),
@@ -139,4 +152,4 @@ fun EventButton(
             tint = colorResource(R.color.main_purple)
         )
     }
-} 
+}

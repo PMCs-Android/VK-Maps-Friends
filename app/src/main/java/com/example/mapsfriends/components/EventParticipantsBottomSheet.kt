@@ -1,13 +1,29 @@
 package com.example.mapsfriends.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +53,7 @@ fun EventParticipantsBottomSheet(
     }
 
     val availableFriends by eventViewModel.availableFriends.collectAsState()
+    val participants by eventViewModel.participants.collectAsState()
 
     ModalBottomSheet(
         onDismissRequest = { showSheet.value = false },
@@ -55,7 +72,7 @@ fun EventParticipantsBottomSheet(
             // Показываем текущих участников
             items(currentEvent.participants) { participantId ->
                 ParticipantRow(
-                    user = eventViewModel.participants.value.find { it.userId == participantId },
+                    user = participants.find { it.userId == participantId },
                     isParticipant = true,
                     onAction = { }
                 )
@@ -64,7 +81,7 @@ fun EventParticipantsBottomSheet(
             // Показываем приглашенных пользователей
             items(currentEvent.invites) { invitedId ->
                 ParticipantRow(
-                    user = eventViewModel.availableFriends.value.find { it.userId == invitedId },
+                    user = availableFriends.find { it.userId == invitedId },
                     isPending = true,
                     onAction = { }
                 )
@@ -124,12 +141,12 @@ private fun ParticipantRow(
                     imageVector = ImageVector.vectorResource(R.drawable.acception),
                     contentDescription = "Participant",
                     tint = colorResource(R.color.main_blue),
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(Dimensions.MEDIUM_SPACING_1.dp)
                 )
             }
             isPending -> {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(Dimensions.MEDIUM_SPACING_1.dp),
                     color = colorResource(R.color.main_purple)
                 )
             }
@@ -144,4 +161,4 @@ private fun ParticipantRow(
             }
         }
     }
-} 
+}

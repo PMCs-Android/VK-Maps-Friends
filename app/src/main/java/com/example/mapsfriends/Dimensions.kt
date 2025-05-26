@@ -16,6 +16,7 @@ object Dimensions {
     const val MEDIUM_SPACING_2 = 30
     const val MEDIUM_SPACING_3 = 36
     const val MEDIUM_SPACING_4 = 48
+    const val MAIN_BUTTON = 58
     const val DATE_BOX = 60
     const val MEDIUM_SPACING_5 = 68
     const val LARGE_ELEMENT_1 = 80

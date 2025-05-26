@@ -69,8 +69,10 @@ fun RequestDetailsScreen(
             RequestDetailsDescription(event)
             RequestDetailsMembers(avatars as Map<String, String>)
             EventLocation(event = event)
-            RequestAcceptRefuseButtons(event = event,
-                navController = navController)
+            RequestAcceptRefuseButtons(
+                event = event,
+                navController = navController
+            )
         }
     }
 }
@@ -170,7 +172,7 @@ fun RequestAcceptRefuseButtons(
     navController: NavHostController
 ) {
     val coroutineScope = rememberCoroutineScope()
-    
+
     Row(
         modifier = Modifier
             .fillMaxWidth()

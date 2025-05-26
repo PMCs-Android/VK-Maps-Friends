@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
+@Suppress("TooManyFunctions")
 @HiltViewModel
 class EventViewModel @Inject constructor(
     private val eventRepository: EventRepository,
@@ -182,7 +183,7 @@ class EventViewModel @Inject constructor(
                 _events.value = emptyList()
                 _allEvents.value = emptyList()
             }.collect { events ->
-                    val sortedEvents = events.sortedWith(
+                val sortedEvents = events.sortedWith(
                     compareBy<Event> {
                         LocalDate.of(
                             LocalDate.now().year,
@@ -248,19 +249,22 @@ class EventViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val currentEvent = _currentEvent.value ?: return@launch
-                val userFriends = userProfileRepository.getUserById(currentUserId)?.friends ?: emptyList()
-                
+                val userFriends = userProfileRepository
+                    .getUserById(currentUserId)?.friends ?: emptyList()
+
                 val availableFriendsList = userFriends.mapNotNull { friendId ->
                     userProfileRepository.getUserById(friendId)
                 }.filter { friend ->
-                    !currentEvent.participants.contains(friend.userId) && 
-                    !currentEvent.invites.contains(friend.userId)
+                    val isNotParticipant = !currentEvent.participants.contains(friend.userId)
+                    val isNotInvited = !currentEvent.invites.contains(friend.userId)
+                    isNotParticipant && isNotInvited
                 }
-                
+
                 _availableFriends.value = availableFriendsList
-            } catch (e: Exception) {
-                println("Error loading available friends: ${e.message}")
-                _availableFriends.value = emptyList()
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error loading event: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error loading event: ${e.message}")
             }
         }
     }
@@ -270,14 +274,16 @@ class EventViewModel @Inject constructor(
             try {
                 val event = _currentEvent.value ?: return@launch
                 eventRepository.sendInvite(event.eventId, friendId)
-                
+
                 // Update available friends list
                 _availableFriends.value = _availableFriends.value.filter { it.userId != friendId }
-                
+
                 // Refresh event data
                 getEvent(event.eventId)
-            } catch (e: Exception) {
-                println("Error inviting friend: ${e.message}")
+            } catch (e: FirebaseFirestoreException) {
+                println("Firestore error loading event: ${e.message}")
+            } catch (e: IOException) {
+                println("Network error loading event: ${e.message}")
             }
         }
     }

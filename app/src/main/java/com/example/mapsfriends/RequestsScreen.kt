@@ -103,12 +103,12 @@ fun RequestButtons(
     viewModel: InvitesViewModel = hiltViewModel()
 ) {
     val coroutineScope = rememberCoroutineScope()
-    
+
     Column(
         modifier = Modifier
     ) {
         IconButton(
-            onClick = { 
+            onClick = {
                 coroutineScope.launch {
                     viewModel.acceptInvite(eventId)
                 }
@@ -128,7 +128,7 @@ fun RequestButtons(
         }
         Spacer(modifier = Modifier.height(4.dp))
         IconButton(
-            onClick = { 
+            onClick = {
                 coroutineScope.launch {
                     viewModel.declineInvite(eventId)
                 }

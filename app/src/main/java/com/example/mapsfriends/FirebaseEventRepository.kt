@@ -237,7 +237,7 @@ class FirebaseEventRepository @Inject constructor(
             // Проверяем количество оставшихся участников
             val updatedEventDoc = eventRef.get().await()
             val remainingParticipants = updatedEventDoc.getStringList("participants")
-            
+
             // Если участников не осталось, удаляем событие
             if (remainingParticipants.isEmpty()) {
                 deleteEvent(eventId)
