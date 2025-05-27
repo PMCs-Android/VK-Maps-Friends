@@ -12,20 +12,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.mapsfriends.messenger.ChatViewModel
-import com.example.mapsfriends.messenger.Message
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.draw.clip
-import java.text.SimpleDateFormat
-import java.util.Locale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,13 +29,19 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.mapsfriends.DateTimePickers
 import com.example.mapsfriends.Dimensions
 import com.example.mapsfriends.R
+import com.example.mapsfriends.messenger.ChatViewModel
+import com.example.mapsfriends.messenger.Message
 import com.example.mapsfriends.ui.theme.MessageColor
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun ChatScreen(
@@ -90,7 +90,7 @@ fun ChatScreen(
             ChatHeader(
                 navController = navController,
                 chatName = if (currentChat?.isGroupChat == true) event?.title ?: "Chat"
-                           else otherUser?.username ?: "Chat",
+                else otherUser?.username ?: "Chat",
                 avatarUrl = if (currentChat?.isGroupChat == true) null else otherUser?.avatarUrl,
                 isGroupChat = currentChat?.isGroupChat ?: false
             )
@@ -198,7 +198,9 @@ fun MessageItem(
             ) {
                 Text(text = message.text, style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    text = SimpleDateFormat("dd.MM HH:mm", Locale.getDefault()).format(message.timestamp.toDate()),
+                    text = SimpleDateFormat("dd.MM HH:mm", Locale.getDefault()).format(
+                        message.timestamp.toDate()
+                    ),
                     style = MaterialTheme.typography.bodySmall
                 )
             }

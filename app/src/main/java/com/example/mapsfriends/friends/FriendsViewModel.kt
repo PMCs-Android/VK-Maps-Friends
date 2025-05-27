@@ -1,23 +1,20 @@
 package com.example.mapsfriends
 
-import androidx.compose.runtime.Composable
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mapsfriends.login.AuthTokenManager
 import com.example.mapsfriends.messenger.Chat
 import com.example.mapsfriends.messenger.MessengerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
-    private val userRepository: UserProfileRepository,
     private val messengerRepository: MessengerRepository,
     private val tokenManager: AuthTokenManager
 ) : ViewModel() {
@@ -37,7 +34,6 @@ class FriendsViewModel @Inject constructor(
         viewModelScope.launch {
             messengerRepository.observeChats(currentUserId)
                 .catch { e ->
-
                 }
                 .collectLatest { chatsList ->
                     _chats.value = chatsList

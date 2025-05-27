@@ -7,15 +7,14 @@ import com.example.mapsfriends.UserProfileRepository
 import com.example.mapsfriends.login.AuthTokenManager
 import com.google.firebase.firestore.FirebaseFirestoreException
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import okio.IOException
-import javax.inject.Inject
 
 @HiltViewModel
 class NewChatViewModel @Inject constructor(

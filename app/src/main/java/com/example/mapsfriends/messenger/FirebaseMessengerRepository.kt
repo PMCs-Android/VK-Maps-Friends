@@ -8,6 +8,8 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
+import java.util.UUID
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.awaitClose
@@ -16,8 +18,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import okio.IOException
-import java.util.UUID
-import javax.inject.Inject
 
 class FirebaseMessengerRepository @Inject constructor(
     private val userRepository: UserProfileRepository
@@ -37,7 +37,7 @@ class FirebaseMessengerRepository @Inject constructor(
 
     override suspend fun createChat(userId1: String, userId2: String): String {
         try {
-            val chatId = if (userId1 < userId2) "${userId1}_${userId2}" else "${userId2}_${userId1}"
+            val chatId = if (userId1 < userId2) "${userId1}_$userId2" else "${userId2}_$userId1"
             val chat = Chat(
                 chatId = chatId,
                 participants = listOf(userId1, userId2),
@@ -203,17 +203,25 @@ class FirebaseMessengerRepository @Inject constructor(
                 }
             awaitClose { listener.remove() }
         } catch (e: IOException) {
-            Log.e("MessengerRepository", "Network error setting up message observation: ${e.message}", e)
+            Log.e(
+                "MessengerRepository",
+                "Network error setting up message observation: ${e.message}",
+                e
+            )
             close(e)
         } catch (e: FirebaseFirestoreException) {
-            Log.e("MessengerRepository", "Firestore error setting up message observation: ${e.code} - ${e.message}", e)
+            Log.e(
+                "MessengerRepository",
+                "Firestore error setting up message observation: ${e.code} - ${e.message}",
+                e
+            )
             close(e)
         }
     }
 
     override suspend fun createGroupChat(participants: List<String>, eventId: String): String {
         try {
-            val chatId = "group_${eventId}"
+            val chatId = "group_$eventId"
             val chat = Chat(
                 chatId = chatId,
                 participants = participants,
@@ -290,7 +298,9 @@ class FirebaseMessengerRepository @Inject constructor(
             println("Network error while removing participant from chat: ${e.message}")
             throw e
         } catch (e: FirebaseFirestoreException) {
-            println("Firestore error while removing participant from chat: ${e.code} - ${e.message}")
+            println(
+                "Firestore error while removing participant from chat: ${e.code} - ${e.message}"
+            )
             throw e
         }
     }

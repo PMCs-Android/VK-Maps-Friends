@@ -34,4 +34,3 @@ interface MessengerRepository {
     suspend fun removeParticipantFromChat(chatId: String, userId: String)
     suspend fun deleteChat(chatId: String)
 }
-

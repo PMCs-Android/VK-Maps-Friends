@@ -1,7 +1,5 @@
 package com.example.mapsfriends
 
-import com.example.mapsfriends.messenger.Chat
-import com.example.mapsfriends.messenger.Message
 import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.flow.Flow
 

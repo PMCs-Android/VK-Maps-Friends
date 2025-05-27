@@ -12,7 +12,6 @@ import com.example.mapsfriends.ui.login.LoginScreen
 import com.example.mapsfriends.ui.messenger.ChatScreen
 import com.example.mapsfriends.ui.messenger.ChatsListScreen
 import com.example.mapsfriends.ui.messenger.NewChatScreen
-import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
