@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Looper
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -25,7 +26,7 @@ class LocationManager(private val context: Context) {
     }
 
     var listener: OnLocationUpdateListener? = null
-    private var userId: String? = null
+
     private var lastLocation: Location? = null
     private var lastUpdateTime: Long = 0
     private var isHighFrequencyMode = true
@@ -33,9 +34,7 @@ class LocationManager(private val context: Context) {
     private val fusedLocationClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(context)
     }
-    fun setUserId(id: String) {
-        userId = id
-    }
+
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             locationResult.lastLocation?.let { location ->
@@ -104,9 +103,14 @@ class LocationManager(private val context: Context) {
     }
 
     private fun handleLocationUpdate(location: Location) {
+        if (location.latitude == 0.0 && location.longitude == 0.0) {
+            Log.w("LocationManager", "Filtered out a (0,0) location update.")
+            return
+        }
+
         val currentTime = System.currentTimeMillis()
         val isSignificantChange = lastLocation == null ||
-            location.distanceTo(lastLocation!!) >= LOCATION_CHANGE_THRESHOLD_METERS
+                location.distanceTo(lastLocation!!) >= LOCATION_CHANGE_THRESHOLD_METERS
 
         if (isSignificantChange) {
             if (!isHighFrequencyMode) {
@@ -116,27 +120,11 @@ class LocationManager(private val context: Context) {
             lastLocation = location
             lastUpdateTime = currentTime
             listener?.onLocationUpdated(location)
-            userId?.let { id ->
-                sendLocationToFirestore(id, location.latitude, location.longitude)
-            }
         } else {
-            if (currentTime - lastUpdateTime > LOW_FREQUENCY_INTERVAL_MILLIS &&
-                isHighFrequencyMode
-            ) {
+            if (currentTime - lastUpdateTime > LOW_FREQUENCY_INTERVAL_MILLIS && isHighFrequencyMode) {
                 isHighFrequencyMode = false
                 requestLocationUpdates(LOW_FREQUENCY_INTERVAL_MILLIS)
             }
         }
-    }
-
-    private fun sendLocationToFirestore(
-        userId: String,
-        latitude: Double,
-        longitude: Double
-    ) {
-        val locationData = GeoPoint(latitude, longitude)
-        Firebase.firestore.collection("users")
-            .document(userId)
-            .update("location", locationData)
     }
 }

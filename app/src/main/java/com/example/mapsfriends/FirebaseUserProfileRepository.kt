@@ -185,4 +185,12 @@ class FirebaseUserProfileRepository @Inject constructor (
     override suspend fun declineInvite(userId: String, eventId: String) {
         eventRepository.removeInvite(eventId, userId)
     }
+
+    override fun observeUser(userId: String): Flow<User?> = callbackFlow {
+        val listener = Firebase.firestore.collection("users").document(userId).addSnapshotListener { snapshot, error ->
+            if (error != null) { close(error); return@addSnapshotListener }
+            trySend(snapshot?.toObject(User::class.java))
+        }
+        awaitClose { listener.remove() }
+    }
 }

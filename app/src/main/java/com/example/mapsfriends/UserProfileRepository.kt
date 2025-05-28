@@ -34,4 +34,5 @@ interface UserProfileRepository {
     fun observeLocation(userId: String): Flow<GeoPoint>
     suspend fun addEventToUser(creatorID: String, eventId: String)
     suspend fun getUserAvatars(userIds: List<String>): Map<String, String?>
+    fun observeUser(userId: String): Flow<User?>
 }

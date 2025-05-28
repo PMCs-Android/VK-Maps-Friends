@@ -57,16 +57,15 @@ class UserViewModel @Inject constructor(
     private var locationManager: LocationManager? = null
 
     init {
-
         viewModelScope.launch {
-            val userId = tokenManager.getUserId()
-            if (userId != null) {
-                val user = userProfileRepository.getUserById(userId)
+            val userId = tokenManager.getUserId() ?: return@launch
+
+            userProfileRepository.observeUser(userId).collect { user ->
                 _currentUser.value = user
-                if (hasLocationPermissions()) {
+
+                if (locationManager == null && user != null && hasLocationPermissions()) {
                     locationManager = LocationManager(appContext).apply {
                         listener = this@UserViewModel
-                        setUserId(user!!.userId)
                         startLocationUpdates()
                     }
                 }
