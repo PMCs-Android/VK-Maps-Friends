@@ -33,7 +33,9 @@ class LocationManager(private val context: Context) {
     private val fusedLocationClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(context)
     }
-
+    fun setUserId(id: String) {
+        userId = id
+    }
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             locationResult.lastLocation?.let { location ->
