@@ -22,6 +22,7 @@ interface EventRepository {
     suspend fun deleteParticipant(eventId: String, userId: String)
     suspend fun getParticipants(eventId: String): List<User>
     fun observeEventsByUserId(userId: String): Flow<List<Event>>
+    fun observeEventById(eventId: String): Flow<Event?>
     suspend fun sendInvite(eventId: String, userId: String)
     suspend fun removeInvite(eventId: String, userId: String)
 }

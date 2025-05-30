@@ -196,11 +196,10 @@ fun OneEvent(
     val userViewModel = hiltViewModel<UserViewModel>()
     val avatars = userViewModel.avatarsPerEvent.collectAsState().value[event.eventId] ?: emptyMap()
 
-    LaunchedEffect(event) {
-        if (!userViewModel.avatarsPerEvent.value.containsKey(event.eventId)) {
-            userViewModel.loadAvatarsForEventCard(event.eventId, event.participants)
-        }
+    LaunchedEffect(event.eventId) {
+        userViewModel.observeEventAvatars(event.eventId, event.participants)
     }
+
     val day = event.time.slice(0..1).toInt()
     val month = event.time.slice(Dimensions.THREE..4).toInt()
     val clockTime = event.time.slice(Dimensions.SIX..10)

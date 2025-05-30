@@ -196,21 +196,22 @@ class FirebaseEventRepository @Inject constructor(
     }
 
     override fun observeEventsByUserId(userId: String): Flow<List<Event>> = callbackFlow {
-        val userRef = database.collection("users").document(userId)
-
-        val listener = userRef
+//        val userRef = database.collection("users").document(userId)
+//        val listener = userRef
+//            .addSnapshotListener { snapshot, error ->
+//                if (error != null) {
+//                    close(error)
+//                    return@addSnapshotListener
+//                }
+        val listener = events
+            .whereArrayContains("participants", userId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     close(error)
                     return@addSnapshotListener
                 }
-                val eventIds = snapshot?.getStringList("events")
-                launch {
-                    val events = eventIds!!.mapNotNull { eventId ->
-                        getEventById(eventId)
-                    }
-                    trySend(events)
-                }
+                val eventList = snapshot?.documents?.mapNotNull { it.toObject(Event::class.java) }
+                trySend(eventList ?: emptyList())
             }
         awaitClose { listener.remove() }
     }
@@ -252,5 +253,18 @@ class FirebaseEventRepository @Inject constructor(
                 "Firestore operation failed at participant $userId delete: ${e.code} - ${e.message}"
             )
         }
+    }
+
+    override fun observeEventById(eventId: String): Flow<Event?> = callbackFlow {
+        val listener = events.document(eventId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                val event = snapshot?.toObject(Event::class.java)
+                trySend(event)
+            }
+        awaitClose { listener.remove() }
     }
 }

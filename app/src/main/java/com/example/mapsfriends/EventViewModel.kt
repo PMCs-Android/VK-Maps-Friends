@@ -220,10 +220,18 @@ class EventViewModel @Inject constructor(
     fun getEvent(eventId: String) {
         viewModelScope.launch {
             try {
-                _currentEvent.value = eventRepository.getEventById(eventId)
-                _avatars.value = userProfileRepository.getUserAvatars(
-                    _currentEvent.value?.participants ?: emptyList()
-                ).filterValues { it != null } as Map<String, String>
+                // Start observing the event for real-time updates
+                eventRepository.observeEventById(eventId)
+                    .catch { e ->
+                        println("Error observing event: ${e.message}")
+                    }
+                    .collect { event ->
+                        _currentEvent.value = event
+                        // Update avatars whenever participants change
+                        _avatars.value = userProfileRepository.getUserAvatars(
+                            event?.participants ?: emptyList()
+                        ).filterValues { it != null } as Map<String, String>
+                    }
             } catch (e: FirebaseFirestoreException) {
                 println("Firestore error loading event: ${e.message}")
             } catch (e: IOException) {

@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 class UserViewModel @Inject constructor(
     private val userProfileRepository: UserProfileRepository,
     private val userFriendsRepository: UserFriendsRepository,
+    private val eventRepository: EventRepository,
     private val tokenManager: AuthTokenManager
 ) : ViewModel() {
     private val _friends = MutableStateFlow<List<User>>(emptyList())
@@ -113,6 +114,22 @@ class UserViewModel @Inject constructor(
                 println("Network error loading avatars: ${e.message}")
                 _avatars.value = emptyMap()
             }
+        }
+    }
+
+    fun observeEventAvatars(eventId: String, participants: List<String>) {
+        viewModelScope.launch {
+            eventRepository.observeEventById(eventId)
+                .catch { e ->
+                    println("Error observing event avatars: ${e.message}")
+                }
+                .collect { event ->
+                    if (event != null) {
+                        val avatars = userProfileRepository.getUserAvatars(event.participants)
+                            .filterValues { it != null } as Map<String, String>
+                        _avatarsPerEvent.value = _avatarsPerEvent.value + (eventId to avatars)
+                    }
+                }
         }
     }
 }
